@@ -8,6 +8,7 @@
     "height": 180,
     "fps": 24,
     "mode": "debug",
+    "debug_overlay": true,
     "video_codec": "libx264",
     "pixel_format": "yuv420p"
   },
