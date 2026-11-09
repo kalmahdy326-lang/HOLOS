@@ -22,6 +22,23 @@ git clone https://github.com/kalmahdy326-lang/HOLOS.git
 cd HOLOS
 ```
 
+## Create a source inventory before asset changes
+
+Run the read-only inventory before moving, renaming, or backing up project
+assets:
+
+\`\`\`bash
+python tools/holos.py inventory
+\`\`\`
+
+The command hashes regular source/project files with SHA-256 and writes a
+timestamped report under \`output/reports/\`. It records path, category, file
+extension, byte size, and hash, plus an aggregate inventory hash. It does not
+follow symlinks, read common secret-file names such as \`.env\` and private-key
+files, or scan generated output, Git metadata, dependency folders, and caches.
+A custom report path is accepted only under \`output/reports/\`; existing reports
+are never overwritten. This is an inventory, not a backup.
+
 ## Validate the example configuration
 
 ```bash
@@ -172,6 +189,7 @@ Implemented and CI-tested:
 - Toolchain detection.
 - Safe project-root-bounded asset existence checks.
 - JSON preflight report output.
+- Read-only project source inventory with per-file and aggregate SHA-256 hashes.
 - Python-to-Godot subprocess adapter with path and output safety checks.
 - Single-shot rendering through the generic Godot scene hooks.
 - Four-frame Godot rendering integration test.
@@ -189,7 +207,7 @@ Implemented and CI-tested:
 Still in development:
 - Khaled and Kevin character-rig adapters and validation against their real project scenes.
 - Sample-accurate synchronization against dialogue cues, phoneme timing, and animation events; current validation checks encoded stream start times and durations only.
-- Backup and recovery orchestration.
+- Automated source backup/restore orchestration (the inventory command is read-only and is not a backup).
 - Offline acceptance test on the target production machine.
 
 ## Configuration timing
