@@ -144,5 +144,97 @@ class FFmpegIntegrationTests(unittest.TestCase):
             )
 
 
+    def test_cli_assembles_verified_multi_shot_episode(self):
+        import json
+        import os
+        import sys
+
+        from holos_engine.batch import render_episode_batch
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for folder in ("holos_engine", "tools"):
+                shutil.copytree(
+                    Path(__file__).resolve().parents[1] / folder,
+                    root / folder,
+                    ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+                )
+            source_frames = root / "source_frames"
+            source_frames.mkdir()
+            subprocess.run([
+                FFMPEG, "-hide_banner", "-loglevel", "error", "-y",
+                "-f", "lavfi", "-i", "testsrc=size=320x180:rate=24",
+                "-frames:v", "4", "-start_number", "0",
+                str(source_frames / "frame_%06d.png"),
+            ], check=True, capture_output=True)
+
+            episode = {
+                "schema_version": 1,
+                "episode_id": "cli_episode_test",
+                "title": "CLI Episode Assembly Test",
+                "render": {"width": 320, "height": 180, "fps": 24},
+                "audio": {"dialogue": None, "music": None},
+                "scenes": [{"scene_id": "scene_01", "shots": [
+                    {"shot_id": "SHOT_A", "start_frame": 0, "end_frame": 2,
+                     "scene": "res://unused_fixture.tscn"},
+                    {"shot_id": "SHOT_B", "start_frame": 2, "end_frame": 4,
+                     "scene": "res://unused_fixture.tscn"},
+                ]}],
+            }
+            episode_dir = root / "examples"
+            episode_dir.mkdir()
+            episode_path = episode_dir / "episode.json"
+            episode_path.write_text(json.dumps(episode, indent=2), encoding="utf-8")
+
+            def render_fixture(scene, shot, output_dir):
+                output_dir.mkdir(parents=True, exist_ok=True)
+                offset = 0 if shot["shot_id"] == "SHOT_A" else 2
+                for index in range(2):
+                    shutil.copy2(
+                        source_frames / f"frame_{offset + index:06d}.png",
+                        output_dir / f"frame_{index:06d}.png",
+                    )
+                return {"return_code": 0, "frame_count": 2}
+
+            batch = render_episode_batch(
+                project_root=root, episode=episode, mode="debug",
+                render_one=render_fixture,
+            )
+            self.assertTrue(batch["success"])
+
+            env = os.environ.copy()
+            env["PYTHONPATH"] = str(root)
+            output = root / "output" / "episode.mp4"
+            command = [
+                sys.executable, str(root / "tools" / "holos.py"),
+                "--project-root", str(root),
+                "assemble-episode",
+                "--episode", "examples/episode.json",
+                "--mode", "debug",
+                "--output", "output/episode.mp4",
+            ]
+            result = subprocess.run(
+                command, cwd=root, env=env, capture_output=True,
+                text=True, timeout=120, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+            self.assertTrue(output.is_file())
+
+            report_path = (
+                root / "output" / "reports"
+                / "cli_episode_test-debug-episode-assembly.json"
+            )
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+            self.assertTrue(report["validation"]["valid"], report["validation"]["errors"])
+            self.assertEqual(report["ordered_shots"], ["SHOT_A", "SHOT_B"])
+            self.assertEqual(report["frame_staging"]["frame_count"], 4)
+            self.assertTrue(
+                (root / "output" / "renders" / "cli_episode_test"
+                 / "SHOT_A" / "frame_000000.png").is_file()
+            )
+            self.assertFalse((root / "output" / ".holos_runtime"
+                              / "episode-frame-sequence-").exists())
+
+
 if __name__ == "__main__":
     unittest.main()
