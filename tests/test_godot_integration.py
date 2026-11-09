@@ -160,8 +160,11 @@ class GodotOffscreenIntegrationTests(unittest.TestCase):
                 text=True, timeout=60, check=False,
             )
             self.assertEqual(second.returncode, 0, second.stderr or second.stdout)
-            result = json.loads(second.stdout.split("Configuration valid:", 1)[1]
-                                 .split("\\n", 1)[1])
+            batch_report = (
+                project_root / "output" / "reports"
+                / "adapter_test_episode_batch-debug-batch.json"
+            )
+            result = json.loads(batch_report.read_text(encoding="utf-8"))
             self.assertEqual(
                 result["batch"]["skipped_verified"],
                 ["ADAPTER_TEST_A", "ADAPTER_TEST_B"],
