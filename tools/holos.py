@@ -302,6 +302,9 @@ def main() -> int:
                     fps=render_settings["fps"],
                     expected_duration=frame_count / float(render_settings["fps"]),
                     require_audio=(dialogue is not None or music is not None),
+                    sync_tolerance_seconds=(
+                        float(audio.get("sync_tolerance_ms", 80)) / 1000.0
+                    ),
                 )
                 if not validation["valid"]:
                     raise MediaError(
