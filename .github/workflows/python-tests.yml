@@ -35,7 +35,7 @@ jobs:
       - name: Download pinned Godot 4.4.1
         run: |
           curl --fail --location --retry 3 \
-            https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.x86_64.zip \
+            https://downloads.godotengine.org/?version=4.4.1&flavor=stable&slug=linux.x86_64.zip \
             --output "$RUNNER_TEMP/godot.zip"
           unzip "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot-bin"
           chmod +x "$RUNNER_TEMP/godot-bin/Godot_v4.4.1-stable_linux.x86_64"
