@@ -9,7 +9,11 @@ from pathlib import Path
 import sys
 import tempfile
 
-from holos_engine.backup import BackupError, create_source_backup
+from holos_engine.backup import (
+    BackupError,
+    create_source_backup,
+    restore_source_backup,
+)
 from holos_engine.batch import (
     BatchRenderError,
     load_completed_batch_manifest,
@@ -167,6 +171,15 @@ def main() -> int:
         help="Optional new directory under output/backups (default: timestamped)",
     )
 
+    restore = subparsers.add_parser(
+        "restore", help="Verify a source backup and restore it into a new directory"
+    )
+    restore.add_argument("--backup", required=True, type=Path)
+    restore.add_argument(
+        "--destination", type=Path,
+        help="Optional new directory under output/restores (default: timestamped)",
+    )
+
     for name in ("validate", "preflight"):
         command = subparsers.add_parser(name)
         command.add_argument("--episode", required=True, type=Path)
@@ -222,6 +235,22 @@ def main() -> int:
                 "file_count": manifest["file_count"],
                 "total_size_bytes": manifest["total_size_bytes"],
                 "source_inventory_sha256": manifest["source_inventory_sha256"],
+            }, indent=2))
+            return 0
+
+        if args.command == "restore":
+            backup_path = args.backup if args.backup.is_absolute() else root / args.backup
+            restored_path, manifest = restore_source_backup(
+                project_root=root,
+                backup_path=backup_path,
+                destination=args.destination,
+            )
+            print(json.dumps({
+                "restore_path": str(restored_path),
+                "status": manifest["status"],
+                "file_count": manifest["file_count"],
+                "total_size_bytes": manifest["total_size_bytes"],
+                "source_backup": manifest["source_backup"],
             }, indent=2))
             return 0
 
