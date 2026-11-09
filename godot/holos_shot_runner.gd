@@ -11,6 +11,7 @@ extends SceneTree
 var _config: Dictionary = {}
 var _output_dir: String = ""
 var _instance: Node
+var _debug_label: Label
 
 
 func _initialize() -> void:
@@ -34,6 +35,34 @@ func _parse_user_args() -> Dictionary:
         index += 2
     return parsed
 
+
+
+
+func _setup_debug_overlay() -> void:
+    if str(_config.get("mode", "production")) != "debug":
+        return
+    if not bool(_config.get("debug_overlay", false)):
+        return
+
+    var layer := CanvasLayer.new()
+    layer.layer = 100
+    var panel := PanelContainer.new()
+    panel.position = Vector2(12, 12)
+
+    var style := StyleBoxFlat.new()
+    style.bg_color = Color(0.02, 0.02, 0.02, 0.82)
+    style.content_margin_left = 9.0
+    style.content_margin_right = 9.0
+    style.content_margin_top = 6.0
+    style.content_margin_bottom = 6.0
+    panel.add_theme_stylebox_override("panel", style)
+
+    _debug_label = Label.new()
+    _debug_label.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
+    _debug_label.add_theme_font_size_override("font_size", 12)
+    panel.add_child(_debug_label)
+    layer.add_child(panel)
+    get_root().add_child(layer)
 
 func _run() -> void:
     var args := _parse_user_args()
@@ -80,6 +109,7 @@ func _run() -> void:
     get_root().add_child(_instance)
     if _instance.has_method("holos_apply_shot"):
         _instance.call("holos_apply_shot", _config)
+    _setup_debug_overlay()
 
     var directory := DirAccess.make_dir_recursive_absolute(_output_dir)
     if directory != OK and directory != ERR_ALREADY_EXISTS:
@@ -87,6 +117,11 @@ func _run() -> void:
         return
 
     for frame_index in range(start_frame, end_frame):
+        if _debug_label != null:
+            _debug_label.text = "HOLOS DEBUG  |  %s  |  frame %d" % [
+                str(_config.get("shot_id", "unknown")),
+                frame_index
+            ]
         if _instance.has_method("holos_set_frame"):
             _instance.call("holos_set_frame", frame_index, fps)
         await process_frame
