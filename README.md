@@ -72,6 +72,8 @@ These are working prototypes, not yet finished production-quality character rigs
 
 Further development includes improved phoneme-level lip synchronization, facial-layer polish, articulated body movement, smoother gaze tracking, and more expressive acting.
 
+The HOLOS adapter handoff requirements and evidence gates for integrating the original character files are documented in [Character Rig Integration Contract](docs/character-rig-integration-contract.md). The current repository does not yet contain either original rig scene or its dependencies.
+
 4. Production Engine — Milestone 6
 
 The current major engineering objective is the HOLOS Local Production Engine.
