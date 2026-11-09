@@ -93,3 +93,10 @@ def validate_episode(data: Any) -> None:
         value = audio.get(key)
         _require(value is None or isinstance(value, str),
                  f"audio.{key} must be a path string or null.")
+    sync_tolerance_ms = audio.get("sync_tolerance_ms", 80)
+    _require(
+        isinstance(sync_tolerance_ms, (int, float))
+        and not isinstance(sync_tolerance_ms, bool)
+        and sync_tolerance_ms >= 0,
+        "audio.sync_tolerance_ms must be a non-negative number.",
+    )
