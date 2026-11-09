@@ -92,7 +92,18 @@ def build_inventory(project_root: Path) -> dict[str, Any]:
     skipped: list[dict[str, str]] = []
     errors: list[dict[str, str]] = []
 
-    for current, directories, filenames in os.walk(root, topdown=True, followlinks=False):
+    def record_walk_error(exc: OSError) -> None:
+        filename = getattr(exc, "filename", None)
+        candidate = Path(filename) if filename else root
+        try:
+            relative = candidate.relative_to(root).as_posix()
+        except ValueError:
+            relative = str(candidate)
+        errors.append({"path": relative, "error": f"{type(exc).__name__}: {exc}"})
+
+    for current, directories, filenames in os.walk(
+        root, topdown=True, followlinks=False, onerror=record_walk_error
+    ):
         current_path = Path(current)
         safe_directories: list[str] = []
         for directory in sorted(directories):
@@ -194,6 +205,8 @@ def write_inventory_report(
     reports_root = (root / "output" / "reports").resolve()
     if not (reports_root == root or root in reports_root.parents):
         raise InventoryError("Inventory report directory must remain inside project root.")
+    if destination == root or root not in destination.parents:
+        raise InventoryError("Inventory report must be written inside the project root.")
     if destination == reports_root or reports_root not in destination.parents:
         raise InventoryError("Inventory report must be written under output/reports.")
     if destination.exists():
