@@ -52,7 +52,8 @@ Do not rebuild completed milestones unnecessarily. Do not relocate source assets
 | A/V tolerance | Configurable as \`audio.sync_tolerance_ms\`; default 80 ms |
 | Existing character rigs | Not yet connected to the engine; the repository currently uses generic adapter fixtures |
 | Offline acceptance on production machine | Not performed; CI is not a substitute for disconnected local acceptance |
-| Source asset inventory and backup/restore | Not yet complete |
+| Source inventory | Read-only inventory command added; it records SHA-256 hashes for project files and excludes generated output, caches, symlinks, and common secret-file names. The first inventory report still needs to be run against the target project checkout. |
+| Source backup/restore | Not yet implemented; inventory does not copy or back up source data |
 
 ## Required capabilities
 
@@ -154,7 +155,8 @@ Milestone 6 must integrate and preserve current work, not misrepresent these gap
 
 ## Completion evidence
 
-- Inventory and backup report.
+- Source inventory report with per-file hashes.
+- Backup and restore report.
 - Toolchain/version report.
 - Versioned configuration schema and example episode.
 - Source code and tests.
