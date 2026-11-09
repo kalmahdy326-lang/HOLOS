@@ -1,0 +1,54 @@
+"""Configuration validation tests using only the Python standard library."""
+
+import unittest
+
+from holos_engine.config import ConfigError, validate_episode
+
+
+VALID = {
+    "schema_version": 1,
+    "episode_id": "episode_test",
+    "title": "Test Episode",
+    "render": {"width": 1280, "height": 720, "fps": 24},
+    "audio": {"dialogue": None, "music": None},
+    "scenes": [{
+        "scene_id": "scene_01",
+        "shots": [{
+            "shot_id": "S01_B01",
+            "start_frame": 0,
+            "end_frame": 24,
+            "characters": ["khaled"],
+            "assets": []
+        }]
+    }]
+}
+
+
+class EpisodeConfigTests(unittest.TestCase):
+    def test_valid_episode(self):
+        validate_episode(VALID)
+
+    def test_rejects_duplicate_shot_ids(self):
+        data = {**VALID, "scenes": [dict(VALID["scenes"][0])]}
+        data["scenes"][0]["shots"] = [
+            dict(VALID["scenes"][0]["shots"][0]),
+            dict(VALID["scenes"][0]["shots"][0]),
+        ]
+        with self.assertRaisesRegex(ConfigError, "Duplicate shot_id"):
+            validate_episode(data)
+
+    def test_rejects_invalid_frame_range(self):
+        data = {**VALID, "scenes": [dict(VALID["scenes"][0])]}
+        data["scenes"][0]["shots"] = [dict(VALID["scenes"][0]["shots"][0])]
+        data["scenes"][0]["shots"][0]["end_frame"] = 0
+        with self.assertRaisesRegex(ConfigError, "end_frame"):
+            validate_episode(data)
+
+    def test_rejects_unsupported_schema(self):
+        data = {**VALID, "schema_version": 99}
+        with self.assertRaisesRegex(ConfigError, "schema_version"):
+            validate_episode(data)
+
+
+if __name__ == "__main__":
+    unittest.main()
