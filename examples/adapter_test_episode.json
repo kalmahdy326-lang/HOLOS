@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "episode_id": "adapter_test_episode",
+  "title": "HOLOS Godot Adapter Test",
+  "description": "Four-frame integration fixture. Not production episode content.",
+  "render": {
+    "width": 320,
+    "height": 180,
+    "fps": 24,
+    "mode": "debug",
+    "video_codec": "libx264",
+    "pixel_format": "yuv420p"
+  },
+  "audio": {
+    "dialogue": null,
+    "music": null,
+    "sync_tolerance_ms": 80
+  },
+  "scenes": [
+    {
+      "scene_id": "adapter_test_scene",
+      "title": "Adapter Test Scene",
+      "shots": [
+        {
+          "shot_id": "ADAPTER_TEST",
+          "scene": "res://test_scenes/adapter_test.tscn",
+          "start_frame": 0,
+          "end_frame": 4,
+          "characters": [],
+          "assets": [],
+          "notes": "Automated integration fixture only."
+        }
+      ]
+    }
+  ]
+}
