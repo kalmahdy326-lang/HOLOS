@@ -84,9 +84,9 @@ The engine will provide:
 2. Structured episode and shot configuration.
 3. Godot integration for character and scene rendering.
 4. Individual shot rendering.
-5. Batch scene rendering.
-6. Complete episode rendering.
-7. Automatic audio/video assembly.
+5. Ordered multi-shot rendering with resumable manifests.
+6. Complete episode assembly from ordered shots (in development).
+7. Automatic audio/video assembly and validation.
 8. Production and debug modes.
 9. Automated validation.
 10. Versioned outputs and backups.
@@ -95,15 +95,15 @@ The engine will provide:
 
 Intended production commands
 
-python tools/render_episode.py --episode episode_01 --mode production
+python tools/holos.py render-episode --episode examples/episode_01.json --mode production
 
-python tools/render_episode.py --episode episode_01 --scene scene_01 --mode production
-
-python tools/render_episode.py --episode episode_01 --shot S01_B01 --mode debug
+python tools/holos.py render --episode examples/episode_01.json --shot S01_B01 --mode debug
 
 python tools/validate_episode.py --episode episode_01 --report
 
-These commands define the intended interface. They are not claimed to be implemented yet.
+The current CLI implements `render` for one shot and `render-episode` for an
+ordered, resumable batch of shots. Final concatenation of separate shot folders
+into a single episode video remains in development.
 
 5. Proposed Repository Structure
 
