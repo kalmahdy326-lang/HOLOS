@@ -5,9 +5,12 @@ from __future__ import annotations
 from datetime import datetime, timezone
 import hashlib
 import json
+import fnmatch
 import os
 from pathlib import Path, PurePosixPath
 import shutil
+
+from holos_engine.inventory import EXCLUDED_DIRECTORIES, SENSITIVE_FILE_PATTERNS
 import tempfile
 from typing import Any
 
@@ -52,7 +55,11 @@ def _validated_inventory(
     root: Path,
     inventory_path: Path,
 ) -> tuple[dict[str, Any], list[tuple[dict[str, Any], Path, PurePosixPath]]]:
-    reports_root = (root / "output" / "reports").resolve()
+    output_lexical = root / "output"
+    reports_lexical = output_lexical / "reports"
+    if output_lexical.is_symlink() or reports_lexical.is_symlink():
+        raise BackupError("Inventory report directory must not use symbolic links.")
+    reports_root = reports_lexical.resolve()
     candidate = inventory_path if inventory_path.is_absolute() else root / inventory_path
     if candidate.is_symlink():
         raise BackupError("Inventory report must not be a symbolic link.")
@@ -83,6 +90,13 @@ def _validated_inventory(
             raise BackupError("Inventory contains a malformed file record.")
         relative = _safe_relative_path(record.get("path"))
         normalized = relative.as_posix()
+        if any(part in EXCLUDED_DIRECTORIES for part in relative.parts):
+            raise BackupError(f"Generated or dependency path is not eligible for backup: {normalized}")
+        if any(
+            fnmatch.fnmatchcase(relative.name, pattern)
+            for pattern in SENSITIVE_FILE_PATTERNS
+        ):
+            raise BackupError(f"Sensitive filename is not eligible for backup: {normalized}")
         if normalized in seen:
             raise BackupError(f"Duplicate path in inventory: {normalized}")
         seen.add(normalized)
@@ -96,13 +110,34 @@ def _validated_inventory(
         resolved_source = source.resolve()
         if not _inside(root, resolved_source) or not resolved_source.is_file():
             raise BackupError(f"Inventory source file is missing or unsafe: {normalized}")
-        if not isinstance(record.get("size_bytes"), int) or record["size_bytes"] < 0:
+        if (
+            not isinstance(record.get("size_bytes"), int)
+            or isinstance(record.get("size_bytes"), bool)
+            or record["size_bytes"] < 0
+        ):
             raise BackupError(f"Invalid file size in inventory: {normalized}")
-        if not isinstance(record.get("sha256"), str) or len(record["sha256"]) != 64:
+        checksum = record.get("sha256")
+        if (
+            not isinstance(checksum, str)
+            or len(checksum) != 64
+            or any(character not in "0123456789abcdef" for character in checksum)
+        ):
             raise BackupError(f"Invalid SHA-256 value in inventory: {normalized}")
         if _sha256(resolved_source) != record["sha256"]:
             raise BackupError(f"Source changed after inventory: {normalized}")
         validated.append((record, resolved_source, relative))
+
+    summary = inventory.get("summary")
+    if not isinstance(summary, dict):
+        raise BackupError("Inventory report is missing its summary.")
+    aggregate = hashlib.sha256()
+    for record, _, relative in validated:
+        aggregate.update(relative.as_posix().encode("utf-8"))
+        aggregate.update(b"\\0")
+        aggregate.update(record["sha256"].encode("ascii"))
+        aggregate.update(b"\\n")
+    if aggregate.hexdigest() != summary.get("inventory_sha256"):
+        raise BackupError("Inventory aggregate hash does not match its file records.")
 
     return inventory, validated
 
@@ -123,12 +158,14 @@ def create_source_backup(
         inventory_path=inventory_path,
     )
 
-    backups_root = (root / "output" / "backups").resolve()
+    output_lexical = root / "output"
+    backups_lexical = output_lexical / "backups"
+    if output_lexical.is_symlink() or backups_lexical.is_symlink():
+        raise BackupError("Backup directory must not use symbolic links.")
+    backups_root = backups_lexical.resolve()
     if not _inside(root, backups_root) or backups_root == root:
         raise BackupError("Backup directory must remain inside project root.")
     backups_root.mkdir(parents=True, exist_ok=True)
-    if backups_root.is_symlink():
-        raise BackupError("Backup directory must not be a symbolic link.")
 
     if destination is None:
         final_dir = backups_root / f"source-backup-{_stamp()}"
