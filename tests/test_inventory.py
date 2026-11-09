@@ -4,6 +4,9 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -89,6 +92,52 @@ class InventoryTests(unittest.TestCase):
         outside = self.root.parent / f"{self.root.name}-report.json"
         with self.assertRaisesRegex(InventoryError, "inside the project root"):
             write_inventory_report(self.root, outside)
+
+
+    def test_cli_creates_inventory_without_episode_configuration(self):
+        source_root = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "holos_engine").mkdir()
+            (root / "tools").mkdir()
+            shutil.copytree(
+                source_root / "holos_engine",
+                root / "holos_engine",
+                dirs_exist_ok=True,
+                ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+            )
+            shutil.copy2(source_root / "tools" / "holos.py", root / "tools" / "holos.py")
+            (root / "notes.txt").write_text("source record", encoding="utf-8")
+            output = Path("output/reports/cli-inventory.json")
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(root / "tools" / "holos.py"),
+                    "--project-root", str(root),
+                    "inventory",
+                    "--output", str(output),
+                ],
+                cwd=root,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+            report_path = root / output
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+            self.assertEqual(report["status"], "complete")
+            self.assertIn(
+                "notes.txt", [item["path"] for item in report["files"]]
+            )
+            self.assertNotIn(
+                "output/reports/cli-inventory.json",
+                [item["path"] for item in report["files"]],
+            )
+
+    def test_rejects_inventory_report_outside_reports_directory(self):
+        with self.assertRaisesRegex(InventoryError, "under output/reports"):
+            write_inventory_report(self.root, Path("README-inventory.json"))
 
 
 if __name__ == "__main__":
