@@ -65,6 +65,34 @@ under `output/reports/`. It refuses to use a non-empty shot output directory.
 Choose a new output location or safely archive the prior generated render
 before repeating a render.
 
+## Render a complete episode as an ordered shot batch
+
+The batch command visits scenes and shots in configuration order:
+
+```bash
+python tools/holos.py render-episode \
+  --episode examples/adapter_test_episode_batch.json \
+  --mode debug
+```
+
+On display-less Linux, add `--display-wrapper xvfb-run` and run with
+`LIBGL_ALWAYS_SOFTWARE=1`.
+
+Each shot is rendered into its own directory under
+`output/renders/{episode_id}/{shot_id}/`. The command writes a resumable
+manifest to `output/manifests/{episode_id}-{mode}-render.json` and a batch
+summary under `output/reports/`.
+
+On a subsequent run, a shot marked completed is skipped only when its exact
+expected numbered PNG sequence still exists and every frame file is non-empty.
+An interrupted, failed, or invalid shot directory is moved—not deleted—to
+`output/recovery/` before it is rendered again. The manifest is atomically
+updated as each shot changes state. If the episode configuration or render
+mode changes, the existing manifest refuses to resume; preserve that run and
+use a new episode ID for a distinct configuration.
+
+The two-shot example is a test fixture, not Episode 1 content.
+
 ## Assemble rendered frames
 
 After rendering a shot, assemble its contiguous numbered frames:
@@ -108,6 +136,8 @@ Implemented and CI-tested:
 - Single-shot rendering through the generic Godot scene hooks.
 - Four-frame Godot rendering integration test.
 - CLI single-shot render command and JSON render report.
+- Ordered multi-shot episode rendering with a resumable status manifest.
+- Verified-completion skipping and preservation of partial output in recovery.
 - FFmpeg frame-sequence assembly with optional dialogue/music inputs.
 - FFprobe metadata inspection and basic output validation.
 - FFmpeg end-to-end integration test using two generated audio sources.
@@ -115,8 +145,9 @@ Implemented and CI-tested:
 
 Still in development:
 - Khaled and Kevin character-rig adapters and validation against their real project scenes.
-- Multi-shot scene/episode scheduling and resumable batch rendering.
-- Joining separate shot folders into one ordered episode sequence.
+- Joining separate shot folders into one ordered episode sequence. The current
+  `assemble` command accepts one contiguous frame directory; batch output must
+  not be treated as a completed episode until a shot-concatenation stage exists.
 - A/V synchronization validation beyond basic stream/duration checks.
 - Production/debug render separation and production overlay policy.
 - Backup and recovery orchestration.
