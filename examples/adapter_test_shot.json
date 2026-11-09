@@ -1,0 +1,10 @@
+{
+  "scene": "res://test_scenes/adapter_test.tscn",
+  "shot_id": "ADAPTER_TEST",
+  "start_frame": 0,
+  "end_frame": 4,
+  "fps": 24,
+  "width": 320,
+  "height": 180,
+  "mode": "debug"
+}
