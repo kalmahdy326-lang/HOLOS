@@ -109,5 +109,64 @@ class GodotOffscreenIntegrationTests(unittest.TestCase):
                              / "adapter_test_episode-ADAPTER_TEST-render.json").is_file())
 
 
+    def test_cli_renders_episode_in_order_and_resumes_verified_shots(self):
+        with tempfile.TemporaryDirectory() as temp:
+            project_root = Path(temp) / "project"
+            project_root.mkdir()
+            for folder in ("godot", "holos_engine", "tools", "examples"):
+                shutil.copytree(ROOT / folder, project_root / folder)
+
+            env = os.environ.copy()
+            env["PYTHONPATH"] = str(project_root)
+            command = [
+                sys.executable,
+                str(project_root / "tools" / "holos.py"),
+                "--project-root", str(project_root),
+                "render-episode",
+                "--episode", "examples/adapter_test_episode_batch.json",
+                "--mode", "debug",
+                "--godot-executable", env["HOLOS_GODOT"],
+            ]
+            wrapper = env.get("HOLOS_GODOT_DISPLAY_WRAPPER")
+            if wrapper:
+                command.extend(["--display-wrapper", wrapper])
+
+            first = subprocess.run(
+                command, cwd=project_root, env=env, capture_output=True,
+                text=True, timeout=180, check=False,
+            )
+            self.assertEqual(first.returncode, 0, first.stderr or first.stdout)
+
+            render_root = (
+                project_root / "output" / "renders"
+                / "adapter_test_episode_batch"
+            )
+            for shot_id in ("ADAPTER_TEST_A", "ADAPTER_TEST_B"):
+                frames = sorted((render_root / shot_id).glob("frame_*.png"))
+                self.assertEqual(len(frames), 2)
+
+            manifest_path = (
+                project_root / "output" / "manifests"
+                / "adapter_test_episode_batch-debug-render.json"
+            )
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            self.assertEqual(
+                [item["status"] for item in manifest["shots"]],
+                ["completed", "completed"],
+            )
+
+            second = subprocess.run(
+                command, cwd=project_root, env=env, capture_output=True,
+                text=True, timeout=60, check=False,
+            )
+            self.assertEqual(second.returncode, 0, second.stderr or second.stdout)
+            result = json.loads(second.stdout.split("Configuration valid:", 1)[1]
+                                 .split("\\n", 1)[1])
+            self.assertEqual(
+                result["batch"]["skipped_verified"],
+                ["ADAPTER_TEST_A", "ADAPTER_TEST_B"],
+            )
+
+
 if __name__ == "__main__":
     unittest.main()
