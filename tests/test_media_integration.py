@@ -292,7 +292,7 @@ class FFmpegIntegrationTests(unittest.TestCase):
             self.assertTrue((root / "output" / "assembled.mp4").is_file())
             report = json.loads(
                 (root / "output" / "reports"
-                 / "cli_single_assembly_test-media-validation.json")
+                 / "cli_single_assembly_test-debug-media-validation.json")
                 .read_text(encoding="utf-8")
             )
             self.assertTrue(report["validation"]["valid"], report["validation"]["errors"])
