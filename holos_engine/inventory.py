@@ -191,8 +191,11 @@ def write_inventory_report(
         destination = output_path if output_path.is_absolute() else root / output_path
         destination = destination.resolve()
 
-    if destination == root or root not in destination.parents:
-        raise InventoryError("Inventory report must be written inside the project root.")
+    reports_root = (root / "output" / "reports").resolve()
+    if not (reports_root == root or root in reports_root.parents):
+        raise InventoryError("Inventory report directory must remain inside project root.")
+    if destination == reports_root or reports_root not in destination.parents:
+        raise InventoryError("Inventory report must be written under output/reports.")
     if destination.exists():
         raise InventoryError(f"Refusing to overwrite existing inventory report: {destination}")
 
