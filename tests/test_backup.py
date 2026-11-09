@@ -10,7 +10,11 @@ import sys
 import tempfile
 import unittest
 
-from holos_engine.backup import BackupError, create_source_backup
+from holos_engine.backup import (
+    BackupError,
+    create_source_backup,
+    restore_source_backup,
+)
 from holos_engine.inventory import write_inventory_report
 
 
@@ -156,6 +160,72 @@ class SourceBackupTests(unittest.TestCase):
                 .read_text(encoding="utf-8")
             )
             self.assertEqual(manifest["status"], "complete")
+
+            restored_dir = root / "output" / "restores" / "cli-restored"
+            restore_run = subprocess.run(
+                [
+                    sys.executable, str(root / "tools" / "holos.py"),
+                    "--project-root", str(root), "restore",
+                    "--backup", "output/backups/cli-test",
+                    "--destination", "output/restores/cli-restored",
+                ],
+                cwd=root, env=env, capture_output=True, text=True, timeout=30, check=False,
+            )
+            self.assertEqual(restore_run.returncode, 0, restore_run.stderr or restore_run.stdout)
+            self.assertEqual(
+                (restored_dir / "notes.txt").read_text(encoding="utf-8"),
+                "backup source",
+            )
+            self.assertEqual(
+                (root / "output" / "backups" / "cli-test" / "files" / "notes.txt")
+                .read_text(encoding="utf-8"),
+                "backup source",
+            )
+
+    def test_restores_only_to_a_new_directory_and_keeps_backup(self):
+        inventory_path = self.inventory()
+        backup_path, _ = create_source_backup(
+            project_root=self.root,
+            inventory_path=inventory_path,
+            destination=Path("output/backups/restore-test"),
+        )
+        restored, manifest = restore_source_backup(
+            project_root=self.root,
+            backup_path=backup_path,
+            destination=Path("output/restores/restore-test"),
+        )
+        self.assertEqual(manifest["status"], "complete")
+        self.assertEqual(
+            (restored / "holos_engine" / "module.py").read_bytes(),
+            (self.root / "holos_engine" / "module.py").read_bytes(),
+        )
+        self.assertTrue((backup_path / "backup-manifest.json").is_file())
+
+    def test_refuses_restore_when_backup_file_is_corrupted(self):
+        inventory_path = self.inventory()
+        backup_path, _ = create_source_backup(
+            project_root=self.root,
+            inventory_path=inventory_path,
+            destination=Path("output/backups/corrupt-test"),
+        )
+        (backup_path / "files" / "README.md").write_text("corrupt", encoding="utf-8")
+        with self.assertRaisesRegex(BackupError, "failed integrity verification"):
+            restore_source_backup(project_root=self.root, backup_path=backup_path)
+
+    def test_refuses_existing_restore_directory(self):
+        inventory_path = self.inventory()
+        backup_path, _ = create_source_backup(
+            project_root=self.root,
+            inventory_path=inventory_path,
+        )
+        existing = self.root / "output" / "restores" / "already-here"
+        existing.mkdir(parents=True)
+        with self.assertRaisesRegex(BackupError, "Refusing to overwrite"):
+            restore_source_backup(
+                project_root=self.root,
+                backup_path=backup_path,
+                destination=existing,
+            )
 
 
 if __name__ == "__main__":
