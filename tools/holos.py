@@ -9,6 +9,7 @@ from pathlib import Path
 import sys
 import tempfile
 
+from holos_engine.batch import BatchRenderError, render_episode_batch
 from holos_engine.config import ConfigError, load_episode
 from holos_engine.controller import write_preflight_report
 from holos_engine.godot_adapter import GodotAdapterError, render_shot
@@ -24,16 +25,114 @@ def _episode_frame_count(episode: dict) -> int:
     )
 
 
-def _find_shot(episode: dict, shot_id: str) -> dict:
+def _find_shot_context(episode: dict, shot_id: str) -> tuple[dict, dict]:
     for scene in episode["scenes"]:
         for shot in scene["shots"]:
             if shot["shot_id"] == shot_id:
-                return shot
+                return scene, shot
     raise ConfigError(f"Shot not found in episode configuration: {shot_id}")
+
+
+def _safe_component(value: str, label: str) -> None:
+    if (
+        not isinstance(value, str)
+        or not value
+        or value in {".", ".."}
+        or "/" in value
+        or "\\" in value
+        or Path(value).is_absolute()
+    ):
+        raise ConfigError(f"{label} must be a single safe path component: {value!r}")
 
 
 def _inside(root: Path, path: Path) -> bool:
     return path == root or root in path.parents
+
+
+def _render_configured_shot(
+    *,
+    root: Path,
+    episode: dict,
+    scene: dict,
+    shot: dict,
+    mode: str,
+    godot_project: Path,
+    godot_executable: str | None,
+    display_wrapper: str | None,
+    output_dir: Path,
+) -> dict:
+    episode_id = episode["episode_id"]
+    shot_id = shot["shot_id"]
+    _safe_component(episode_id, "episode_id")
+    _safe_component(shot_id, "shot_id")
+
+    scene_path = shot.get("scene")
+    if not isinstance(scene_path, str) or not scene_path.startswith("res://"):
+        raise ConfigError(
+            f"Shot {shot_id} must define a Godot scene using a res:// path."
+        )
+
+    render_settings = episode["render"]
+    shot_config = {
+        "scene": scene_path,
+        "shot_id": shot_id,
+        "start_frame": shot["start_frame"],
+        "end_frame": shot["end_frame"],
+        "fps": render_settings["fps"],
+        "width": render_settings["width"],
+        "height": render_settings["height"],
+        "mode": mode,
+    }
+
+    absolute_output = output_dir if output_dir.is_absolute() else root / output_dir
+    absolute_output = absolute_output.resolve()
+    if not _inside(root, absolute_output):
+        raise ConfigError(f"Shot output directory must remain inside project root: {absolute_output}")
+    relative_output = absolute_output.relative_to(root)
+
+    runtime_root = root / "output" / ".holos_runtime"
+    runtime_root.mkdir(parents=True, exist_ok=True)
+    prefix = (display_wrapper, "-a") if display_wrapper else ()
+
+    with tempfile.TemporaryDirectory(prefix="shot-config-", dir=runtime_root) as temporary:
+        temporary_config = Path(temporary) / "shot.json"
+        temporary_config.write_text(
+            json.dumps(shot_config, indent=2) + "\n", encoding="utf-8"
+        )
+        config_relative = temporary_config.relative_to(root)
+        result = render_shot(
+            project_root=root,
+            godot_project=godot_project,
+            runner_script="res://holos_shot_runner.gd",
+            shot_config=config_relative,
+            output_dir=relative_output,
+            expected_frame_count=shot["end_frame"] - shot["start_frame"],
+            executable=godot_executable,
+            headless=False,
+            command_prefix=prefix,
+        )
+
+    report = {
+        "episode_id": episode_id,
+        "scene_id": scene["scene_id"],
+        "shot_id": shot_id,
+        "mode": mode,
+        "scene": scene_path,
+        "render": {
+            "width": render_settings["width"],
+            "height": render_settings["height"],
+            "fps": render_settings["fps"],
+        },
+        "output_dir": str(relative_output),
+        "result": result,
+    }
+    report_dir = root / "output" / "reports"
+    report_dir.mkdir(parents=True, exist_ok=True)
+    report_path = report_dir / f"{episode_id}-{shot_id}-render.json"
+    if not _inside(root, report_path.resolve()):
+        raise ConfigError("Shot report path must remain inside project root.")
+    report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    return result
 
 
 def main() -> int:
@@ -46,13 +145,15 @@ def main() -> int:
         command.add_argument("--episode", required=True, type=Path)
         command.add_argument("--mode", choices=("debug", "production"), default="production")
 
-    render = subparsers.add_parser("render")
-    render.add_argument("--episode", required=True, type=Path)
-    render.add_argument("--shot", required=True)
-    render.add_argument("--mode", choices=("debug", "production"), default="production")
-    render.add_argument("--godot-project", type=Path, default=Path("godot"))
-    render.add_argument("--godot-executable")
-    render.add_argument("--display-wrapper", help="Optional wrapper such as xvfb-run")
+    for name in ("render", "render-episode"):
+        command = subparsers.add_parser(name)
+        command.add_argument("--episode", required=True, type=Path)
+        command.add_argument("--mode", choices=("debug", "production"), default="production")
+        command.add_argument("--godot-project", type=Path, default=Path("godot"))
+        command.add_argument("--godot-executable")
+        command.add_argument("--display-wrapper", help="Optional wrapper such as xvfb-run")
+        if name == "render":
+            command.add_argument("--shot", required=True)
 
     assemble = subparsers.add_parser("assemble")
     assemble.add_argument("--episode", required=True, type=Path)
@@ -81,68 +182,58 @@ def main() -> int:
             return 1 if result["missing_assets"] else 0
 
         if args.command == "render":
-            shot = _find_shot(episode, args.shot)
-            scene_path = shot.get("scene")
-            if not isinstance(scene_path, str) or not scene_path.startswith("res://"):
-                raise ConfigError(
-                    f"Shot {args.shot} must define a Godot scene using a res:// path."
-                )
+            scene, shot = _find_shot_context(episode, args.shot)
+            output_dir = (
+                Path("output") / "renders" / episode["episode_id"] / shot["shot_id"]
+            )
+            result = _render_configured_shot(
+                root=root,
+                episode=episode,
+                scene=scene,
+                shot=shot,
+                mode=args.mode,
+                godot_project=args.godot_project,
+                godot_executable=args.godot_executable,
+                display_wrapper=args.display_wrapper,
+                output_dir=output_dir,
+            )
+            print(json.dumps(result, indent=2))
+            return 0
 
-            render_settings = episode["render"]
-            shot_config = {
-                "scene": scene_path,
-                "shot_id": shot["shot_id"],
-                "start_frame": shot["start_frame"],
-                "end_frame": shot["end_frame"],
-                "fps": render_settings["fps"],
-                "width": render_settings["width"],
-                "height": render_settings["height"],
-                "mode": args.mode,
-            }
-            runtime_root = root / "output" / ".holos_runtime"
-            runtime_root.mkdir(parents=True, exist_ok=True)
-            output_dir = Path("output") / "renders" / episode["episode_id"] / args.shot
-            prefix = (args.display_wrapper, "-a") if args.display_wrapper else ()
-
-            with tempfile.TemporaryDirectory(
-                prefix="shot-config-", dir=runtime_root
-            ) as temporary:
-                temporary_config = Path(temporary) / "shot.json"
-                temporary_config.write_text(
-                    json.dumps(shot_config, indent=2) + "\n", encoding="utf-8"
-                )
-                config_relative = temporary_config.relative_to(root)
-                result = render_shot(
-                    project_root=root,
+        if args.command == "render-episode":
+            def render_one(scene: dict, shot: dict, output_dir: Path) -> dict:
+                return _render_configured_shot(
+                    root=root,
+                    episode=episode,
+                    scene=scene,
+                    shot=shot,
+                    mode=args.mode,
                     godot_project=args.godot_project,
-                    runner_script="res://holos_shot_runner.gd",
-                    shot_config=config_relative,
+                    godot_executable=args.godot_executable,
+                    display_wrapper=args.display_wrapper,
                     output_dir=output_dir,
-                    expected_frame_count=shot["end_frame"] - shot["start_frame"],
-                    executable=args.godot_executable,
-                    headless=False,
-                    command_prefix=prefix,
                 )
 
+            result = render_episode_batch(
+                project_root=root,
+                episode=episode,
+                mode=args.mode,
+                render_one=render_one,
+            )
             report = {
                 "episode_id": episode["episode_id"],
-                "shot_id": args.shot,
                 "mode": args.mode,
-                "scene": scene_path,
-                "render": {
-                    "width": render_settings["width"],
-                    "height": render_settings["height"],
-                    "fps": render_settings["fps"],
-                },
-                "result": result,
+                "batch": result,
             }
             report_dir = root / "output" / "reports"
             report_dir.mkdir(parents=True, exist_ok=True)
-            report_path = report_dir / f"{episode['episode_id']}-{args.shot}-render.json"
+            report_path = report_dir / f"{episode['episode_id']}-{args.mode}-batch.json"
+            if not _inside(root, report_path.resolve()):
+                raise ConfigError("Batch report path must remain inside project root.")
             report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
             print(json.dumps(report, indent=2))
-            print(f"Render report: {report_path}")
-            return 0
+            print(f"Batch report: {report_path}")
+            return 0 if result["success"] else 1
 
         if args.command == "assemble":
             frames_dir = (root / args.frames_dir).resolve()
@@ -190,7 +281,15 @@ def main() -> int:
             print(f"Media validation report: {report_path}")
             return 0 if validation["valid"] else 1
 
-    except (ConfigError, GodotAdapterError, MediaError, OSError, KeyError, ValueError) as exc:
+    except (
+        BatchRenderError,
+        ConfigError,
+        GodotAdapterError,
+        MediaError,
+        OSError,
+        KeyError,
+        ValueError,
+    ) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 
