@@ -27,17 +27,26 @@ def build_render_command(
     runner_script: str,
     shot_config: Path,
     output_dir: Path,
+    *,
+    headless: bool = True,
 ) -> list[str]:
-    """Build a deterministic headless Godot invocation."""
-    return [
-        godot_executable,
-        "--headless",
+    """Build a deterministic Godot invocation.
+
+    True headless mode is useful for non-rendering tasks. Actual viewport
+    capture requires a rendering-capable display; use headless=False with a
+    virtual display such as Xvfb on display-less Linux machines.
+    """
+    command = [godot_executable]
+    if headless:
+        command.append("--headless")
+    command.extend([
         "--path", str(project_dir.resolve()),
         "--script", runner_script,
         "--",
         "--config", str(shot_config.resolve()),
         "--output", str(output_dir.resolve()),
-    ]
+    ])
+    return command
 
 
 def _inside(root: Path, path: Path) -> bool:
@@ -54,6 +63,8 @@ def render_shot(
     expected_frame_count: int,
     executable: str | None = None,
     timeout_seconds: int = 3600,
+    headless: bool = True,
+    command_prefix: tuple[str, ...] = (),
 ) -> dict[str, Any]:
     """Render one shot into a fresh, project-contained output directory."""
     root = project_root.resolve()
@@ -89,7 +100,12 @@ def render_shot(
     output.mkdir(parents=True, exist_ok=True)
 
     godot = find_godot(executable)
-    command = build_render_command(godot, project, runner_script, config, output)
+    command = [
+        *command_prefix,
+        *build_render_command(
+            godot, project, runner_script, config, output, headless=headless
+        ),
+    ]
 
     try:
         result = subprocess.run(
