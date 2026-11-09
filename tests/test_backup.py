@@ -1,0 +1,103 @@
+"""Tests for verified source backup and preservation."""
+
+import hashlib
+import json
+from pathlib import Path
+import tempfile
+import unittest
+
+from holos_engine.backup import BackupError, create_source_backup
+from holos_engine.inventory import write_inventory_report
+
+
+class SourceBackupTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name)
+        (self.root / "holos_engine").mkdir()
+        (self.root / "holos_engine" / "module.py").write_text(
+            "print('HOLOS')\n", encoding="utf-8"
+        )
+        (self.root / "README.md").write_text("Project source\n", encoding="utf-8")
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def inventory(self) -> Path:
+        path, _ = write_inventory_report(
+            self.root, Path("output/reports/source-inventory-test.json")
+        )
+        return path
+
+    def test_creates_verified_copy_without_modifying_sources(self):
+        inventory_path = self.inventory()
+        original = (self.root / "holos_engine" / "module.py").read_bytes()
+        backup_path, manifest = create_source_backup(
+            project_root=self.root,
+            inventory_path=inventory_path,
+            destination=Path("output/backups/test-backup"),
+        )
+        self.assertEqual(manifest["status"], "complete")
+        self.assertEqual(manifest["file_count"], 2)
+        restored = backup_path / "files" / "holos_engine" / "module.py"
+        self.assertEqual(restored.read_bytes(), original)
+        self.assertEqual(
+            hashlib.sha256(restored.read_bytes()).hexdigest(),
+            next(item for item in manifest["files"]
+                 if item["source_path"] == "holos_engine/module.py")["sha256"],
+        )
+        self.assertEqual((self.root / "holos_engine" / "module.py").read_bytes(), original)
+        saved_manifest = json.loads(
+            (backup_path / "backup-manifest.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(saved_manifest["status"], "complete")
+
+    def test_refuses_backup_when_source_changed_since_inventory(self):
+        inventory_path = self.inventory()
+        (self.root / "README.md").write_text("changed\n", encoding="utf-8")
+        with self.assertRaisesRegex(BackupError, "Source changed after inventory"):
+            create_source_backup(
+                project_root=self.root,
+                inventory_path=inventory_path,
+                destination=Path("output/backups/should-not-exist"),
+            )
+        self.assertFalse((self.root / "output" / "backups").exists())
+
+    def test_refuses_existing_backup_destination(self):
+        inventory_path = self.inventory()
+        destination = self.root / "output" / "backups" / "existing"
+        destination.mkdir(parents=True)
+        with self.assertRaisesRegex(BackupError, "Refusing to overwrite"):
+            create_source_backup(
+                project_root=self.root,
+                inventory_path=inventory_path,
+                destination=destination,
+            )
+
+    def test_rejects_inventory_path_traversal(self):
+        inventory_path = self.inventory()
+        data = json.loads(inventory_path.read_text(encoding="utf-8"))
+        data["files"][0]["path"] = "../outside.txt"
+        inventory_path.write_text(json.dumps(data), encoding="utf-8")
+        with self.assertRaisesRegex(BackupError, "safe relative path"):
+            create_source_backup(
+                project_root=self.root,
+                inventory_path=inventory_path,
+            )
+
+    def test_rejects_inventory_for_another_project(self):
+        inventory_path = self.inventory()
+        other = self.root.parent / f"{self.root.name}-other"
+        other.mkdir()
+        try:
+            with self.assertRaisesRegex(BackupError, "different project root"):
+                create_source_backup(
+                    project_root=other,
+                    inventory_path=inventory_path,
+                )
+        finally:
+            other.rmdir()
+
+
+if __name__ == "__main__":
+    unittest.main()
