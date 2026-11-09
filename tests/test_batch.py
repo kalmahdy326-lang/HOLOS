@@ -122,7 +122,7 @@ class BatchRenderTests(unittest.TestCase):
             project_root=self.root, episode=EPISODE, mode="production", render_one=renderer,
         )
         missing = (
-            self.root / "output" / "renders" / "batch_test" / "S01_B01" / "frame_000001.png"
+            self.root / "output" / "renders" / "batch_test" / "production" / "S01_B01" / "frame_000001.png"
         )
         missing.unlink()
         result = render_episode_batch(
