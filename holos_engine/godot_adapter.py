@@ -69,6 +69,12 @@ def render_shot(
 
     if not project.is_dir():
         raise GodotAdapterError(f"Godot project must be a directory: {project}")
+    if not (project / "project.godot").is_file():
+        raise GodotAdapterError(f"project.godot not found in Godot project: {project}")
+    if runner_script.startswith("res://"):
+        runner_file = project / runner_script.removeprefix("res://")
+        if not runner_file.is_file():
+            raise GodotAdapterError(f"Godot runner script not found: {runner_file}")
     if not _inside(root, output):
         raise GodotAdapterError(f"Output directory must remain inside project root: {output}")
     if expected_frame_count <= 0:
@@ -108,9 +114,13 @@ def render_shot(
         )
 
     frames = sorted(output.glob("frame_*.png"))
-    if len(frames) != expected_frame_count:
+    expected_names = [f"frame_{index:06d}.png" for index in range(expected_frame_count)]
+    actual_names = [frame.name for frame in frames]
+    if actual_names != expected_names:
         raise GodotAdapterError(
-            f"Expected {expected_frame_count} frames, found {len(frames)} in {output}."
+            "Frame sequence mismatch. "
+            f"Expected {expected_names[0]}..{expected_names[-1]} "
+            f"({expected_frame_count} frames), found {len(frames)} frame files."
         )
 
     return {
