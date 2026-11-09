@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "holos-local-production-engine"
+version = "0.1.0"
+description = "Local-first production orchestration for HOLOS"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+authors = [{ name = "Khaled AL-MAHDY" }]
+dependencies = []
+
+[tool.setuptools.packages.find]
+include = ["holos_engine*"]
+
+[tool.unittest]
+start-directory = "tests"
