@@ -30,7 +30,8 @@ class FFmpegIntegrationTests(unittest.TestCase):
             subprocess.run([
                 FFMPEG, "-hide_banner", "-loglevel", "error", "-y",
                 "-f", "lavfi", "-i", "color=c=navy:s=320x180:r=24:d=1",
-                "-frames:v", "24", str(frames / "frame_%06d.png"),
+                "-start_number", "0", "-frames:v", "24",
+                str(frames / "frame_%06d.png"),
             ], check=True, capture_output=True)
 
             for output, frequency in ((dialogue, "440"), (music, "660")):
