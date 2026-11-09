@@ -25,10 +25,10 @@ def _inside(root: Path, path: Path) -> bool:
 
 
 def _safe_component(value: str, label: str) -> str:
-    if not value or value in {".", ".."} or "/" in value or "\\" in value:
+    if not isinstance(value, str) or not value or value in {".", ".."}:
         raise BatchRenderError(f"{label} must be a single safe path component: {value!r}")
-    if Path(value).is_absolute():
-        raise BatchRenderError(f"{label} must not be an absolute path: {value!r}")
+    if "/" in value or "\\" in value or Path(value).is_absolute():
+        raise BatchRenderError(f"{label} must be a single safe path component: {value!r}")
     return value
 
 
@@ -45,13 +45,38 @@ def _expected_names(frame_count: int) -> list[str]:
     return [f"frame_{index:06d}.png" for index in range(frame_count)]
 
 
-def _has_valid_frames(output_dir: Path, frame_count: int) -> bool:
-    if not output_dir.is_dir():
-        return False
+def _frame_integrity(output_dir: Path, frame_count: int) -> list[dict[str, Any]] | None:
+    if output_dir.is_symlink() or not output_dir.is_dir():
+        return None
     frames = sorted(output_dir.glob("frame_*.png"))
     if [item.name for item in frames] != _expected_names(frame_count):
+        return None
+
+    records: list[dict[str, Any]] = []
+    for frame in frames:
+        if frame.is_symlink() or not frame.is_file() or frame.stat().st_size == 0:
+            return None
+        digest = hashlib.sha256()
+        with frame.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+        records.append({
+            "name": frame.name,
+            "size_bytes": frame.stat().st_size,
+            "sha256": digest.hexdigest(),
+        })
+    return records
+
+
+def _has_valid_frames(
+    output_dir: Path,
+    frame_count: int,
+    expected_integrity: list[dict[str, Any]] | None = None,
+) -> bool:
+    actual = _frame_integrity(output_dir, frame_count)
+    if actual is None:
         return False
-    return all(item.is_file() and item.stat().st_size > 0 for item in frames)
+    return expected_integrity is None or actual == expected_integrity
 
 
 def _archive_output(root: Path, output_dir: Path, shot_id: str) -> str | None:
@@ -92,6 +117,77 @@ def _write_manifest(path: Path, manifest: dict[str, Any]) -> None:
         raise
 
 
+def _manifest_location(root: Path, episode: dict[str, Any], mode: str) -> Path:
+    episode_id = _safe_component(episode["episode_id"], "episode_id")
+    if mode not in {"debug", "production"}:
+        raise BatchRenderError(f"Unsupported render mode: {mode}")
+    path = (
+        root / "output" / "manifests" / f"{episode_id}-{mode}-render.json"
+    ).resolve()
+    if not _inside(root, path):
+        raise BatchRenderError("Batch manifest path must remain inside project root.")
+    return path
+
+
+def load_completed_batch_manifest(
+    *,
+    project_root: Path,
+    episode: dict[str, Any],
+    mode: str,
+) -> tuple[Path, dict[str, Any]]:
+    """Load a matching manifest and verify every shot before episode assembly."""
+    root = project_root.resolve()
+    manifest_path = _manifest_location(root, episode, mode)
+    if not manifest_path.is_file():
+        raise BatchRenderError(
+            f"Completed batch manifest not found. Run render-episode first: {manifest_path}"
+        )
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise BatchRenderError(f"Cannot read batch manifest: {exc}") from exc
+
+    if not isinstance(manifest, dict) or manifest.get("schema_version") != 1:
+        raise BatchRenderError("Batch manifest has an invalid or unsupported schema.")
+    if manifest.get("episode_config_sha256") != _config_digest(episode):
+        raise BatchRenderError("Batch manifest does not match the current episode configuration.")
+    if manifest.get("mode") != mode:
+        raise BatchRenderError("Batch manifest render mode does not match the requested mode.")
+
+    records = manifest.get("shots")
+    expected_shots = [
+        (scene, shot, shot["end_frame"] - shot["start_frame"])
+        for scene in episode["scenes"]
+        for shot in scene["shots"]
+    ]
+    if not isinstance(records, list) or len(records) != len(expected_shots):
+        raise BatchRenderError("Batch manifest shot list does not match the episode.")
+
+    for record, (scene, shot, frame_count) in zip(records, expected_shots):
+        if not isinstance(record, dict) or record.get("shot_id") != shot["shot_id"]:
+            raise BatchRenderError("Batch manifest shot order does not match the episode.")
+        if record.get("status") != "completed":
+            raise BatchRenderError(
+                f"Shot {shot['shot_id']} is not completed (status: {record.get('status')})."
+            )
+        if record.get("expected_frame_count") != frame_count:
+            raise BatchRenderError(f"Frame-count metadata mismatch for shot {shot['shot_id']}.")
+        relative_output = Path(record.get("output_dir", ""))
+        if relative_output.is_absolute():
+            raise BatchRenderError(f"Absolute shot output path is not allowed: {relative_output}")
+        output_dir = (root / relative_output).resolve()
+        if not _inside(root, output_dir):
+            raise BatchRenderError(f"Shot output path escapes project root: {output_dir}")
+        if not _has_valid_frames(
+            output_dir, frame_count, record.get("frame_integrity")
+        ):
+            raise BatchRenderError(
+                f"Shot {shot['shot_id']} is marked completed but its frame sequence "
+                "is missing, empty, or has changed."
+            )
+    return manifest_path, manifest
+
+
 def render_episode_batch(
     *,
     project_root: Path,
@@ -120,11 +216,9 @@ def render_episode_batch(
             jobs.append((scene, shot, shot["end_frame"] - shot["start_frame"]))
 
     render_root = (root / "output" / "renders" / episode_id).resolve()
-    manifest_path = (
-        root / "output" / "manifests" / f"{episode_id}-{mode}-render.json"
-    ).resolve()
-    if not _inside(root, render_root) or not _inside(root, manifest_path):
-        raise BatchRenderError("Batch output paths must remain inside project root.")
+    manifest_path = _manifest_location(root, episode, mode)
+    if not _inside(root, render_root):
+        raise BatchRenderError("Batch render path must remain inside project root.")
 
     digest = _config_digest(episode)
     if manifest_path.exists():
@@ -176,8 +270,11 @@ def render_episode_batch(
             "output_dir": str(output_dir.relative_to(root)),
             "status": prior.get("status", "pending"),
             "error": None,
+            "errors": list(prior.get("errors", [])),
+            "attempts": int(prior.get("attempts", 0)),
             "result": prior.get("result"),
-            "recovered_output": None,
+            "frame_integrity": prior.get("frame_integrity"),
+            "recovered_outputs": list(prior.get("recovered_outputs", [])),
         }
         current_records.append(record)
 
@@ -192,25 +289,33 @@ def render_episode_batch(
         record = current_records[index]
         output_dir = (root / record["output_dir"]).resolve()
 
-        if record["status"] == "completed" and _has_valid_frames(output_dir, frame_count):
+        if record["status"] == "completed" and _has_valid_frames(
+            output_dir, frame_count, record.get("frame_integrity")
+        ):
             skipped.append(shot["shot_id"])
             continue
 
-        if output_dir.exists():
-            record["recovered_output"] = _archive_output(root, output_dir, shot["shot_id"])
+        archived = _archive_output(root, output_dir, shot["shot_id"])
+        if archived:
+            record["recovered_outputs"].append(archived)
         record["status"] = "running"
         record["error"] = None
         record["result"] = None
+        record["frame_integrity"] = None
+        record["attempts"] += 1
         _write_manifest(manifest_path, manifest)
 
         try:
             result = render_one(scene, shot, output_dir)
-            if not _has_valid_frames(output_dir, frame_count):
+            integrity = _frame_integrity(output_dir, frame_count)
+            if integrity is None:
                 raise BatchRenderError(
                     f"Renderer did not produce the exact {frame_count}-frame sequence "
                     f"for shot {shot['shot_id']}."
                 )
             record["status"] = "completed"
+            record["frame_integrity"] = integrity
+            record["error"] = None
             record["result"] = {
                 key: result[key]
                 for key in ("return_code", "frame_count", "first_frame", "last_frame")
@@ -220,6 +325,7 @@ def render_episode_batch(
         except Exception as exc:
             record["status"] = "failed"
             record["error"] = f"{type(exc).__name__}: {exc}"
+            record["errors"].append(record["error"])
             failed.append(shot["shot_id"])
         _write_manifest(manifest_path, manifest)
 
