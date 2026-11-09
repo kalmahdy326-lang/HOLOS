@@ -139,7 +139,7 @@ class FFmpegIntegrationTests(unittest.TestCase):
             self.assertEqual(assembled["frame_count"], 4)
             self.assertTrue(validation["valid"], validation["errors"])
             self.assertTrue(
-                (root / "output" / "renders" / "ffmpeg_multishot_test"
+                (root / "output" / "renders" / "ffmpeg_multishot_test" / "debug"
                  / "SHOT_A" / "frame_000000.png").is_file()
             )
 
@@ -229,7 +229,7 @@ class FFmpegIntegrationTests(unittest.TestCase):
             self.assertEqual(report["ordered_shots"], ["SHOT_A", "SHOT_B"])
             self.assertEqual(report["frame_staging"]["frame_count"], 4)
             self.assertTrue(
-                (root / "output" / "renders" / "cli_episode_test"
+                (root / "output" / "renders" / "cli_episode_test" / "debug"
                  / "SHOT_A" / "frame_000000.png").is_file()
             )
             self.assertFalse((root / "output" / ".holos_runtime"
