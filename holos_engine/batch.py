@@ -169,7 +169,7 @@ def load_completed_batch_manifest(
         shot_id = _safe_component(shot["shot_id"], "shot_id")
         expected_output = (
             Path("output") / "renders" / _safe_component(episode["episode_id"], "episode_id")
-            / shot_id
+            / mode / shot_id
         )
         try:
             recorded_output = Path(record.get("output_dir", ""))
@@ -231,7 +231,7 @@ def render_episode_batch(
             seen.add(shot_id)
             jobs.append((scene, shot, shot["end_frame"] - shot["start_frame"]))
 
-    render_root = (root / "output" / "renders" / episode_id).resolve()
+    render_root = (root / "output" / "renders" / episode_id / mode).resolve()
     manifest_path = _manifest_location(root, episode, mode)
     if not _inside(root, render_root):
         raise BatchRenderError("Batch render path must remain inside project root.")
