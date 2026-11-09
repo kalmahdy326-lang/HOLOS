@@ -166,6 +166,19 @@ def load_completed_batch_manifest(
     for record, (scene, shot, frame_count) in zip(records, expected_shots):
         if not isinstance(record, dict) or record.get("shot_id") != shot["shot_id"]:
             raise BatchRenderError("Batch manifest shot order does not match the episode.")
+        shot_id = _safe_component(shot["shot_id"], "shot_id")
+        expected_output = (
+            Path("output") / "renders" / _safe_component(episode["episode_id"], "episode_id")
+            / shot_id
+        )
+        try:
+            recorded_output = Path(record.get("output_dir", ""))
+        except TypeError as exc:
+            raise BatchRenderError(f"Invalid output path in manifest for {shot_id}.") from exc
+        if recorded_output != expected_output:
+            raise BatchRenderError(
+                f"Manifest output path does not match the expected shot directory for {shot_id}."
+            )
         if record.get("status") != "completed":
             raise BatchRenderError(
                 f"Shot {shot['shot_id']} is not completed (status: {record.get('status')})."
@@ -175,7 +188,10 @@ def load_completed_batch_manifest(
         relative_output = Path(record.get("output_dir", ""))
         if relative_output.is_absolute():
             raise BatchRenderError(f"Absolute shot output path is not allowed: {relative_output}")
-        output_dir = (root / relative_output).resolve()
+        candidate_output = root / relative_output
+        if candidate_output.is_symlink():
+            raise BatchRenderError(f"Symbolic-link shot output is not allowed: {candidate_output}")
+        output_dir = candidate_output.resolve()
         if not _inside(root, output_dir):
             raise BatchRenderError(f"Shot output path escapes project root: {output_dir}")
         if not _has_valid_frames(
