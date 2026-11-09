@@ -1,4 +1,4 @@
-name: HOLOS Python and media checks
+name: HOLOS Python, media, and Godot checks
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  python-tests:
+  python-and-media:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,5 +18,24 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --yes ffmpeg
-      - name: Run standard-library and media integration tests
+      - name: Run Python and FFmpeg integration tests
         run: python -m unittest discover -s tests -v
+
+  godot-headless:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Download pinned Godot 4.4.1
+        run: |
+          curl --fail --location --retry 3 \
+            https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.x86_64.zip \
+            --output "$RUNNER_TEMP/godot.zip"
+          unzip "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot-bin"
+          chmod +x "$RUNNER_TEMP/godot-bin/Godot_v4.4.1-stable_linux.x86_64"
+      - name: Run real headless Godot render integration test
+        env:
+          HOLOS_GODOT: ${{ runner.temp }}/godot-bin/Godot_v4.4.1-stable_linux.x86_64
+        run: python -m unittest discover -s tests -p "test_godot_integration.py" -v
