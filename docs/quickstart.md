@@ -116,10 +116,12 @@ python tools/holos.py assemble-episode \\
 The command verifies the manifest against the episode configuration and the
 configured shot order. It stages a contiguous sequence from the individual
 shot folders in a temporary directory, then uses FFmpeg to encode the complete
-episode and FFprobe to validate dimensions, frame rate, duration, and required
-audio presence. The final MP4 is published only after validation succeeds.
-Existing shot renders and source dialogue/music remain unchanged. Existing
-episode output files are never overwritten.
+episode. FFprobe validates dimensions, frame rate, total duration, required
+audio presence, audio/video stream start-time offset, and stream-duration
+difference. The permitted stream timing difference is controlled by
+`audio.sync_tolerance_ms` (default: 80 ms). The final MP4 is published only
+after validation succeeds. Existing shot renders and source dialogue/music
+remain unchanged. Existing episode output files are never overwritten.
 
 The batch fixture is for testing the engine; it is not Episode 1 content.
 
@@ -138,7 +140,10 @@ The command derives the expected frame count from the configured shot ranges,
 refuses to overwrite an existing MP4, uses FFmpeg to assemble the numbered
 frames, probes the result with FFprobe, and writes a JSON validation report.
 The configured dialogue and music files are read as inputs; they are not
-modified.
+modified. When audio is included, FFprobe also checks stream start-time and
+duration alignment against `audio.sync_tolerance_ms` (default: 80 ms). This
+checks encoded stream timing; it does not prove sample-accurate synchronization
+with dialogue cues or animation events.
 
 ## Run the tests
 
@@ -171,13 +176,13 @@ Implemented and CI-tested:
 - Ordered staging of separate verified shot folders into one contiguous episode frame sequence.
 - Verified multi-shot `assemble-episode` workflow with final output publication after FFprobe validation.
 - FFmpeg frame-sequence assembly with optional dialogue/music inputs.
-- FFprobe metadata inspection and basic output validation.
+- FFprobe metadata inspection, stream-level A/V start/duration checks, and configurable tolerance.
 - FFmpeg end-to-end integration test using two generated audio sources.
 - CLI assembly command with no-overwrite behavior.
 
 Still in development:
 - Khaled and Kevin character-rig adapters and validation against their real project scenes.
-- A/V synchronization validation beyond basic stream/duration checks.
+- Sample-accurate synchronization against dialogue cues, phoneme timing, and animation events; current validation checks encoded stream start times and durations only.
 - Production/debug render separation and production overlay policy.
 - Backup and recovery orchestration.
 - Offline acceptance test on the target production machine.
