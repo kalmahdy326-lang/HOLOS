@@ -20,6 +20,8 @@ jobs:
           sudo apt-get install --yes ffmpeg
       - name: Run Python and FFmpeg integration tests
         run: python -m unittest discover -s tests -v
+      - name: Inventory checked-out source tree
+        run: python tools/holos.py inventory
 
   godot-offscreen-render:
     runs-on: ubuntu-latest
