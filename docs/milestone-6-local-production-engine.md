@@ -1,7 +1,7 @@
 # Milestone 6 — HOLOS Local Production Engine
 
 **Project author:** Khaled AL-MAHDY  
-**Status:** Planned; implementation and offline acceptance are not yet verified.
+**Status:** In progress. The local Python/Godot/FFmpeg engine, ordered resumable shot rendering, verified episode assembly, and stream-level A/V timing validation are implemented in the repository and covered by CI. Integration with the actual Khaled and Kevin rigs, production safeguards, and offline acceptance remain unverified.
 
 ## Objective
 
@@ -38,6 +38,20 @@ Avoid duplicated responsibilities across components.
 - Original dialogue, soundtrack, source artwork, scene plates, references, reports, and benchmark outputs.
 
 Do not rebuild completed milestones unnecessarily. Do not relocate source assets until an inventory and backup exist.
+
+## Current repository implementation status
+
+| Capability | Evidence / boundary |
+|---|---|
+| Python CLI and versioned episode configuration | Implemented; configuration and CLI tests run in CI |
+| Godot shot rendering | Implemented through the generic scene hook contract; real Godot offscreen render tests run in CI |
+| Ordered multi-shot rendering | Implemented with resumable manifest, per-frame SHA-256 integrity, attempt/error history, and recovery archival |
+| Complete episode assembly | Implemented from verified per-shot folders; output is published only after FFprobe validation |
+| Media validation | Resolution, frame rate, container duration, audio presence, audio/video start offset, and stream-duration difference checked |
+| A/V tolerance | Configurable as \`audio.sync_tolerance_ms\`; default 80 ms |
+| Existing character rigs | Not yet connected to the engine; the repository currently uses generic adapter fixtures |
+| Offline acceptance on production machine | Not performed; CI is not a substitute for disconnected local acceptance |
+| Source asset inventory and backup/restore | Not yet complete |
 
 ## Required capabilities
 
@@ -107,7 +121,7 @@ These are target commands, not claims of existing implementation.
 ### F. Validation and reporting
 - Verify resolution, frame rate, duration, and expected frame count.
 - Verify audio stream presence and mapping.
-- Check A/V synchronization within a documented tolerance.
+- Check stream-level A/V start-time offset and stream-duration difference within a documented tolerance.
 - Detect missing assets, incomplete shots, corrupt media, and debug overlays.
 - Produce machine-readable manifests and human-readable reports.
 
