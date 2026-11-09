@@ -50,5 +50,18 @@ class EpisodeConfigTests(unittest.TestCase):
             validate_episode(data)
 
 
+    def test_rejects_negative_audio_sync_tolerance(self):
+        data = {**VALID, "audio": {"dialogue": None, "music": None,
+                                  "sync_tolerance_ms": -1}}
+        with self.assertRaisesRegex(ConfigError, "sync_tolerance_ms"):
+            validate_episode(data)
+
+    def test_rejects_boolean_audio_sync_tolerance(self):
+        data = {**VALID, "audio": {"dialogue": None, "music": None,
+                                  "sync_tolerance_ms": True}}
+        with self.assertRaisesRegex(ConfigError, "sync_tolerance_ms"):
+            validate_episode(data)
+
+
 if __name__ == "__main__":
     unittest.main()
