@@ -2,7 +2,7 @@
 
 **Project author:** Khaled AL-MAHDY  
 **Engine version:** 0.1.0  
-**Status:** Single-shot Godot rendering and FFmpeg assembly are implemented and covered by automated integration tests. Character-rig integration and full-episode orchestration remain in development.
+**Status:** Single-shot and ordered multi-shot rendering, resumable manifests, and verified multi-shot FFmpeg episode assembly are implemented. Character-rig integration and production-machine acceptance remain in development.
 
 ## Requirements
 
@@ -93,6 +93,36 @@ use a new episode ID for a distinct configuration.
 
 The two-shot example is a test fixture, not Episode 1 content.
 
+## Assemble a complete episode from rendered shots
+
+First render or resume the ordered batch:
+
+\`\`\`bash
+python tools/holos.py render-episode \\
+  --episode examples/adapter_test_episode_batch.json \\
+  --mode debug
+\`\`\`
+
+Then assemble only after every shot has a completed manifest entry and its
+frame hashes still match:
+
+\`\`\`bash
+python tools/holos.py assemble-episode \\
+  --episode examples/adapter_test_episode_batch.json \\
+  --mode debug \\
+  --output output/adapter_test_episode_batch.mp4
+\`\`\`
+
+The command verifies the manifest against the episode configuration and the
+configured shot order. It stages a contiguous sequence from the individual
+shot folders in a temporary directory, then uses FFmpeg to encode the complete
+episode and FFprobe to validate dimensions, frame rate, duration, and required
+audio presence. The final MP4 is published only after validation succeeds.
+Existing shot renders and source dialogue/music remain unchanged. Existing
+episode output files are never overwritten.
+
+The batch fixture is for testing the engine; it is not Episode 1 content.
+
 ## Assemble rendered frames
 
 After rendering a shot, assemble its contiguous numbered frames:
@@ -137,7 +167,9 @@ Implemented and CI-tested:
 - Four-frame Godot rendering integration test.
 - CLI single-shot render command and JSON render report.
 - Ordered multi-shot episode rendering with a resumable status manifest.
-- Verified-completion skipping and preservation of partial output in recovery.
+- Verified-completion skipping, per-frame SHA-256 integrity records, and preservation of partial output in recovery.
+- Ordered staging of separate verified shot folders into one contiguous episode frame sequence.
+- Verified multi-shot `assemble-episode` workflow with final output publication after FFprobe validation.
 - FFmpeg frame-sequence assembly with optional dialogue/music inputs.
 - FFprobe metadata inspection and basic output validation.
 - FFmpeg end-to-end integration test using two generated audio sources.
@@ -145,9 +177,6 @@ Implemented and CI-tested:
 
 Still in development:
 - Khaled and Kevin character-rig adapters and validation against their real project scenes.
-- Joining separate shot folders into one ordered episode sequence. The current
-  `assemble` command accepts one contiguous frame directory; batch output must
-  not be treated as a completed episode until a shot-concatenation stage exists.
 - A/V synchronization validation beyond basic stream/duration checks.
 - Production/debug render separation and production overlay policy.
 - Backup and recovery orchestration.
