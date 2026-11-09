@@ -21,7 +21,7 @@ jobs:
       - name: Run Python and FFmpeg integration tests
         run: python -m unittest discover -s tests -v
 
-  godot-headless:
+  godot-offscreen-render:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -40,7 +40,7 @@ jobs:
           echo "d6e382fb531019f85630c1f485a561a0d20c4a2344b6c3847735cfee7da812aa  $RUNNER_TEMP/godot.zip" | sha256sum --check
           unzip "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot-bin"
           chmod +x "$RUNNER_TEMP/godot-bin/Godot_v4.4.1-stable_linux.x86_64"
-      - name: Run real headless Godot render integration test
+      - name: Run real Godot offscreen render integration test
         env:
           HOLOS_GODOT: ${{ runner.temp }}/godot-bin/Godot_v4.4.1-stable_linux.x86_64
           HOLOS_GODOT_HEADLESS: "0"
