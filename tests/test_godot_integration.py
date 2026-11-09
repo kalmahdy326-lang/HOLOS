@@ -50,6 +50,13 @@ class GodotHeadlessIntegrationTests(unittest.TestCase):
                 expected_frame_count=4,
                 executable=os.environ["HOLOS_GODOT"],
                 timeout_seconds=120,
+                # Godot's --headless mode uses a dummy renderer and cannot
+                # provide viewport textures. CI uses Xvfb + software GL.
+                headless=os.environ.get("HOLOS_GODOT_HEADLESS", "1") != "0",
+                command_prefix=tuple(
+                    [os.environ["HOLOS_GODOT_DISPLAY_WRAPPER"], "-a"]
+                    if os.environ.get("HOLOS_GODOT_DISPLAY_WRAPPER") else []
+                ),
             )
             self.assertEqual(result["frame_count"], 4)
             self.assertTrue(Path(result["first_frame"]).is_file())
