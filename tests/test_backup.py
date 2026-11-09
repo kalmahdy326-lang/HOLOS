@@ -3,6 +3,9 @@
 import hashlib
 import json
 from pathlib import Path
+import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -90,13 +93,68 @@ class SourceBackupTests(unittest.TestCase):
         other = self.root.parent / f"{self.root.name}-other"
         other.mkdir()
         try:
-            with self.assertRaisesRegex(BackupError, "different project root"):
+            with self.assertRaisesRegex(BackupError, "inside output/reports"):
                 create_source_backup(
                     project_root=other,
                     inventory_path=inventory_path,
                 )
         finally:
             other.rmdir()
+
+    def test_rejects_secret_path_in_tampered_inventory(self):
+        inventory_path = self.inventory()
+        data = json.loads(inventory_path.read_text(encoding="utf-8"))
+        data["files"][0]["path"] = ".env"
+        inventory_path.write_text(json.dumps(data), encoding="utf-8")
+        with self.assertRaisesRegex(BackupError, "Sensitive filename"):
+            create_source_backup(
+                project_root=self.root,
+                inventory_path=inventory_path,
+            )
+
+    def test_cli_runs_inventory_then_backup_without_episode_configuration(self):
+        source_root = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            shutil.copytree(
+                source_root / "holos_engine",
+                root / "holos_engine",
+                ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+            )
+            (root / "tools").mkdir()
+            shutil.copy2(source_root / "tools" / "holos.py", root / "tools" / "holos.py")
+            (root / "notes.txt").write_text("backup source", encoding="utf-8")
+            env = os.environ.copy()
+            env["PYTHONPATH"] = str(root)
+            inventory_path = "output/reports/backup-cli-inventory.json"
+            inventory_run = subprocess.run(
+                [
+                    sys.executable, str(root / "tools" / "holos.py"),
+                    "--project-root", str(root), "inventory", "--output", inventory_path,
+                ],
+                cwd=root, env=env, capture_output=True, text=True, timeout=30, check=False,
+            )
+            self.assertEqual(
+                inventory_run.returncode, 0,
+                inventory_run.stderr or inventory_run.stdout,
+            )
+            backup_run = subprocess.run(
+                [
+                    sys.executable, str(root / "tools" / "holos.py"),
+                    "--project-root", str(root), "backup",
+                    "--inventory", inventory_path,
+                    "--destination", "output/backups/cli-test",
+                ],
+                cwd=root, env=env, capture_output=True, text=True, timeout=30, check=False,
+            )
+            self.assertEqual(backup_run.returncode, 0, backup_run.stderr or backup_run.stdout)
+            backed_up = root / "output" / "backups" / "cli-test" / "files" / "notes.txt"
+            self.assertEqual(backed_up.read_text(encoding="utf-8"), "backup source")
+            manifest = json.loads(
+                (root / "output" / "backups" / "cli-test" / "backup-manifest.json")
+                .read_text(encoding="utf-8")
+            )
+            self.assertEqual(manifest["status"], "complete")
 
 
 if __name__ == "__main__":
