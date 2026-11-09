@@ -133,9 +133,9 @@ def _validated_inventory(
     aggregate = hashlib.sha256()
     for record, _, relative in validated:
         aggregate.update(relative.as_posix().encode("utf-8"))
-        aggregate.update(b"\\0")
+        aggregate.update(b"\0")
         aggregate.update(record["sha256"].encode("ascii"))
-        aggregate.update(b"\\n")
+        aggregate.update(b"\n")
     if aggregate.hexdigest() != summary.get("inventory_sha256"):
         raise BackupError("Inventory aggregate hash does not match its file records.")
 
