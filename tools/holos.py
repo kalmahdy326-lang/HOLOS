@@ -349,6 +349,8 @@ def main() -> int:
             output = (root / args.output).resolve()
             if not _inside(root, frames_dir) or not _inside(root, output):
                 raise MediaError("Frames and output paths must remain inside project root.")
+            if output.exists():
+                raise MediaError(f"Refusing to overwrite existing output: {output}")
 
             audio = episode.get("audio", {})
             dialogue = (root / audio["dialogue"]).resolve() if audio.get("dialogue") else None
@@ -359,14 +361,45 @@ def main() -> int:
 
             render_settings = episode["render"]
             frame_count = _episode_frame_count(episode)
-            result = assemble_video(
-                frames_dir=frames_dir,
-                fps=render_settings["fps"],
-                frame_count=frame_count,
-                output=output,
-                dialogue=dialogue,
-                music=music,
-            )
+            runtime_root = root / "output" / ".holos_runtime"
+            runtime_root.mkdir(parents=True, exist_ok=True)
+            with tempfile.TemporaryDirectory(
+                prefix="frame-assembly-", dir=runtime_root
+            ) as temporary:
+                temporary_output = Path(temporary) / "assembled.mp4"
+                result = assemble_video(
+                    frames_dir=frames_dir,
+                    fps=render_settings["fps"],
+                    frame_count=frame_count,
+                    output=temporary_output,
+                    dialogue=dialogue,
+                    music=music,
+                )
+                metadata = probe_media(temporary_output)
+                validation = validate_media(
+                    metadata,
+                    width=render_settings["width"],
+                    height=render_settings["height"],
+                    fps=render_settings["fps"],
+                    expected_duration=frame_count / float(render_settings["fps"]),
+                    require_audio=(dialogue is not None or music is not None),
+                    sync_tolerance_seconds=(
+                        float(audio.get("sync_tolerance_ms", 80)) / 1000.0
+                    ),
+                )
+                if not validation["valid"]:
+                    raise MediaError(
+                        "Assembled output failed validation: "
+                        + "; ".join(validation["errors"])
+                    )
+                if output.exists():
+                    raise MediaError(
+                        f"Refusing to overwrite output created during assembly: {output}"
+                    )
+                output.parent.mkdir(parents=True, exist_ok=True)
+                temporary_output.replace(output)
+                result["output"] = str(output)
+
             report = {
                 "episode_id": episode["episode_id"],
                 "mode": args.mode,
@@ -376,10 +409,13 @@ def main() -> int:
             report_dir = root / "output" / "reports"
             report_dir.mkdir(parents=True, exist_ok=True)
             report_path = report_dir / f"{episode['episode_id']}-media-validation.json"
+            if not _inside(root, report_path.resolve()):
+                raise ConfigError("Media validation report path must remain inside project root.")
             report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
             print(json.dumps(report, indent=2))
             print(f"Media validation report: {report_path}")
-            return 0 if validation["valid"] else 1
+            return 0
+
 
     except (
         BatchRenderError,
