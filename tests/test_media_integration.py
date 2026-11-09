@@ -236,5 +236,67 @@ class FFmpegIntegrationTests(unittest.TestCase):
                               / "episode-frame-sequence-").exists())
 
 
+    def test_cli_assembles_single_contiguous_frame_directory(self):
+        import json
+        import os
+        import sys
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            source_project = Path(__file__).resolve().parents[1]
+            for folder in ("holos_engine", "tools"):
+                shutil.copytree(
+                    source_project / folder,
+                    root / folder,
+                    ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+                )
+            frames = root / "input_frames"
+            frames.mkdir()
+            subprocess.run([
+                FFMPEG, "-hide_banner", "-loglevel", "error", "-y",
+                "-f", "lavfi", "-i", "testsrc=size=320x180:rate=24",
+                "-frames:v", "4", "-start_number", "0",
+                str(frames / "frame_%06d.png"),
+            ], check=True, capture_output=True)
+
+            episode = {
+                "schema_version": 1,
+                "episode_id": "cli_single_assembly_test",
+                "title": "CLI Single Assembly Test",
+                "render": {"width": 320, "height": 180, "fps": 24},
+                "audio": {"dialogue": None, "music": None, "sync_tolerance_ms": 80},
+                "scenes": [{"scene_id": "scene_01", "shots": [
+                    {"shot_id": "SHOT_A", "start_frame": 0, "end_frame": 4},
+                ]}],
+            }
+            (root / "examples").mkdir()
+            (root / "examples" / "episode.json").write_text(
+                json.dumps(episode, indent=2), encoding="utf-8"
+            )
+            env = os.environ.copy()
+            env["PYTHONPATH"] = str(root)
+            command = [
+                sys.executable, str(root / "tools" / "holos.py"),
+                "--project-root", str(root),
+                "assemble",
+                "--episode", "examples/episode.json",
+                "--frames-dir", "input_frames",
+                "--output", "output/assembled.mp4",
+                "--mode", "debug",
+            ]
+            result = subprocess.run(
+                command, cwd=root, env=env, capture_output=True,
+                text=True, timeout=120, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+            self.assertTrue((root / "output" / "assembled.mp4").is_file())
+            report = json.loads(
+                (root / "output" / "reports"
+                 / "cli_single_assembly_test-media-validation.json")
+                .read_text(encoding="utf-8")
+            )
+            self.assertTrue(report["validation"]["valid"], report["validation"]["errors"])
+
+
 if __name__ == "__main__":
     unittest.main()
