@@ -50,7 +50,7 @@ Do not rebuild completed milestones unnecessarily. Do not relocate source assets
 | Complete episode assembly | Implemented from verified per-shot folders; output is published only after FFprobe validation |
 | Media validation | Resolution, frame rate, container duration, audio presence, audio/video start offset, and stream-duration difference checked |
 | A/V tolerance | Configurable as \`audio.sync_tolerance_ms\`; default 80 ms |
-| Existing character rigs | Not yet connected to the engine; the repository currently uses generic adapter fixtures |
+| Existing character rigs | Not yet connected; the repository has no original Khaled/Kevin rig scenes or dependencies. See the character rig integration contract. |
 | Offline acceptance on production machine | Not performed; CI is not a substitute for disconnected local acceptance |
 | Source inventory | Read-only inventory command added; it records SHA-256 hashes for project files and excludes generated output, caches, symlinks, and common secret-file names. The first inventory report still needs to be run against the target project checkout. |
 | Source backup | Implemented; only complete same-project inventories are accepted; source files are re-hashed before copying and every backup copy is verified. Existing backups are never overwritten. |
@@ -107,6 +107,14 @@ before they can be considered a production workflow for those characters.
 - Create a timestamped backup before modifying anything.
 - Separate source assets from generated outputs.
 - Record exact Godot, Python, FFmpeg, and FFprobe versions.
+
+### A2. Character rig integration handoff
+
+Follow [Character Rig Integration Contract](character-rig-integration-contract.md).
+For each character, inventory and verify a backup of the complete original Godot
+resource set before integration. Implement wrappers around the real scenes only
+after the scene dependencies, scripts, project settings, and benchmark assets
+are available. Do not substitute the generic adapter fixture for either rig.
 
 ### B. Configuration contract
 - Define a versioned JSON schema.
