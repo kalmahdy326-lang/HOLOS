@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Generated production outputs (keep manifests/reports when intentionally committed)
+output/renders/
+output/tmp/
+output/cache/
+*.log
+
+# Godot generated/editor cache
+.godot/
+.import/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
