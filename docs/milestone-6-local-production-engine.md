@@ -53,7 +53,8 @@ Do not rebuild completed milestones unnecessarily. Do not relocate source assets
 | Existing character rigs | Not yet connected to the engine; the repository currently uses generic adapter fixtures |
 | Offline acceptance on production machine | Not performed; CI is not a substitute for disconnected local acceptance |
 | Source inventory | Read-only inventory command added; it records SHA-256 hashes for project files and excludes generated output, caches, symlinks, and common secret-file names. The first inventory report still needs to be run against the target project checkout. |
-| Source backup/restore | Not yet implemented; inventory does not copy or back up source data |
+| Source backup | Implemented; only complete same-project inventories are accepted; source files are re-hashed before copying and every backup copy is verified. Existing backups are never overwritten. |
+| Source restore | Implemented as a verified restore to a new `output/restores/` snapshot directory; the working project is never overwritten. Git metadata, generated output, caches, and excluded secret files are not restored. |
 
 ## Required capabilities
 
@@ -156,7 +157,7 @@ Milestone 6 must integrate and preserve current work, not misrepresent these gap
 ## Completion evidence
 
 - Source inventory report with per-file hashes.
-- Backup and restore report.
+- Verified backup manifest and restore manifest.
 - Toolchain/version report.
 - Versioned configuration schema and example episode.
 - Source code and tests.
