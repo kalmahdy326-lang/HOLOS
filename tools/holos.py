@@ -271,35 +271,51 @@ def main() -> int:
             runtime_root = root / "output" / ".holos_runtime"
             runtime_root.mkdir(parents=True, exist_ok=True)
             with tempfile.TemporaryDirectory(
-                prefix="episode-frame-sequence-", dir=runtime_root
+                prefix="episode-assembly-", dir=runtime_root
             ) as temporary:
+                temporary_root = Path(temporary)
+                staged_dir = temporary_root / "frames"
                 staged = stage_episode_frames(
                     project_root=root,
                     episode=episode,
                     manifest=manifest,
-                    staging_dir=Path(temporary),
+                    staging_dir=staged_dir,
                 )
                 if staged["frame_count"] != frame_count:
                     raise EpisodeAssemblyError(
                         f"Staged {staged['frame_count']} frames; expected {frame_count}."
                     )
+                temporary_output = temporary_root / "episode.mp4"
                 assembly = assemble_video(
-                    frames_dir=Path(temporary),
+                    frames_dir=staged_dir,
                     fps=render_settings["fps"],
                     frame_count=frame_count,
-                    output=output,
+                    output=temporary_output,
                     dialogue=dialogue,
                     music=music,
                 )
-            metadata = probe_media(output)
-            validation = validate_media(
-                metadata,
-                width=render_settings["width"],
-                height=render_settings["height"],
-                fps=render_settings["fps"],
-                expected_duration=frame_count / float(render_settings["fps"]),
-                require_audio=(dialogue is not None or music is not None),
-            )
+                metadata = probe_media(temporary_output)
+                validation = validate_media(
+                    metadata,
+                    width=render_settings["width"],
+                    height=render_settings["height"],
+                    fps=render_settings["fps"],
+                    expected_duration=frame_count / float(render_settings["fps"]),
+                    require_audio=(dialogue is not None or music is not None),
+                )
+                if not validation["valid"]:
+                    raise MediaError(
+                        "Episode output failed validation: "
+                        + "; ".join(validation["errors"])
+                    )
+                if output.exists():
+                    raise MediaError(
+                        f"Refusing to overwrite output created during assembly: {output}"
+                    )
+                output.parent.mkdir(parents=True, exist_ok=True)
+                temporary_output.replace(output)
+                assembly["output"] = str(output)
+
             report = {
                 "episode_id": episode["episode_id"],
                 "mode": args.mode,
@@ -347,15 +363,6 @@ def main() -> int:
                 output=output,
                 dialogue=dialogue,
                 music=music,
-            )
-            metadata = probe_media(output)
-            validation = validate_media(
-                metadata,
-                width=render_settings["width"],
-                height=render_settings["height"],
-                fps=render_settings["fps"],
-                expected_duration=frame_count / float(render_settings["fps"]),
-                require_audio=(dialogue is not None or music is not None),
             )
             report = {
                 "episode_id": episode["episode_id"],
