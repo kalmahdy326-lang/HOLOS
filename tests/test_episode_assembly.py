@@ -4,7 +4,11 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from holos_engine.batch import load_completed_batch_manifest, render_episode_batch
+from holos_engine.batch import (
+    BatchRenderError,
+    load_completed_batch_manifest,
+    render_episode_batch,
+)
 from holos_engine.episode_assembly import stage_episode_frames
 
 
