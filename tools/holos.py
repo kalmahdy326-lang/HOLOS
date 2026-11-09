@@ -20,6 +20,7 @@ from holos_engine.controller import write_preflight_report
 from holos_engine.godot_adapter import GodotAdapterError, render_shot
 from holos_engine.media import MediaError, assemble_video, probe_media, validate_media
 from holos_engine.preflight import run_preflight
+from holos_engine.inventory import InventoryError, write_inventory_report
 
 
 def _episode_frame_count(episode: dict) -> int:
@@ -148,6 +149,14 @@ def main() -> int:
     parser.add_argument("--project-root", type=Path, default=Path.cwd())
     subparsers = parser.add_subparsers(dest="command", required=True)
 
+    inventory = subparsers.add_parser(
+        "inventory", help="Create a read-only SHA-256 inventory of project source files"
+    )
+    inventory.add_argument(
+        "--output", type=Path,
+        help="Optional report path under output/reports (default: timestamped report)",
+    )
+
     for name in ("validate", "preflight"):
         command = subparsers.add_parser(name)
         command.add_argument("--episode", required=True, type=Path)
@@ -178,11 +187,19 @@ def main() -> int:
 
     args = parser.parse_args()
     root = args.project_root.resolve()
-    config_path = args.episode
-    if not config_path.is_absolute():
-        config_path = root / config_path
 
     try:
+        if args.command == "inventory":
+            report_path, report = write_inventory_report(root, args.output)
+            print(json.dumps(report["summary"], indent=2))
+            print(f"Inventory status: {report['status']}")
+            print(f"Inventory report: {report_path}")
+            return 0 if report["status"] == "complete" else 1
+
+        config_path = args.episode
+        if not config_path.is_absolute():
+            config_path = root / config_path
+
         episode = load_episode(config_path)
         print(f"Configuration valid: {episode['episode_id']}")
 
@@ -423,6 +440,7 @@ def main() -> int:
     except (
         BatchRenderError,
         EpisodeAssemblyError,
+        InventoryError,
         ConfigError,
         GodotAdapterError,
         MediaError,
