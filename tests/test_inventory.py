@@ -90,7 +90,7 @@ class InventoryTests(unittest.TestCase):
 
     def test_rejects_output_path_outside_project(self):
         outside = self.root.parent / f"{self.root.name}-report.json"
-        with self.assertRaisesRegex(InventoryError, "inside the project root"):
+        with self.assertRaisesRegex(InventoryError, "Inventory report must be written"):
             write_inventory_report(self.root, outside)
 
 
@@ -109,6 +109,8 @@ class InventoryTests(unittest.TestCase):
             shutil.copy2(source_root / "tools" / "holos.py", root / "tools" / "holos.py")
             (root / "notes.txt").write_text("source record", encoding="utf-8")
             output = Path("output/reports/cli-inventory.json")
+            env = os.environ.copy()
+            env["PYTHONPATH"] = str(root)
             result = subprocess.run(
                 [
                     sys.executable,
@@ -118,6 +120,7 @@ class InventoryTests(unittest.TestCase):
                     "--output", str(output),
                 ],
                 cwd=root,
+                env=env,
                 capture_output=True,
                 text=True,
                 timeout=30,
