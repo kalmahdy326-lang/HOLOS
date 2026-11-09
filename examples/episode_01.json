@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "episode_id": "episode_01",
+  "title": "HOLOS — Episode 1",
+  "description": "Starter configuration. Replace placeholder paths and shot timing with verified production data.",
+  "render": {
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "mode": "production",
+    "video_codec": "libx264",
+    "pixel_format": "yuv420p"
+  },
+  "audio": {
+    "dialogue": "assets/audio/dialogue.wav",
+    "music": null,
+    "sync_tolerance_ms": 80
+  },
+  "scenes": [
+    {
+      "scene_id": "scene_01",
+      "title": "Opening",
+      "shots": [
+        {
+          "shot_id": "S01_B01",
+          "start_frame": 0,
+          "end_frame": 240,
+          "characters": ["khaled"],
+          "assets": [],
+          "notes": "Placeholder timing only. Confirm against the authoritative edit."
+        }
+      ]
+    }
+  ]
+}
