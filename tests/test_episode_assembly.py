@@ -63,7 +63,7 @@ class EpisodeFrameStagingTests(unittest.TestCase):
             )
             self.assertTrue(manifest_path.is_file())
             self.assertEqual(
-                (root / "output" / "renders" / "assembly_test" / "S01_A"
+                (root / "output" / "renders" / "assembly_test" / "debug" / "S01_A"
                  / "frame_000000.png").read_bytes(),
                 b"S01_A:0",
             )
@@ -82,7 +82,7 @@ class EpisodeFrameStagingTests(unittest.TestCase):
                 project_root=root, episode=EPISODE, mode="debug", render_one=render,
             )
             changed = (
-                root / "output" / "renders" / "assembly_test" / "S01_A"
+                root / "output" / "renders" / "assembly_test" / "debug" / "S01_A"
                 / "frame_000000.png"
             )
             changed.write_bytes(b"modified")
