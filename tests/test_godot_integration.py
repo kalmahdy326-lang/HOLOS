@@ -7,6 +7,9 @@ Without it, the suite skips this test and still exercises the Python contract.
 import json
 import os
 from pathlib import Path
+import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -61,6 +64,49 @@ class GodotHeadlessIntegrationTests(unittest.TestCase):
             self.assertEqual(result["frame_count"], 4)
             self.assertTrue(Path(result["first_frame"]).is_file())
             self.assertTrue(Path(result["last_frame"]).is_file())
+
+    def test_cli_renders_configured_shot_end_to_end(self):
+        with tempfile.TemporaryDirectory() as temp:
+            project_root = Path(temp) / "project"
+            project_root.mkdir()
+            for folder in ("godot", "holos_engine", "tools", "examples"):
+                shutil.copytree(ROOT / folder, project_root / folder)
+
+            env = os.environ.copy()
+            env["PYTHONPATH"] = str(project_root)
+            command = [
+                sys.executable,
+                str(project_root / "tools" / "holos.py"),
+                "--project-root", str(project_root),
+                "render",
+                "--episode", "examples/adapter_test_episode.json",
+                "--shot", "ADAPTER_TEST",
+                "--mode", "debug",
+                "--godot-executable", env["HOLOS_GODOT"],
+            ]
+            wrapper = env.get("HOLOS_GODOT_DISPLAY_WRAPPER")
+            if wrapper:
+                command.extend(["--display-wrapper", wrapper])
+
+            result = subprocess.run(
+                command,
+                cwd=project_root,
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=120,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+
+            rendered = (
+                project_root / "output" / "renders"
+                / "adapter_test_episode" / "ADAPTER_TEST"
+            )
+            frames = sorted(rendered.glob("frame_*.png"))
+            self.assertEqual(len(frames), 4)
+            self.assertTrue((project_root / "output" / "reports"
+                             / "adapter_test_episode-ADAPTER_TEST-render.json").is_file())
 
 
 if __name__ == "__main__":
