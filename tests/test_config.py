@@ -63,5 +63,11 @@ class EpisodeConfigTests(unittest.TestCase):
             validate_episode(data)
 
 
+    def test_rejects_non_boolean_debug_overlay_setting(self):
+        data = {**VALID, "render": {**VALID["render"], "debug_overlay": "true"}}
+        with self.assertRaisesRegex(ConfigError, "render.debug_overlay"):
+            validate_episode(data)
+
+
 if __name__ == "__main__":
     unittest.main()
