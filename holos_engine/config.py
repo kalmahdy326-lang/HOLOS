@@ -49,6 +49,9 @@ def validate_episode(data: Any) -> None:
     fps = render.get("fps")
     _require(isinstance(fps, (int, float)) and not isinstance(fps, bool) and fps > 0,
              "render.fps must be a positive number.")
+    debug_overlay = render.get("debug_overlay", False)
+    _require(isinstance(debug_overlay, bool),
+             "render.debug_overlay must be a boolean.")
 
     scenes = data.get("scenes")
     _require(isinstance(scenes, list) and scenes, "scenes must be a non-empty array.")
