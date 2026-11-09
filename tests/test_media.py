@@ -71,8 +71,13 @@ class MediaTests(unittest.TestCase):
                     "width": 1280,
                     "height": 720,
                     "avg_frame_rate": "24/1",
+                    "start_time": "0.000000",
+                    "duration": "10.000000",
                 },
-                {"codec_type": "audio", "codec_name": "aac"},
+                {
+                    "codec_type": "audio", "codec_name": "aac",
+                    "start_time": "0.000000", "duration": "10.000000",
+                },
             ],
             "format": {"duration": "10.000"},
         }
@@ -97,6 +102,63 @@ class MediaTests(unittest.TestCase):
         )
         self.assertFalse(result["valid"])
         self.assertGreaterEqual(len(result["errors"]), 4)
+
+
+    def test_detects_audio_video_start_offset_outside_tolerance(self):
+        metadata = {
+            "streams": [
+                {"codec_type": "video", "width": 1280, "height": 720,
+                 "avg_frame_rate": "24/1", "start_time": "0.000",
+                 "duration": "10.000"},
+                {"codec_type": "audio", "start_time": "0.150",
+                 "duration": "10.000"},
+            ],
+            "format": {"duration": "10.000"},
+        }
+        result = validate_media(
+            metadata, width=1280, height=720, fps=24,
+            expected_duration=10.0, require_audio=True,
+            sync_tolerance_seconds=0.08,
+        )
+        self.assertFalse(result["valid"])
+        self.assertTrue(any("starts +0.150s" in item for item in result["errors"]))
+        self.assertTrue(result["av_sync"]["checked"])
+
+    def test_detects_audio_video_duration_mismatch(self):
+        metadata = {
+            "streams": [
+                {"codec_type": "video", "width": 1280, "height": 720,
+                 "avg_frame_rate": "24/1", "start_time": "0.000",
+                 "duration": "10.000"},
+                {"codec_type": "audio", "start_time": "0.000",
+                 "duration": "9.500"},
+            ],
+            "format": {"duration": "10.000"},
+        }
+        result = validate_media(
+            metadata, width=1280, height=720, fps=24,
+            expected_duration=10.0, require_audio=True,
+        )
+        self.assertFalse(result["valid"])
+        self.assertTrue(any("duration differs from video" in item
+                            for item in result["errors"]))
+
+    def test_uses_duration_timestamp_when_direct_stream_duration_is_absent(self):
+        metadata = {
+            "streams": [
+                {"codec_type": "video", "width": 1280, "height": 720,
+                 "avg_frame_rate": "24/1", "start_time": "0",
+                 "duration_ts": "240000", "time_base": "1/24000"},
+                {"codec_type": "audio", "start_time": "0",
+                 "duration_ts": "480000", "time_base": "1/48000"},
+            ],
+            "format": {"duration": "10.0"},
+        }
+        result = validate_media(
+            metadata, width=1280, height=720, fps=24,
+            expected_duration=10.0, require_audio=True,
+        )
+        self.assertTrue(result["valid"], result["errors"])
 
 
 if __name__ == "__main__":
