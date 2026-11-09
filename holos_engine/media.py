@@ -187,6 +187,25 @@ def probe_media(
         raise MediaError("FFprobe returned invalid JSON.") from exc
 
 
+def _stream_time_seconds(stream: dict[str, Any], field: str) -> float | None:
+    value = stream.get(field)
+    if value not in (None, "", "N/A"):
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            pass
+
+    if field == "duration":
+        duration_ts = stream.get("duration_ts")
+        time_base = stream.get("time_base")
+        try:
+            if duration_ts not in (None, "", "N/A") and time_base:
+                return float(int(duration_ts) * Fraction(str(time_base)))
+        except (TypeError, ValueError, ZeroDivisionError):
+            pass
+    return None
+
+
 def validate_media(
     metadata: dict[str, Any],
     *,
@@ -196,8 +215,12 @@ def validate_media(
     expected_duration: float,
     require_audio: bool = True,
     duration_tolerance_seconds: float = 0.08,
+    sync_tolerance_seconds: float = 0.08,
 ) -> dict[str, Any]:
-    """Validate video dimensions, frame rate, duration, and audio presence."""
+    """Validate video properties and audio/video stream timeline alignment."""
+    if duration_tolerance_seconds < 0 or sync_tolerance_seconds < 0:
+        raise MediaError("Media validation tolerances must be non-negative.")
+
     streams = metadata.get("streams", [])
     video = next((s for s in streams if s.get("codec_type") == "video"), None)
     audio = [s for s in streams if s.get("codec_type") == "audio"]
@@ -230,8 +253,60 @@ def validate_media(
         actual_duration = None
         errors.append("Could not read media duration.")
 
+    sync_checks: list[dict[str, Any]] = []
     if require_audio and not audio:
         errors.append("Audio stream is required but missing.")
+
+    if require_audio and video is not None and audio:
+        video_start = _stream_time_seconds(video, "start_time")
+        video_duration = _stream_time_seconds(video, "duration")
+        if video_start is None:
+            errors.append("Video stream start time is missing; A/V sync cannot be verified.")
+        if video_duration is None:
+            errors.append("Video stream duration is missing; A/V sync cannot be verified.")
+
+        for index, stream in enumerate(audio):
+            audio_start = _stream_time_seconds(stream, "start_time")
+            audio_duration = _stream_time_seconds(stream, "duration")
+            check: dict[str, Any] = {
+                "audio_stream_index": index,
+                "start_delta_seconds": None,
+                "duration_delta_seconds": None,
+                "valid": False,
+            }
+            if video_start is None or audio_start is None:
+                errors.append(
+                    f"Audio stream {index} start time is missing; A/V sync cannot be verified."
+                )
+            else:
+                start_delta = audio_start - video_start
+                check["start_delta_seconds"] = start_delta
+                if abs(start_delta) > sync_tolerance_seconds:
+                    errors.append(
+                        f"Audio stream {index} starts {start_delta:+.3f}s relative to video; "
+                        f"tolerance is {sync_tolerance_seconds:.3f}s."
+                    )
+
+            if video_duration is None or audio_duration is None:
+                errors.append(
+                    f"Audio stream {index} duration is missing; A/V sync cannot be verified."
+                )
+            else:
+                duration_delta = audio_duration - video_duration
+                check["duration_delta_seconds"] = duration_delta
+                if abs(duration_delta) > sync_tolerance_seconds:
+                    errors.append(
+                        f"Audio stream {index} duration differs from video by "
+                        f"{duration_delta:+.3f}s; tolerance is {sync_tolerance_seconds:.3f}s."
+                    )
+
+            check["valid"] = (
+                check["start_delta_seconds"] is not None
+                and check["duration_delta_seconds"] is not None
+                and abs(check["start_delta_seconds"]) <= sync_tolerance_seconds
+                and abs(check["duration_delta_seconds"]) <= sync_tolerance_seconds
+            )
+            sync_checks.append(check)
 
     return {
         "valid": not errors,
@@ -240,4 +315,9 @@ def validate_media(
         "audio_stream_count": len(audio),
         "duration_seconds": actual_duration,
         "expected_duration_seconds": expected_duration,
+        "av_sync": {
+            "checked": bool(require_audio and audio and video is not None),
+            "tolerance_seconds": sync_tolerance_seconds,
+            "streams": sync_checks,
+        },
     }
