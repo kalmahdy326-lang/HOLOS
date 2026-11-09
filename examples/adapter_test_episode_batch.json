@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "episode_id": "adapter_test_episode_batch",
+  "title": "HOLOS Batch Render Integration Fixture",
+  "description": "Two-shot fixture for ordered batch rendering and resume validation. Not production episode content.",
+  "render": {
+    "width": 320,
+    "height": 180,
+    "fps": 24,
+    "mode": "debug",
+    "video_codec": "libx264",
+    "pixel_format": "yuv420p"
+  },
+  "audio": {
+    "dialogue": null,
+    "music": null,
+    "sync_tolerance_ms": 80
+  },
+  "scenes": [
+    {
+      "scene_id": "adapter_test_scene",
+      "title": "Adapter Test Scene",
+      "shots": [
+        {
+          "shot_id": "ADAPTER_TEST_A",
+          "scene": "res://test_scenes/adapter_test.tscn",
+          "start_frame": 0,
+          "end_frame": 2,
+          "characters": [],
+          "assets": [],
+          "notes": "Automated batch integration fixture only."
+        },
+        {
+          "shot_id": "ADAPTER_TEST_B",
+          "scene": "res://test_scenes/adapter_test.tscn",
+          "start_frame": 2,
+          "end_frame": 4,
+          "characters": [],
+          "assets": [],
+          "notes": "Automated batch integration fixture only."
+        }
+      ]
+    }
+  ]
+}
