@@ -1,8 +1,4 @@
-"""Subprocess adapter for the HOLOS Godot shot runner.
-
-The adapter does not own animation logic. It passes a validated shot contract
-to a Godot project, then verifies that the expected frame files were produced.
-"""
+"""Subprocess adapter for the HOLOS Godot shot runner."""
 
 from __future__ import annotations
 
@@ -44,6 +40,10 @@ def build_render_command(
     ]
 
 
+def _inside(root: Path, path: Path) -> bool:
+    return path == root or root in path.parents
+
+
 def render_shot(
     *,
     project_root: Path,
@@ -55,30 +55,35 @@ def render_shot(
     executable: str | None = None,
     timeout_seconds: int = 3600,
 ) -> dict[str, Any]:
-    """Render one shot and require every expected PNG frame.
-
-    The caller is responsible for writing the shot JSON and for ensuring that
-    output_dir is a new or explicitly approved destination.
-    """
+    """Render one shot into a fresh, project-contained output directory."""
     root = project_root.resolve()
     project = (root / godot_project).resolve()
     config = (root / shot_config).resolve()
     output = (root / output_dir).resolve()
 
     for label, path in (("Godot project", project), ("shot config", config)):
-        if root not in path.parents and path != root:
+        if not _inside(root, path):
             raise GodotAdapterError(f"{label} must remain inside project root: {path}")
         if not path.exists():
             raise GodotAdapterError(f"{label} does not exist: {path}")
 
+    if not project.is_dir():
+        raise GodotAdapterError(f"Godot project must be a directory: {project}")
+    if not _inside(root, output):
+        raise GodotAdapterError(f"Output directory must remain inside project root: {output}")
     if expected_frame_count <= 0:
         raise GodotAdapterError("expected_frame_count must be positive.")
+    if timeout_seconds <= 0:
+        raise GodotAdapterError("timeout_seconds must be positive.")
 
+    if output.exists() and any(output.iterdir()):
+        raise GodotAdapterError(
+            f"Refusing to render into a non-empty directory; use a fresh output path: {output}"
+        )
     output.mkdir(parents=True, exist_ok=True)
+
     godot = find_godot(executable)
-    command = build_render_command(
-        godot, project, runner_script, config, output
-    )
+    command = build_render_command(godot, project, runner_script, config, output)
 
     try:
         result = subprocess.run(
