@@ -87,7 +87,7 @@ The engine will provide:
 5. Ordered multi-shot rendering with resumable manifests.
 6. Verified complete-episode assembly from ordered shot folders.
 7. Automatic audio/video assembly and validation.
-8. Production and debug modes.
+8. Separate production/debug render modes with a debug-only optional overlay.
 9. Automated validation.
 10. Versioned outputs and backups.
 11. Structured production logs.
