@@ -44,6 +44,25 @@ The example audio path is intentionally a placeholder. A missing-asset result is
 python -m unittest discover -s tests -v
 ```
 
+## Assemble rendered frames
+
+Once a complete, contiguous frame sequence exists, configure the original
+dialogue and optional music paths in the episode JSON, then run:
+
+```bash
+python tools/holos.py assemble \
+  --episode examples/episode_01.json \
+  --frames-dir output/episode_01/frames \
+  --output output/episode_01/episode_01.mp4
+```
+
+The command derives the expected frame count from the configured shot ranges,
+refuses to overwrite an existing MP4, uses FFmpeg to assemble the numbered
+frames, probes the result with FFprobe, and writes a JSON validation report.
+The frame directory must contain one contiguous sequence named
+`frame_000000.png`, `frame_000001.png`, and so on. The configured dialogue
+and music files are read as inputs; they are not modified.
+
 ## Current implementation boundary
 
 Implemented:
@@ -53,12 +72,15 @@ Implemented:
 - Toolchain detection.
 - Safe project-root-bounded asset existence checks.
 - JSON preflight report output.
+- FFmpeg frame-sequence assembly with optional dialogue/music inputs.
+- FFprobe metadata inspection and basic output validation.
+- CLI assembly command with no-overwrite behavior.
 
 Not implemented yet:
-- Godot headless shot rendering.
+- A passing Godot headless render against the minimal test project.
 - Khaled and Kevin rig adapters.
 - Shot scheduling and resumable batch rendering.
-- FFmpeg assembly and A/V synchronization validation.
+- A/V synchronization validation beyond basic stream/duration checks.
 - Production/debug render separation.
 - Backup and recovery orchestration.
 - Offline acceptance test.
