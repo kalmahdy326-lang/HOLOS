@@ -9,6 +9,7 @@ from pathlib import Path
 import sys
 import tempfile
 
+from holos_engine.backup import BackupError, create_source_backup
 from holos_engine.batch import (
     BatchRenderError,
     load_completed_batch_manifest,
@@ -157,6 +158,15 @@ def main() -> int:
         help="Optional report path under output/reports (default: timestamped report)",
     )
 
+    backup = subparsers.add_parser(
+        "backup", help="Create and verify a source copy from a complete inventory"
+    )
+    backup.add_argument("--inventory", required=True, type=Path)
+    backup.add_argument(
+        "--destination", type=Path,
+        help="Optional new directory under output/backups (default: timestamped)",
+    )
+
     for name in ("validate", "preflight"):
         command = subparsers.add_parser(name)
         command.add_argument("--episode", required=True, type=Path)
@@ -195,6 +205,25 @@ def main() -> int:
             print(f"Inventory status: {report['status']}")
             print(f"Inventory report: {report_path}")
             return 0 if report["status"] == "complete" else 1
+
+        if args.command == "backup":
+            inventory_path = (
+                args.inventory if args.inventory.is_absolute()
+                else root / args.inventory
+            )
+            backup_path, manifest = create_source_backup(
+                project_root=root,
+                inventory_path=inventory_path,
+                destination=args.destination,
+            )
+            print(json.dumps({
+                "backup_path": str(backup_path),
+                "status": manifest["status"],
+                "file_count": manifest["file_count"],
+                "total_size_bytes": manifest["total_size_bytes"],
+                "source_inventory_sha256": manifest["source_inventory_sha256"],
+            }, indent=2))
+            return 0
 
         config_path = args.episode
         if not config_path.is_absolute():
@@ -441,6 +470,7 @@ def main() -> int:
         BatchRenderError,
         EpisodeAssemblyError,
         InventoryError,
+        BackupError,
         ConfigError,
         GodotAdapterError,
         MediaError,
