@@ -9,7 +9,12 @@ from pathlib import Path
 import sys
 import tempfile
 
-from holos_engine.batch import BatchRenderError, render_episode_batch
+from holos_engine.batch import (
+    BatchRenderError,
+    load_completed_batch_manifest,
+    render_episode_batch,
+)
+from holos_engine.episode_assembly import EpisodeAssemblyError, stage_episode_frames
 from holos_engine.config import ConfigError, load_episode
 from holos_engine.controller import write_preflight_report
 from holos_engine.godot_adapter import GodotAdapterError, render_shot
@@ -161,6 +166,13 @@ def main() -> int:
     assemble.add_argument("--output", required=True, type=Path)
     assemble.add_argument("--mode", choices=("debug", "production"), default="production")
 
+    assemble_episode = subparsers.add_parser(
+        "assemble-episode", help="Assemble verified shot renders into one episode video"
+    )
+    assemble_episode.add_argument("--episode", required=True, type=Path)
+    assemble_episode.add_argument("--output", required=True, type=Path)
+    assemble_episode.add_argument("--mode", choices=("debug", "production"), default="production")
+
     args = parser.parse_args()
     root = args.project_root.resolve()
     config_path = args.episode
@@ -235,6 +247,84 @@ def main() -> int:
             print(f"Batch report: {report_path}")
             return 0 if result["success"] else 1
 
+        if args.command == "assemble-episode":
+            _safe_component(episode["episode_id"], "episode_id")
+            output = args.output if args.output.is_absolute() else root / args.output
+            output = output.resolve()
+            if not _inside(root, output):
+                raise MediaError("Episode output path must remain inside project root.")
+            if output.exists():
+                raise MediaError(f"Refusing to overwrite existing output: {output}")
+
+            manifest_path, manifest = load_completed_batch_manifest(
+                project_root=root, episode=episode, mode=args.mode,
+            )
+            audio = episode.get("audio", {})
+            dialogue = (root / audio["dialogue"]).resolve() if audio.get("dialogue") else None
+            music = (root / audio["music"]).resolve() if audio.get("music") else None
+            for label, path in (("dialogue", dialogue), ("music", music)):
+                if path is not None and not _inside(root, path):
+                    raise MediaError(f"{label} path must remain inside project root.")
+
+            render_settings = episode["render"]
+            frame_count = _episode_frame_count(episode)
+            runtime_root = root / "output" / ".holos_runtime"
+            runtime_root.mkdir(parents=True, exist_ok=True)
+            with tempfile.TemporaryDirectory(
+                prefix="episode-frame-sequence-", dir=runtime_root
+            ) as temporary:
+                staged = stage_episode_frames(
+                    project_root=root,
+                    episode=episode,
+                    manifest=manifest,
+                    staging_dir=Path(temporary),
+                )
+                if staged["frame_count"] != frame_count:
+                    raise EpisodeAssemblyError(
+                        f"Staged {staged['frame_count']} frames; expected {frame_count}."
+                    )
+                assembly = assemble_video(
+                    frames_dir=Path(temporary),
+                    fps=render_settings["fps"],
+                    frame_count=frame_count,
+                    output=output,
+                    dialogue=dialogue,
+                    music=music,
+                )
+            metadata = probe_media(output)
+            validation = validate_media(
+                metadata,
+                width=render_settings["width"],
+                height=render_settings["height"],
+                fps=render_settings["fps"],
+                expected_duration=frame_count / float(render_settings["fps"]),
+                require_audio=(dialogue is not None or music is not None),
+            )
+            report = {
+                "episode_id": episode["episode_id"],
+                "mode": args.mode,
+                "manifest": str(manifest_path),
+                "ordered_shots": staged["ordered_shots"],
+                "frame_staging": {
+                    "frame_count": staged["frame_count"],
+                    "hardlinked_frames": staged["hardlinked_frames"],
+                    "copied_frames": staged["copied_frames"],
+                },
+                "assembly": assembly,
+                "validation": validation,
+            }
+            report_dir = root / "output" / "reports"
+            report_dir.mkdir(parents=True, exist_ok=True)
+            report_path = (
+                report_dir / f"{episode['episode_id']}-{args.mode}-episode-assembly.json"
+            )
+            if not _inside(root, report_path.resolve()):
+                raise ConfigError("Episode assembly report path must remain inside project root.")
+            report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+            print(json.dumps(report, indent=2))
+            print(f"Episode assembly report: {report_path}")
+            return 0 if validation["valid"] else 1
+
         if args.command == "assemble":
             frames_dir = (root / args.frames_dir).resolve()
             output = (root / args.output).resolve()
@@ -283,6 +373,7 @@ def main() -> int:
 
     except (
         BatchRenderError,
+        EpisodeAssemblyError,
         ConfigError,
         GodotAdapterError,
         MediaError,
