@@ -87,6 +87,9 @@ def _render_configured_shot(
         "width": render_settings["width"],
         "height": render_settings["height"],
         "mode": mode,
+        "debug_overlay": (
+            mode == "debug" and bool(render_settings.get("debug_overlay", False))
+        ),
     }
 
     absolute_output = output_dir if output_dir.is_absolute() else root / output_dir
@@ -133,7 +136,7 @@ def _render_configured_shot(
     }
     report_dir = root / "output" / "reports"
     report_dir.mkdir(parents=True, exist_ok=True)
-    report_path = report_dir / f"{episode_id}-{shot_id}-render.json"
+    report_path = report_dir / f"{episode_id}-{mode}-{shot_id}-render.json"
     if not _inside(root, report_path.resolve()):
         raise ConfigError("Shot report path must remain inside project root.")
     report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
@@ -196,7 +199,7 @@ def main() -> int:
         if args.command == "render":
             scene, shot = _find_shot_context(episode, args.shot)
             output_dir = (
-                Path("output") / "renders" / episode["episode_id"] / shot["shot_id"]
+                Path("output") / "renders" / episode["episode_id"] / args.mode / shot["shot_id"]
             )
             result = _render_configured_shot(
                 root=root,
@@ -408,7 +411,7 @@ def main() -> int:
             }
             report_dir = root / "output" / "reports"
             report_dir.mkdir(parents=True, exist_ok=True)
-            report_path = report_dir / f"{episode['episode_id']}-media-validation.json"
+            report_path = report_dir / f"{episode['episode_id']}-{args.mode}-media-validation.json"
             if not _inside(root, report_path.resolve()):
                 raise ConfigError("Media validation report path must remain inside project root.")
             report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
