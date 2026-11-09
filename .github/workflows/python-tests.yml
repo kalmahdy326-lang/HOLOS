@@ -34,9 +34,10 @@ jobs:
           sudo apt-get install --yes xvfb libgl1-mesa-dri
       - name: Download pinned Godot 4.4.1
         run: |
-          curl --fail --location --retry 3 \
-            https://downloads.godotengine.org/?version=4.4.1&flavor=stable&slug=linux.x86_64.zip \
+          curl --fail --location --retry 10 --retry-all-errors --retry-delay 2 --retry-max-time 180 \
+            https://github.com/godotengine/godot-builds/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.x86_64.zip \
             --output "$RUNNER_TEMP/godot.zip"
+          echo "d6e382fb531019f85630c1f485a561a0d20c4a2344b6c3847735cfee7da812aa  $RUNNER_TEMP/godot.zip" | sha256sum --check
           unzip "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot-bin"
           chmod +x "$RUNNER_TEMP/godot-bin/Godot_v4.4.1-stable_linux.x86_64"
       - name: Run real headless Godot render integration test
