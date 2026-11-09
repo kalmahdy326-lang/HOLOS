@@ -89,7 +89,7 @@ The engine will provide:
 7. Automatic audio/video assembly and validation.
 8. Separate production/debug render modes with a debug-only optional overlay.
 9. Automated validation.
-10. Versioned outputs and backups.
+10. Versioned outputs, verified backups, and non-overwriting source restoration.
 11. Structured production logs.
 12. Offline installation and operation.
 
@@ -100,6 +100,12 @@ python tools/holos.py render-episode --episode examples/episode_01.json --mode p
 python tools/holos.py render --episode examples/episode_01.json --shot S01_B01 --mode debug
 
 python tools/holos.py assemble-episode --episode examples/episode_01.json --mode production --output output/episode_01.mp4
+
+python tools/holos.py inventory
+
+python tools/holos.py backup --inventory output/reports/source-inventory-YYYYMMDDTHHMMSSZ.json
+
+python tools/holos.py restore --backup output/backups/source-backup-YYYYMMDDTHHMMSSffffffZ
 
 The CLI implements `render` for one shot, `render-episode` for an ordered,
 resumable batch, and `assemble-episode` for final FFmpeg/FFprobe-validated
