@@ -1,7 +1,7 @@
-"""Optional end-to-end test for an installed Godot 4 executable.
+"""End-to-end tests for an installed Godot 4 executable and real viewport rendering.
 
-Set HOLOS_GODOT to the executable path to enable the real headless render test.
-Without it, the suite skips this test and still exercises the Python contract.
+Set HOLOS_GODOT to the executable path to enable the offscreen render tests.
+On display-less Linux, also set the Xvfb wrapper and disable strict headless mode.
 """
 
 import json
@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 @unittest.skipUnless(os.environ.get("HOLOS_GODOT"), "Set HOLOS_GODOT to run Godot integration test")
-class GodotHeadlessIntegrationTests(unittest.TestCase):
+class GodotOffscreenIntegrationTests(unittest.TestCase):
     def test_minimal_scene_renders_expected_frames(self):
         with tempfile.TemporaryDirectory() as temp:
             temp_root = Path(temp)
