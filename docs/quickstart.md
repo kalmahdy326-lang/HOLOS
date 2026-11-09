@@ -39,6 +39,38 @@ files, or scan generated output, Git metadata, dependency folders, and caches.
 A custom report path is accepted only under \`output/reports/\`; existing reports
 are never overwritten. This is an inventory, not a backup.
 
+## Create and verify a source backup
+
+After reviewing the inventory report, create a verified copy:
+
+\`\`\`bash
+python tools/holos.py backup \\
+  --inventory output/reports/source-inventory-YYYYMMDDTHHMMSSZ.json
+\`\`\`
+
+The command accepts only a complete inventory from this project. It rechecks
+the aggregate inventory hash and each source file's size and SHA-256 before
+copying, then verifies every copied file. Backups are created as new directories
+under \`output/backups/\`; existing backups are never overwritten. A failed copy
+is preserved in a directory marked \`FAILED-\` instead of being silently deleted.
+The command does not modify source files.
+
+Use the exact backup directory reported by the command to verify and restore a
+snapshot into a separate new folder:
+
+\`\`\`bash
+python tools/holos.py restore \\
+  --backup output/backups/source-backup-YYYYMMDDTHHMMSSffffffZ
+\`\`\`
+
+Restore verifies the backup manifest, each file hash, and total size before
+copying into a new directory under \`output/restores/\`. It never writes over the
+working project or an existing restore directory. The result is a source
+snapshot, not an in-place project replacement: Git metadata, generated output,
+caches, and file names excluded from the inventory (including common secret
+files) are not recreated. A failed restore is preserved in a \`FAILED-\`
+directory for inspection.
+
 ## Validate the example configuration
 
 ```bash
@@ -190,6 +222,8 @@ Implemented and CI-tested:
 - Safe project-root-bounded asset existence checks.
 - JSON preflight report output.
 - Read-only project source inventory with per-file and aggregate SHA-256 hashes.
+- Verified source backup with pre-copy and post-copy hash checks.
+- Non-overwriting restore into a separate source snapshot directory, with verification.
 - Python-to-Godot subprocess adapter with path and output safety checks.
 - Single-shot rendering through the generic Godot scene hooks.
 - Four-frame Godot rendering integration test.
@@ -207,7 +241,7 @@ Implemented and CI-tested:
 Still in development:
 - Khaled and Kevin character-rig adapters and validation against their real project scenes.
 - Sample-accurate synchronization against dialogue cues, phoneme timing, and animation events; current validation checks encoded stream start times and durations only.
-- Automated source backup/restore orchestration (the inventory command is read-only and is not a backup).
+- One-click backup/restore of the actual external Khaled/Kevin rig directories once those source assets are present and inventoried.
 - Offline acceptance test on the target production machine.
 
 ## Configuration timing
