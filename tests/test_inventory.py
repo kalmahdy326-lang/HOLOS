@@ -2,7 +2,6 @@
 
 import hashlib
 import json
-import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -109,8 +108,6 @@ class InventoryTests(unittest.TestCase):
             shutil.copy2(source_root / "tools" / "holos.py", root / "tools" / "holos.py")
             (root / "notes.txt").write_text("source record", encoding="utf-8")
             output = Path("output/reports/cli-inventory.json")
-            env = os.environ.copy()
-            env["PYTHONPATH"] = str(root)
             result = subprocess.run(
                 [
                     sys.executable,
@@ -120,7 +117,6 @@ class InventoryTests(unittest.TestCase):
                     "--output", str(output),
                 ],
                 cwd=root,
-                env=env,
                 capture_output=True,
                 text=True,
                 timeout=30,
