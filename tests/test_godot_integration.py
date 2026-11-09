@@ -101,12 +101,36 @@ class GodotOffscreenIntegrationTests(unittest.TestCase):
 
             rendered = (
                 project_root / "output" / "renders"
-                / "adapter_test_episode" / "ADAPTER_TEST"
+                / "adapter_test_episode" / "debug" / "ADAPTER_TEST"
             )
             frames = sorted(rendered.glob("frame_*.png"))
             self.assertEqual(len(frames), 4)
             self.assertTrue((project_root / "output" / "reports"
-                             / "adapter_test_episode-ADAPTER_TEST-render.json").is_file())
+                             / "adapter_test_episode-debug-ADAPTER_TEST-render.json").is_file())
+
+            production_command = command.copy()
+            production_command[production_command.index("--mode") + 1] = "production"
+            production_result = subprocess.run(
+                production_command, cwd=project_root, env=env,
+                capture_output=True, text=True, timeout=120, check=False,
+            )
+            self.assertEqual(
+                production_result.returncode, 0,
+                production_result.stderr or production_result.stdout,
+            )
+            production_dir = (
+                project_root / "output" / "renders" / "adapter_test_episode"
+                / "production" / "ADAPTER_TEST"
+            )
+            production_frames = sorted(production_dir.glob("frame_*.png"))
+            self.assertEqual(len(production_frames), 4)
+            self.assertTrue((project_root / "output" / "reports"
+                             / "adapter_test_episode-production-ADAPTER_TEST-render.json").is_file())
+            self.assertNotEqual(
+                frames[0].read_bytes(),
+                production_frames[0].read_bytes(),
+                "Debug fixture should include the debug overlay; production must not.",
+            )
 
 
     def test_cli_renders_episode_in_order_and_resumes_verified_shots(self):
@@ -139,7 +163,7 @@ class GodotOffscreenIntegrationTests(unittest.TestCase):
 
             render_root = (
                 project_root / "output" / "renders"
-                / "adapter_test_episode_batch"
+                / "adapter_test_episode_batch" / "debug"
             )
             for shot_id in ("ADAPTER_TEST_A", "ADAPTER_TEST_B"):
                 frames = sorted((render_root / shot_id).glob("frame_*.png"))
