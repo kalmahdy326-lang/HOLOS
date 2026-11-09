@@ -73,16 +73,31 @@ Do not rebuild completed milestones unnecessarily. Do not relocate source assets
 13. Installation, offline operation, recovery, restore, and troubleshooting documentation.
 14. An actual offline acceptance test.
 
-## Intended command-line interface
+## Current command-line interface
 
-```bash
-python tools/render_episode.py --episode episode_01 --mode production
-python tools/render_episode.py --episode episode_01 --scene scene_01 --mode production
-python tools/render_episode.py --episode episode_01 --shot S01_B01 --mode debug
-python tools/validate_episode.py --episode episode_01 --report
-```
+The repository currently implements the following commands:
 
-These are target commands, not claims of existing implementation.
+\`\`\`bash
+python tools/holos.py inventory
+
+python tools/holos.py backup \\
+  --inventory output/reports/source-inventory-YYYYMMDDTHHMMSSZ.json
+
+python tools/holos.py restore \\
+  --backup output/backups/source-backup-YYYYMMDDTHHMMSSffffffZ
+
+python tools/holos.py validate --episode examples/episode_01.json
+python tools/holos.py preflight --episode examples/episode_01.json
+python tools/holos.py render --episode examples/episode_01.json --shot S01_B01 --mode debug
+python tools/holos.py render-episode --episode examples/episode_01.json --mode production
+python tools/holos.py assemble-episode --episode examples/episode_01.json --mode production --output output/episode_01.mp4
+\`\`\`
+
+Inventory, backup, and restore are separate operations. Restore creates a
+verified source snapshot under \`output/restores/\`; it does not overwrite the
+working project or reconstruct Git metadata and generated output. The render
+commands still require integration with the actual Khaled and Kevin rig files
+before they can be considered a production workflow for those characters.
 
 ## Implementation sequence
 
