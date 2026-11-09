@@ -60,7 +60,7 @@ LIBGL_ALWAYS_SOFTWARE=1 python tools/holos.py render \
 ```
 
 The command renders the configured shot into
-`output/renders/adapter_test_episode/ADAPTER_TEST/` and writes a JSON report
+`output/renders/adapter_test_episode/debug/ADAPTER_TEST/` and writes a JSON report
 under `output/reports/`. It refuses to use a non-empty shot output directory.
 Choose a new output location or safely archive the prior generated render
 before repeating a render.
@@ -79,7 +79,7 @@ On display-less Linux, add `--display-wrapper xvfb-run` and run with
 `LIBGL_ALWAYS_SOFTWARE=1`.
 
 Each shot is rendered into its own directory under
-`output/renders/{episode_id}/{shot_id}/`. The command writes a resumable
+`output/renders/{episode_id}/{mode}/{shot_id}/`. The command writes a resumable
 manifest to `output/manifests/{episode_id}-{mode}-render.json` and a batch
 summary under `output/reports/`.
 
@@ -90,6 +90,11 @@ An interrupted, failed, or invalid shot directory is moved—not deleted—to
 updated as each shot changes state. If the episode configuration or render
 mode changes, the existing manifest refuses to resume; preserve that run and
 use a new episode ID for a distinct configuration.
+
+Render modes use isolated output folders, so debug renders cannot be mistaken
+for production renders. The optional `render.debug_overlay` boolean defaults
+to `false`; when enabled, it appears only in debug renders and is forcibly
+disabled by the production CLI.
 
 The two-shot example is a test fixture, not Episode 1 content.
 
@@ -132,7 +137,7 @@ After rendering a shot, assemble its contiguous numbered frames:
 ```bash
 python tools/holos.py assemble \
   --episode examples/adapter_test_episode.json \
-  --frames-dir output/renders/adapter_test_episode/ADAPTER_TEST \
+  --frames-dir output/renders/adapter_test_episode/debug/ADAPTER_TEST \
   --output output/adapter_test_episode.mp4
 ```
 
@@ -170,7 +175,8 @@ Implemented and CI-tested:
 - Python-to-Godot subprocess adapter with path and output safety checks.
 - Single-shot rendering through the generic Godot scene hooks.
 - Four-frame Godot rendering integration test.
-- CLI single-shot render command and JSON render report.
+- CLI single-shot render command and mode-specific JSON render report.
+- Separate debug/production render directories and a debug-only overlay gate, tested with actual Godot frame output.
 - Ordered multi-shot episode rendering with a resumable status manifest.
 - Verified-completion skipping, per-frame SHA-256 integrity records, and preservation of partial output in recovery.
 - Ordered staging of separate verified shot folders into one contiguous episode frame sequence.
@@ -183,7 +189,6 @@ Implemented and CI-tested:
 Still in development:
 - Khaled and Kevin character-rig adapters and validation against their real project scenes.
 - Sample-accurate synchronization against dialogue cues, phoneme timing, and animation events; current validation checks encoded stream start times and durations only.
-- Production/debug render separation and production overlay policy.
 - Backup and recovery orchestration.
 - Offline acceptance test on the target production machine.
 
