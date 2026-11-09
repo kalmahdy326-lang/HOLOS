@@ -7,8 +7,6 @@ from pathlib import Path
 import shutil
 from typing import Any
 
-from holos_engine.batch import BatchRenderError
-
 
 class EpisodeAssemblyError(RuntimeError):
     """Raised when shot frames cannot be staged safely."""
