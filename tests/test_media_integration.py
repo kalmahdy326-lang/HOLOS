@@ -4,12 +4,16 @@ This test runs only when both executables are available. It never touches
 repository source assets.
 """
 
+import json
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
+from holos_engine.batch import render_episode_batch
+from holos_engine.episode_assembly import stage_episode_frames
 from holos_engine.media import assemble_video, probe_media, validate_media
 
 
@@ -67,6 +71,77 @@ class FFmpegIntegrationTests(unittest.TestCase):
             )
             self.assertTrue(validation["valid"], validation["errors"])
             self.assertEqual(validation["audio_stream_count"], 1)
+
+
+    def test_assembles_two_verified_shot_folders_into_one_episode(self):
+        from holos_engine.batch import load_completed_batch_manifest
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            master_frames = root / "master_frames"
+            master_frames.mkdir()
+            subprocess.run([
+                FFMPEG, "-hide_banner", "-loglevel", "error", "-y",
+                "-f", "lavfi", "-i", "testsrc=size=320x180:rate=24",
+                "-frames:v", "4", "-start_number", "0",
+                str(master_frames / "frame_%06d.png"),
+            ], check=True, capture_output=True)
+
+            episode = {
+                "schema_version": 1,
+                "episode_id": "ffmpeg_multishot_test",
+                "title": "FFmpeg Multi-shot Assembly Test",
+                "render": {"width": 320, "height": 180, "fps": 24},
+                "audio": {"dialogue": None, "music": None},
+                "scenes": [{"scene_id": "scene_01", "shots": [
+                    {"shot_id": "SHOT_A", "start_frame": 0, "end_frame": 2},
+                    {"shot_id": "SHOT_B", "start_frame": 2, "end_frame": 4},
+                ]}],
+            }
+
+            def render_fixture(scene, shot, output_dir):
+                output_dir.mkdir(parents=True, exist_ok=True)
+                offset = 0 if shot["shot_id"] == "SHOT_A" else 2
+                for index in range(2):
+                    shutil.copy2(
+                        master_frames / f"frame_{offset + index:06d}.png",
+                        output_dir / f"frame_{index:06d}.png",
+                    )
+                return {"return_code": 0, "frame_count": 2}
+
+            batch = render_episode_batch(
+                project_root=root, episode=episode, mode="debug",
+                render_one=render_fixture,
+            )
+            self.assertTrue(batch["success"])
+            _, manifest = load_completed_batch_manifest(
+                project_root=root, episode=episode, mode="debug",
+            )
+
+            staging_root = root / "output" / ".holos_runtime" / "staged"
+            staging_root.mkdir(parents=True)
+            staged = stage_episode_frames(
+                project_root=root, episode=episode, manifest=manifest,
+                staging_dir=staging_root,
+            )
+            self.assertEqual(staged["frame_count"], 4)
+            output = root / "output" / "episode.mp4"
+            assembled = assemble_video(
+                frames_dir=staging_root, fps=24, frame_count=4, output=output,
+                ffmpeg_executable=FFMPEG,
+            )
+            metadata = probe_media(output, ffprobe_executable=FFPROBE)
+            validation = validate_media(
+                metadata, width=320, height=180, fps=24,
+                expected_duration=4 / 24, require_audio=False,
+                duration_tolerance_seconds=0.08,
+            )
+            self.assertEqual(assembled["frame_count"], 4)
+            self.assertTrue(validation["valid"], validation["errors"])
+            self.assertTrue(
+                (root / "output" / "renders" / "ffmpeg_multishot_test"
+                 / "SHOT_A" / "frame_000000.png").is_file()
+            )
 
 
 if __name__ == "__main__":
