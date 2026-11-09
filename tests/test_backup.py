@@ -2,7 +2,6 @@
 
 import hashlib
 import json
-import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -129,15 +128,13 @@ class SourceBackupTests(unittest.TestCase):
             (root / "tools").mkdir()
             shutil.copy2(source_root / "tools" / "holos.py", root / "tools" / "holos.py")
             (root / "notes.txt").write_text("backup source", encoding="utf-8")
-            env = os.environ.copy()
-            env["PYTHONPATH"] = str(root)
             inventory_path = "output/reports/backup-cli-inventory.json"
             inventory_run = subprocess.run(
                 [
                     sys.executable, str(root / "tools" / "holos.py"),
                     "--project-root", str(root), "inventory", "--output", inventory_path,
                 ],
-                cwd=root, env=env, capture_output=True, text=True, timeout=30, check=False,
+                cwd=root, capture_output=True, text=True, timeout=30, check=False,
             )
             self.assertEqual(
                 inventory_run.returncode, 0,
@@ -150,7 +147,7 @@ class SourceBackupTests(unittest.TestCase):
                     "--inventory", inventory_path,
                     "--destination", "output/backups/cli-test",
                 ],
-                cwd=root, env=env, capture_output=True, text=True, timeout=30, check=False,
+                cwd=root, capture_output=True, text=True, timeout=30, check=False,
             )
             self.assertEqual(backup_run.returncode, 0, backup_run.stderr or backup_run.stdout)
             backed_up = root / "output" / "backups" / "cli-test" / "files" / "notes.txt"
@@ -169,7 +166,7 @@ class SourceBackupTests(unittest.TestCase):
                     "--backup", "output/backups/cli-test",
                     "--destination", "output/restores/cli-restored",
                 ],
-                cwd=root, env=env, capture_output=True, text=True, timeout=30, check=False,
+                cwd=root, capture_output=True, text=True, timeout=30, check=False,
             )
             self.assertEqual(restore_run.returncode, 0, restore_run.stderr or restore_run.stdout)
             self.assertEqual(
