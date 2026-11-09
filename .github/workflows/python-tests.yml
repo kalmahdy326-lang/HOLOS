@@ -28,6 +28,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Install virtual display and software renderer
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes xvfb libgl1-mesa-dri
       - name: Download pinned Godot 4.4.1
         run: |
           curl --fail --location --retry 3 \
@@ -38,4 +42,6 @@ jobs:
       - name: Run real headless Godot render integration test
         env:
           HOLOS_GODOT: ${{ runner.temp }}/godot-bin/Godot_v4.4.1-stable_linux.x86_64
-        run: python -m unittest discover -s tests -p "test_godot_integration.py" -v
+          HOLOS_GODOT_HEADLESS: "0"
+          HOLOS_GODOT_DISPLAY_WRAPPER: xvfb-run
+        run: LIBGL_ALWAYS_SOFTWARE=1 python -m unittest discover -s tests -p "test_godot_integration.py" -v
