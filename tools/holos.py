@@ -9,6 +9,11 @@ from pathlib import Path
 import sys
 import tempfile
 
+# Allow direct execution as `python tools/holos.py ...` from a clean checkout.
+_REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+if str(_REPOSITORY_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPOSITORY_ROOT))
+
 from holos_engine.backup import (
     BackupError,
     create_source_backup,
