@@ -1,2 +1,213 @@
-# HOLOS
 HOLOS
+
+An Independent Animation & Production Project
+
+Project author: Khaled AL-MAHDY
+
+HOLOS is an independent animation and storytelling project focused on building a complete, locally operated production pipeline.
+
+The goal is to develop a production environment where characters, environments, animation, dialogue, sound, and final video assembly work together as one coherent system.
+
+HOLOS is designed to remain independent of external AI services, subscriptions, paid generation credits, and internet-dependent production tools.
+
+---
+
+1. Project Philosophy
+
+HOLOS belongs to the project, not to any particular software platform or service.
+
+Its production system must remain:
+
+- Independent: No mandatory dependence on external AI platforms or subscriptions.
+- Local-first: Core production must run on locally available software and assets.
+- Offline-capable: Rendering, assembly, and validation must work without internet access.
+- Reproducible: Production should be driven by explicit configurations and repeatable processes.
+- Modular: Characters, scenes, animation, audio, and rendering should remain independently manageable.
+- Preservational: Existing assets, completed work, dialogue, soundtrack, and benchmarks must be protected.
+
+The objective is not simply to produce individual animations. It is to establish a reusable production system capable of producing complete episodes.
+
+2. Technical Architecture
+
+HOLOS uses several tools, each with a clearly defined responsibility.
+
+Technology| Responsibility
+Godot| Character rigs, animation, scenes, and rendering
+Python| Production controller, configuration, automation, validation, and reporting
+FFmpeg| Video assembly, encoding, and audio integration
+FFprobe| Media inspection and technical validation
+JSON| Episode, scene, shot, dialogue, and render configuration
+Git| Version control and project history
+
+The architecture avoids unnecessary duplication of responsibilities.
+
+Godot handles animation and rendering. Python coordinates production. FFmpeg handles media assembly. JSON defines what is being produced.
+
+3. Character Development
+
+HOLOS currently has two independently functioning character animation prototypes.
+
+Khaled — Milestone 3
+
+- Independent character rig.
+- Layered facial animation.
+- Multiple mouth shapes.
+- Blinking and gaze changes.
+- Facial expression changes.
+- Head movement and environmental animation.
+- Functional dialogue benchmark.
+
+Kevin — Milestone 4
+
+- Independent character rig.
+- Facial and mouth animation.
+- Blinking and gaze changes.
+- Multiple expression states.
+- Speaking and listening states.
+- Functional dialogue benchmark.
+
+Both characters have completed initial functional benchmarks.
+
+These are working prototypes, not yet finished production-quality character rigs.
+
+Further development includes improved phoneme-level lip synchronization, facial-layer polish, articulated body movement, smoother gaze tracking, and more expressive acting.
+
+4. Production Engine — Milestone 6
+
+The current major engineering objective is the HOLOS Local Production Engine.
+
+The purpose is to integrate existing character rigs and production tools into a unified system.
+
+The engine will provide:
+
+1. A central Python production controller.
+2. Structured episode and shot configuration.
+3. Godot integration for character and scene rendering.
+4. Individual shot rendering.
+5. Batch scene rendering.
+6. Complete episode rendering.
+7. Automatic audio/video assembly.
+8. Production and debug modes.
+9. Automated validation.
+10. Versioned outputs and backups.
+11. Structured production logs.
+12. Offline installation and operation.
+
+Intended production commands
+
+python tools/render_episode.py --episode episode_01 --mode production
+
+python tools/render_episode.py --episode episode_01 --scene scene_01 --mode production
+
+python tools/render_episode.py --episode episode_01 --shot S01_B01 --mode debug
+
+python tools/validate_episode.py --episode episode_01 --report
+
+These commands define the intended interface. They are not claimed to be implemented yet.
+
+5. Proposed Repository Structure
+
+HOLOS/
+│
+├── assets/
+│   ├── characters/
+│   ├── environments/
+│   ├── audio/
+│   └── references/
+│
+├── config/
+│   ├── episodes/
+│   └── schemas/
+│
+├── docs/
+│
+├── godot/
+│   ├── characters/
+│   ├── scenes/
+│   └── scripts/
+│
+├── tools/
+│   ├── render_episode.py
+│   ├── validate_episode.py
+│   └── holos/
+│
+├── output/
+│   ├── renders/
+│   ├── reports/
+│   └── manifests/
+│
+└── tests/
+
+This is the intended organization. Existing project files will be inventoried before integration or relocation.
+
+6. Production Standards
+
+Every production operation should follow several rules:
+
+- Original source files remain untouched.
+- Generated outputs are stored separately.
+- Production settings are explicitly defined.
+- Debug overlays never appear in final production output.
+- Incomplete renders are never treated as completed shots.
+- Failed operations produce useful logs and error codes.
+- Existing work is backed up before structural changes.
+- Every final episode can be technically inspected and validated.
+
+The system must also distinguish between identical binary output and visually and temporally equivalent output when rendering introduces nondeterministic behavior.
+
+7. Independence From External Services
+
+HOLOS does not require Manus to operate.
+
+Manus and other AI assistants may optionally help with development, research, planning, or troubleshooting.
+
+However, the actual production pipeline must remain independently executable.
+
+No paid software, subscriptions, AI generation credits, or external AI services are to be introduced without explicit authorization.
+
+8. Development Roadmap
+
+Milestone| Objective| Status
+1–2| Initial production research and animation groundwork| Completed
+3| Khaled functional character rig| Completed
+4| Kevin functional character rig| Completed
+5| Two-character interaction and animation refinement| Prototype / refinement
+6| Unified local production engine| Current objective
+7| Production-ready animation workflow| Planned
+8| Full Episode 1 animation| Planned
+
+Milestone completion must be supported by actual working results and documented verification.
+
+9. Acceptance Standard
+
+The production engine will not be considered complete until it can:
+
+1. Operate with internet access disabled.
+2. Load both existing character rigs.
+3. Render multiple configured shots.
+4. Assemble those shots into a complete video.
+5. Preserve and integrate the original audio.
+6. Validate the final output.
+7. Produce a report and production manifest.
+8. Recover safely from interrupted production.
+9. Reproduce the configured workflow without external services.
+
+An offline acceptance test must actually be performed before offline capability is declared verified.
+
+---
+
+10. Project Attribution
+
+HOLOS
+An independent animation and production project.
+
+Researcher and Project Author:
+Khaled AL-MAHDY
+
+The project is developed through independent research, technical experimentation, original creative work, and iterative engineering.
+
+All development should preserve a clear distinction between completed work, working prototypes, ongoing investigations, and future objectives.
+
+---
+
+Build independently. Preserve what works. Verify what is claimed.
