@@ -63,7 +63,7 @@ def render_shot(
     expected_frame_count: int,
     executable: str | None = None,
     timeout_seconds: int = 3600,
-    headless: bool = True,
+    headless: bool = False,
     command_prefix: tuple[str, ...] = (),
 ) -> dict[str, Any]:
     """Render one shot into a fresh, project-contained output directory."""
