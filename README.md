@@ -85,7 +85,7 @@ The engine will provide:
 3. Godot integration for character and scene rendering.
 4. Individual shot rendering.
 5. Ordered multi-shot rendering with resumable manifests.
-6. Complete episode assembly from ordered shots (in development).
+6. Verified complete-episode assembly from ordered shot folders.
 7. Automatic audio/video assembly and validation.
 8. Production and debug modes.
 9. Automated validation.
@@ -99,11 +99,13 @@ python tools/holos.py render-episode --episode examples/episode_01.json --mode p
 
 python tools/holos.py render --episode examples/episode_01.json --shot S01_B01 --mode debug
 
-python tools/validate_episode.py --episode episode_01 --report
+python tools/holos.py assemble-episode --episode examples/episode_01.json --mode production --output output/episode_01.mp4
 
-The current CLI implements `render` for one shot and `render-episode` for an
-ordered, resumable batch of shots. Final concatenation of separate shot folders
-into a single episode video remains in development.
+The CLI implements `render` for one shot, `render-episode` for an ordered,
+resumable batch, and `assemble-episode` for final FFmpeg/FFprobe-validated
+assembly from the verified manifest. The engine still requires validation
+against the actual Khaled and Kevin rigs and an offline acceptance test on the
+target production machine.
 
 5. Proposed Repository Structure
 
