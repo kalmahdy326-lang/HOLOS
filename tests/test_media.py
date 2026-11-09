@@ -48,7 +48,7 @@ class MediaTests(unittest.TestCase):
                 music=music,
             )
             self.assertIn("-filter_complex", command)
-            self.assertIn("amix=inputs=2", command)
+            self.assertTrue(any("amix=inputs=2" in arg for arg in command))
 
     def test_rejects_missing_audio(self):
         with tempfile.TemporaryDirectory() as temp:
