@@ -11,7 +11,6 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import re
 import shutil
 import tempfile
 from typing import Any, Callable
@@ -26,7 +25,7 @@ def _inside(root: Path, path: Path) -> bool:
 
 
 def _safe_component(value: str, label: str) -> str:
-    if not value or value in {".", ".."} or "/" in value or "\\\\" in value:
+    if not value or value in {".", ".."} or "/" in value or "\\" in value:
         raise BatchRenderError(f"{label} must be a single safe path component: {value!r}")
     if Path(value).is_absolute():
         raise BatchRenderError(f"{label} must not be an absolute path: {value!r}")
@@ -81,7 +80,7 @@ def _write_manifest(path: Path, manifest: dict[str, Any]) -> None:
     try:
         with os.fdopen(handle, "w", encoding="utf-8") as stream:
             json.dump(manifest, stream, indent=2)
-            stream.write("\\n")
+            stream.write("\n")
             stream.flush()
             os.fsync(stream.fileno())
         os.replace(temporary_name, path)
