@@ -22,6 +22,8 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Inventory checked-out source tree
         run: python tools/holos.py inventory
+      - name: Audit Godot resource dependencies
+        run: python tools/holos.py audit-godot-assets --godot-project godot
 
   godot-offscreen-render:
     runs-on: ubuntu-latest
