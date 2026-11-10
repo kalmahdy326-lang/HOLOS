@@ -46,7 +46,7 @@ Do not rebuild completed milestones unnecessarily. Do not relocate source assets
 | Python CLI and versioned episode configuration | Implemented; configuration and CLI tests run in CI |
 | Godot shot rendering | Implemented through the generic scene hook contract; real Godot offscreen render tests run in CI |
 | Debug/production separation | Separate output trees; optional debug overlay is gated to debug mode and ignored in production; verified by comparing actual Godot PNGs |
-| Ordered multi-shot rendering | Implemented with resumable manifest, per-frame SHA-256 integrity, attempt/error history, and recovery archival |
+| Ordered multi-shot rendering | Implemented with resumable manifest, per-frame SHA-256 integrity, manifest-structure validation, symlink-safe output/recovery paths, attempt/error history, and recovery archival |
 | Complete episode assembly | Implemented from verified per-shot folders; output is published only after FFprobe validation |
 | Media validation | Resolution, frame rate, container duration, audio presence, audio/video start offset, and stream-duration difference checked |
 | A/V tolerance | Configurable as \`audio.sync_tolerance_ms\`; default 80 ms |
