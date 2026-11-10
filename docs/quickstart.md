@@ -135,8 +135,13 @@ summary under `output/reports/`.
 On a subsequent run, a shot marked completed is skipped only when its exact
 expected numbered PNG sequence still exists and every frame file is non-empty.
 An interrupted, failed, or invalid shot directory is moved—not deleted—to
-`output/recovery/` before it is rendered again. The manifest is atomically
-updated as each shot changes state. If the episode configuration or render
+`output/recovery/` before it is rendered again. Each completed frame is recorded
+with its size and SHA-256 hash; resume and episode assembly re-hash the files
+rather than trusting a status flag alone. The manifest rejects duplicate,
+reordered, malformed, or invalid-attempt records. Batch render, manifest, and
+recovery paths reject symbolic-link traversal so a generated-output symlink
+cannot redirect an archive or overwrite an unrelated directory. The manifest
+is atomically updated as each shot changes state. If the episode configuration or render
 mode changes, the existing manifest refuses to resume; preserve that run and
 use a new episode ID for a distinct configuration.
 
