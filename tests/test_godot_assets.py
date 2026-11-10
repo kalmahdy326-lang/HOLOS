@@ -1,6 +1,8 @@
 """Tests for the read-only Godot resource dependency audit."""
 
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -107,6 +109,23 @@ class GodotAssetAuditTests(unittest.TestCase):
         self.assertTrue(any(
             item["path"] == ".godot" for item in report["skipped"]
         ))
+
+
+    def test_cli_audits_project_and_writes_report(self):
+        command = [
+            sys.executable,
+            str(Path(__file__).resolve().parents[1] / "tools" / "holos.py"),
+            "--project-root", str(self.root),
+            "audit-godot-assets",
+            "--godot-project", "godot",
+        ]
+        result = subprocess.run(
+            command, cwd=self.root, capture_output=True, text=True,
+            timeout=30, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+        reports = list((self.root / "output" / "reports").glob("godot-asset-audit-*.json"))
+        self.assertEqual(len(reports), 1)
 
 
 if __name__ == "__main__":
