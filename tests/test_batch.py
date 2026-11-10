@@ -208,5 +208,44 @@ class BatchRenderTests(unittest.TestCase):
         self.assertEqual(marker.read_text(encoding="utf-8"), "preserve")
 
 
+    def test_refuses_manifest_with_duplicate_or_out_of_order_shot_records(self):
+        calls = []
+        render_episode_batch(
+            project_root=self.root, episode=EPISODE, mode="debug",
+            render_one=self.make_renderer(calls),
+        )
+        manifest_path = (
+            self.root / "output" / "manifests" / "batch_test-debug-render.json"
+        )
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["shots"][1]["shot_id"] = manifest["shots"][0]["shot_id"]
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+        with self.assertRaisesRegex(BatchRenderError, "duplicate shot"):
+            render_episode_batch(
+                project_root=self.root, episode=EPISODE, mode="debug",
+                render_one=self.make_renderer([]),
+            )
+
+    def test_refuses_manifest_with_invalid_attempt_metadata(self):
+        calls = []
+        render_episode_batch(
+            project_root=self.root, episode=EPISODE, mode="debug",
+            render_one=self.make_renderer(calls),
+        )
+        manifest_path = (
+            self.root / "output" / "manifests" / "batch_test-debug-render.json"
+        )
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["shots"][0]["attempts"] = -1
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+        with self.assertRaisesRegex(BatchRenderError, "attempt count"):
+            render_episode_batch(
+                project_root=self.root, episode=EPISODE, mode="debug",
+                render_one=self.make_renderer([]),
+            )
+
+
 if __name__ == "__main__":
     unittest.main()
