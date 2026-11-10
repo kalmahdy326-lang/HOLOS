@@ -164,7 +164,7 @@ class BatchRenderTests(unittest.TestCase):
         marker = preserved / "marker.txt"
         marker.write_text("preserve", encoding="utf-8")
         manifest_link = self.root / "output" / "manifests"
-        manifest_link.parent.mkdir(parents=True)
+        manifest_link.parent.mkdir(parents=True, exist_ok=True)
         try:
             manifest_link.symlink_to(preserved, target_is_directory=True)
         except (OSError, NotImplementedError):
