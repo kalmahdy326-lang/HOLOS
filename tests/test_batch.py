@@ -133,5 +133,80 @@ class BatchRenderTests(unittest.TestCase):
         self.assertTrue(list((self.root / "output" / "recovery").glob("S01_B01-*")))
 
 
+    def test_refuses_shot_output_symlink_without_moving_its_target(self):
+        calls = []
+        target = self.root / "output" / "preserved"
+        target.mkdir(parents=True)
+        sentinel = target / "do-not-touch.txt"
+        sentinel.write_text("preserve", encoding="utf-8")
+        link = (
+            self.root / "output" / "renders" / "batch_test"
+            / "debug" / "S01_B01"
+        )
+        link.parent.mkdir(parents=True)
+        try:
+            link.symlink_to(target, target_is_directory=True)
+        except (OSError, NotImplementedError):
+            self.skipTest("Directory symlinks are unavailable on this platform.")
+
+        with self.assertRaisesRegex(BatchRenderError, "symbolic links"):
+            render_episode_batch(
+                project_root=self.root, episode=EPISODE, mode="debug",
+                render_one=self.make_renderer(calls),
+            )
+        self.assertTrue(link.is_symlink())
+        self.assertEqual(sentinel.read_text(encoding="utf-8"), "preserve")
+        self.assertEqual(calls, [])
+
+    def test_refuses_manifest_directory_symlink(self):
+        preserved = self.root / "output" / "preserved-manifests"
+        preserved.mkdir(parents=True)
+        marker = preserved / "marker.txt"
+        marker.write_text("preserve", encoding="utf-8")
+        manifest_link = self.root / "output" / "manifests"
+        manifest_link.parent.mkdir(parents=True)
+        try:
+            manifest_link.symlink_to(preserved, target_is_directory=True)
+        except (OSError, NotImplementedError):
+            self.skipTest("Directory symlinks are unavailable on this platform.")
+
+        with self.assertRaisesRegex(BatchRenderError, "symbolic links"):
+            render_episode_batch(
+                project_root=self.root, episode=EPISODE, mode="debug",
+                render_one=self.make_renderer([]),
+            )
+        self.assertEqual(marker.read_text(encoding="utf-8"), "preserve")
+        self.assertFalse(list(preserved.glob("*render.json")))
+
+    def test_refuses_recovery_directory_symlink_before_archiving(self):
+        calls = []
+        renderer = self.make_renderer(calls, fail_once="S01_B02")
+        first = render_episode_batch(
+            project_root=self.root, episode=EPISODE, mode="debug", render_one=renderer,
+        )
+        self.assertFalse(first["success"])
+        partial = (
+            self.root / "output" / "renders" / "batch_test"
+            / "debug" / "S01_B02"
+        )
+        preserved = self.root / "output" / "preserved-recovery"
+        preserved.mkdir(parents=True)
+        marker = preserved / "marker.txt"
+        marker.write_text("preserve", encoding="utf-8")
+        recovery_link = self.root / "output" / "recovery"
+        try:
+            recovery_link.symlink_to(preserved, target_is_directory=True)
+        except (OSError, NotImplementedError):
+            self.skipTest("Directory symlinks are unavailable on this platform.")
+
+        with self.assertRaisesRegex(BatchRenderError, "symbolic links"):
+            render_episode_batch(
+                project_root=self.root, episode=EPISODE, mode="debug",
+                render_one=renderer,
+            )
+        self.assertTrue(partial.is_dir())
+        self.assertEqual(marker.read_text(encoding="utf-8"), "preserve")
+
+
 if __name__ == "__main__":
     unittest.main()
