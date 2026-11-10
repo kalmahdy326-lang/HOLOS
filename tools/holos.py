@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 import sys
 import tempfile
@@ -28,6 +30,7 @@ from holos_engine.episode_assembly import EpisodeAssemblyError, stage_episode_fr
 from holos_engine.config import ConfigError, load_episode
 from holos_engine.controller import write_preflight_report
 from holos_engine.godot_adapter import GodotAdapterError, render_shot
+from holos_engine.godot_assets import GodotAssetAuditError, audit_godot_project
 from holos_engine.media import MediaError, assemble_video, probe_media, validate_media
 from holos_engine.preflight import run_preflight
 from holos_engine.inventory import InventoryError, write_inventory_report
@@ -167,6 +170,16 @@ def main() -> int:
         help="Optional report path under output/reports (default: timestamped report)",
     )
 
+    asset_audit = subparsers.add_parser(
+        "audit-godot-assets",
+        help="Check literal res:// resource dependencies in the Godot project",
+    )
+    asset_audit.add_argument("--godot-project", type=Path, default=Path("godot"))
+    asset_audit.add_argument(
+        "--output", type=Path,
+        help="Optional report path under output/reports (default: timestamped report)",
+    )
+
     backup = subparsers.add_parser(
         "backup", help="Create and verify a source copy from a complete inventory"
     )
@@ -222,6 +235,57 @@ def main() -> int:
             print(json.dumps(report["summary"], indent=2))
             print(f"Inventory status: {report['status']}")
             print(f"Inventory report: {report_path}")
+            return 0 if report["status"] == "complete" else 1
+
+        if args.command == "audit-godot-assets":
+            report = audit_godot_project(
+                project_root=root, godot_project=args.godot_project
+            )
+            report_dir = root / "output" / "reports"
+            report_dir.mkdir(parents=True, exist_ok=True)
+            if args.output is None:
+                stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+                report_path = report_dir / f"godot-asset-audit-{stamp}.json"
+            else:
+                report_path = (
+                    args.output if args.output.is_absolute()
+                    else root / args.output
+                )
+            report_path = Path(os.path.abspath(report_path))
+            if not _inside(root, report_path) or report_dir not in report_path.parents:
+                raise GodotAssetAuditError(
+                    "Godot asset audit report must be under output/reports."
+                )
+            current = root
+            for part in report_path.relative_to(root).parts:
+                current = current / part
+                if current.is_symlink():
+                    raise GodotAssetAuditError(
+                        f"Audit report path must not traverse symbolic links: {current}"
+                    )
+            if report_path.exists():
+                raise GodotAssetAuditError(
+                    f"Refusing to overwrite existing audit report: {report_path}"
+                )
+            temporary_path = None
+            try:
+                with tempfile.NamedTemporaryFile(
+                    mode="w", encoding="utf-8", prefix=".godot-audit-",
+                    suffix=".tmp", dir=report_dir, delete=False
+                ) as stream:
+                    json.dump(report, stream, indent=2)
+                    stream.write("\n")
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                    temporary_path = Path(stream.name)
+                os.replace(temporary_path, report_path)
+            except Exception:
+                if temporary_path is not None:
+                    temporary_path.unlink(missing_ok=True)
+                raise
+            print(json.dumps(report["summary"], indent=2))
+            print(f"Godot asset audit status: {report['status']}")
+            print(f"Godot asset audit report: {report_path}")
             return 0 if report["status"] == "complete" else 1
 
         if args.command == "backup":
