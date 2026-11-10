@@ -24,6 +24,25 @@ def _inside(root: Path, path: Path) -> bool:
     return path == root or root in path.parents
 
 
+
+
+def _assert_no_symlink_components(root: Path, path: Path, label: str) -> None:
+    """Reject symlinks in every existing component without resolving them first."""
+    root = root.resolve()
+    candidate = Path(os.path.abspath(path))
+    try:
+        relative = candidate.relative_to(root)
+    except ValueError as exc:
+        raise BatchRenderError(f"{label} must remain inside project root: {candidate}") from exc
+
+    current = root
+    for part in relative.parts:
+        current = current / part
+        if current.is_symlink():
+            raise BatchRenderError(
+                f"{label} must not traverse symbolic links: {current}"
+            )
+
 def _safe_component(value: str, label: str) -> str:
     if not isinstance(value, str) or not value or value in {".", ".."}:
         raise BatchRenderError(f"{label} must be a single safe path component: {value!r}")
@@ -82,9 +101,9 @@ def _has_valid_frames(
 def _archive_output(root: Path, output_dir: Path, shot_id: str) -> str | None:
     if not output_dir.exists():
         return None
-    recovery_root = (root / "output" / "recovery").resolve()
-    if not _inside(root, recovery_root):
-        raise BatchRenderError("Recovery directory must remain inside project root.")
+    _assert_no_symlink_components(root, output_dir, "Shot output directory")
+    recovery_root = root / "output" / "recovery"
+    _assert_no_symlink_components(root, recovery_root, "Recovery directory")
     recovery_root.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     destination = recovery_root / f"{shot_id}-{stamp}"
@@ -121,11 +140,8 @@ def _manifest_location(root: Path, episode: dict[str, Any], mode: str) -> Path:
     episode_id = _safe_component(episode["episode_id"], "episode_id")
     if mode not in {"debug", "production"}:
         raise BatchRenderError(f"Unsupported render mode: {mode}")
-    path = (
-        root / "output" / "manifests" / f"{episode_id}-{mode}-render.json"
-    ).resolve()
-    if not _inside(root, path):
-        raise BatchRenderError("Batch manifest path must remain inside project root.")
+    path = root / "output" / "manifests" / f"{episode_id}-{mode}-render.json"
+    _assert_no_symlink_components(root, path, "Batch manifest path")
     return path
 
 
@@ -189,8 +205,7 @@ def load_completed_batch_manifest(
         if relative_output.is_absolute():
             raise BatchRenderError(f"Absolute shot output path is not allowed: {relative_output}")
         candidate_output = root / relative_output
-        if candidate_output.is_symlink():
-            raise BatchRenderError(f"Symbolic-link shot output is not allowed: {candidate_output}")
+        _assert_no_symlink_components(root, candidate_output, "Shot output directory")
         output_dir = candidate_output.resolve()
         if not _inside(root, output_dir):
             raise BatchRenderError(f"Shot output path escapes project root: {output_dir}")
@@ -231,10 +246,9 @@ def render_episode_batch(
             seen.add(shot_id)
             jobs.append((scene, shot, shot["end_frame"] - shot["start_frame"]))
 
-    render_root = (root / "output" / "renders" / episode_id / mode).resolve()
+    render_root = root / "output" / "renders" / episode_id / mode
+    _assert_no_symlink_components(root, render_root, "Batch render directory")
     manifest_path = _manifest_location(root, episode, mode)
-    if not _inside(root, render_root):
-        raise BatchRenderError("Batch render path must remain inside project root.")
 
     digest = _config_digest(episode)
     if manifest_path.exists():
@@ -273,9 +287,8 @@ def render_episode_batch(
     current_records: list[dict[str, Any]] = []
     for scene, shot, frame_count in jobs:
         shot_id = shot["shot_id"]
-        output_dir = (render_root / shot_id).resolve()
-        if not _inside(root, output_dir):
-            raise BatchRenderError(f"Shot output path escapes project root: {output_dir}")
+        output_dir = render_root / shot_id
+        _assert_no_symlink_components(root, output_dir, "Shot output directory")
         prior = previous.get(shot_id, {})
         record = {
             "scene_id": scene["scene_id"],
@@ -303,7 +316,8 @@ def render_episode_batch(
 
     for index, (scene, shot, frame_count) in enumerate(jobs):
         record = current_records[index]
-        output_dir = (root / record["output_dir"]).resolve()
+        output_dir = root / record["output_dir"]
+        _assert_no_symlink_components(root, output_dir, "Shot output directory")
 
         if record["status"] == "completed" and _has_valid_frames(
             output_dir, frame_count, record.get("frame_integrity")
