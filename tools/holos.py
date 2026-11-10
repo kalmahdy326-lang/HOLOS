@@ -242,6 +242,13 @@ def main() -> int:
                 project_root=root, godot_project=args.godot_project
             )
             report_dir = root / "output" / "reports"
+            current = root
+            for part in report_dir.relative_to(root).parts:
+                current = current / part
+                if current.is_symlink():
+                    raise GodotAssetAuditError(
+                        f"Audit report directory must not traverse symbolic links: {current}"
+                    )
             report_dir.mkdir(parents=True, exist_ok=True)
             if args.output is None:
                 stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
@@ -567,6 +574,7 @@ def main() -> int:
     except (
         BatchRenderError,
         EpisodeAssemblyError,
+        GodotAssetAuditError,
         InventoryError,
         BackupError,
         ConfigError,
