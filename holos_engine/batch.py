@@ -99,9 +99,9 @@ def _has_valid_frames(
 
 
 def _archive_output(root: Path, output_dir: Path, shot_id: str) -> str | None:
+    _assert_no_symlink_components(root, output_dir, "Shot output directory")
     if not output_dir.exists():
         return None
-    _assert_no_symlink_components(root, output_dir, "Shot output directory")
     recovery_root = root / "output" / "recovery"
     _assert_no_symlink_components(root, recovery_root, "Recovery directory")
     recovery_root.mkdir(parents=True, exist_ok=True)
@@ -266,13 +266,41 @@ def render_episode_batch(
                 "or render mode. Preserve it and use a new episode ID for a new run."
             )
         records = manifest.get("shots")
-        if not isinstance(records, list):
-            raise BatchRenderError("Existing batch manifest has an invalid shots list.")
-        previous = {
-            item.get("shot_id"): item
-            for item in records
-            if isinstance(item, dict) and isinstance(item.get("shot_id"), str)
-        }
+        expected_ids = [shot["shot_id"] for _, shot, _ in jobs]
+        if not isinstance(records, list) or len(records) != len(expected_ids):
+            raise BatchRenderError(
+                "Existing batch manifest shot list does not match the current episode."
+            )
+        recorded_ids: list[str] = []
+        previous = {}
+        for item in records:
+            if not isinstance(item, dict) or not isinstance(item.get("shot_id"), str):
+                raise BatchRenderError("Existing batch manifest contains a malformed shot record.")
+            shot_id = item["shot_id"]
+            if shot_id in previous:
+                raise BatchRenderError(f"Existing batch manifest has duplicate shot: {shot_id}")
+            recorded_ids.append(shot_id)
+            previous[shot_id] = item
+        if recorded_ids != expected_ids:
+            raise BatchRenderError(
+                "Existing batch manifest shot order does not match the current episode."
+            )
+        for shot_id, item in previous.items():
+            if item.get("status") not in {"pending", "running", "failed", "completed"}:
+                raise BatchRenderError(
+                    f"Existing batch manifest has invalid status for {shot_id}."
+                )
+            attempts = item.get("attempts", 0)
+            if not isinstance(attempts, int) or isinstance(attempts, bool) or attempts < 0:
+                raise BatchRenderError(
+                    f"Existing batch manifest has invalid attempt count for {shot_id}."
+                )
+            for field in ("errors", "recovered_outputs"):
+                value = item.get(field, [])
+                if not isinstance(value, list) or not all(isinstance(entry, str) for entry in value):
+                    raise BatchRenderError(
+                        f"Existing batch manifest has invalid {field} for {shot_id}."
+                    )
     else:
         previous = {}
         manifest = {
