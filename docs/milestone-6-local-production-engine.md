@@ -45,6 +45,7 @@ Do not rebuild completed milestones unnecessarily. Do not relocate source assets
 |---|---|
 | Python CLI and versioned episode configuration | Implemented; configuration and CLI tests run in CI |
 | Godot shot rendering | Implemented through the generic scene hook contract; real Godot offscreen render tests run in CI |
+| Godot resource dependency audit | Static audit of literal `res://` references, unsafe paths, and missing dependencies; UID/dynamic paths remain explicit limitations |
 | Debug/production separation | Separate output trees; optional debug overlay is gated to debug mode and ignored in production; verified by comparing actual Godot PNGs |
 | Ordered multi-shot rendering | Implemented with resumable manifest, per-frame SHA-256 integrity, manifest-structure validation, symlink-safe output/recovery paths, attempt/error history, and recovery archival |
 | Complete episode assembly | Implemented from verified per-shot folders; output is published only after FFprobe validation |
