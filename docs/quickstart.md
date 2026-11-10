@@ -39,6 +39,21 @@ files, or scan generated output, Git metadata, dependency folders, and caches.
 A custom report path is accepted only under \`output/reports/\`; existing reports
 are never overwritten. This is an inventory, not a backup.
 
+## Audit Godot resource dependencies
+
+Before integrating a character scene, run a static audit of literal `res://`
+references in the Godot project:
+
+```bash
+python tools/holos.py audit-godot-assets --godot-project godot
+```
+
+The audit reports resolved, missing, and unsafe resource paths, skips generated
+Godot caches, and refuses to follow symbolic links. It also lists `uid://`
+references separately because their resolution depends on Godot's resource UID
+database. Dynamically constructed paths are not statically resolvable; a clean
+report does not replace loading the project in Godot.
+
 ## Create and verify a source backup
 
 After reviewing the inventory report, create a verified copy:
