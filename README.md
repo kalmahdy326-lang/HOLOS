@@ -221,3 +221,16 @@ All development should preserve a clear distinction between completed work, work
 ---
 
 Build independently. Preserve what works. Verify what is claimed.
+
+11. HOLOS Project Hub and Research Programme
+
+HOLOS is maintained as one programme with two deliberately separated GitHub repositories:
+
+- **This repository — [HOLOS production hub](https://github.com/kalmahdy326-lang/HOLOS):** local-first animation and the Python/Godot/FFmpeg production engine.
+- **[HOLOS scientific research](https://github.com/kalmahdy326-lang/holos-reality):** the reality-first research charter, investigations INV-001 through INV-014, boundary-mathematics work, source register, reproducible experiments, tests and research workflows.
+
+The separation keeps scientific dependencies and evidentiary claims independent from animation production code. The shared [Project-space consolidation register](docs/project-space-consolidation-2026-11-11.md) records the cross-project architecture, manuscript status, source-package inventory, migration gates and the boundary between HOLOS and unrelated projects.
+
+The research programme's governing rule is: “We are not trying to make our theory right. We are trying to find out what is right.” No finite-dimensional quantum-information result is to be presented as a derivation of gravity or spacetime without a separate, independently reviewed bridge.
+
+The production repository's current implementation status and offline acceptance requirements remain in [Milestone 6 — Local Production Engine](docs/milestone-6-local-production-engine.md). The actual Khaled/Kevin source rigs and disconnected-network acceptance test remain unverified in this repository.
