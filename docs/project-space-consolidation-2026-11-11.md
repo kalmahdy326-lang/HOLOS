@@ -60,16 +60,16 @@ The isolated NumPy-only workflow in the research repository ran the actual demo 
 
 | Field | Recorded result |
 |---|---|
-| GitHub Actions run | [INV-005 cross-check #3](https://github.com/kalmahdy326-lang/holos-reality/actions/runs/43156656758) |
+| GitHub Actions run | [INV-005 cross-check #4](https://github.com/kalmahdy326-lang/holos-reality/actions/runs/43156925600) |
 | Tested commit | \`e9d6aa1a3da86a33a34c19fd288abb371265df8d\` |
 | Local Pacific date | 11 November 2026 |
-| UTC timestamp | 2026-11-12 04:43:40Z |
+| UTC timestamp | 2026-11-12 04:46:09Z |
 | Runner | Ubuntu 26.04.1 |
 | Python | 3.11.18 |
 | NumPy | 1.26.4 (only installed numerical dependency) |
 | Demo | Passed |
 | Unit tests | **19 passed; 0 failed** |
-| Reproducibility artifact | [inv005-crosscheck-python311-numpy1264](https://github.com/kalmahdy326-lang/holos-reality/actions/runs/43156656758/artifacts/13916525077) |
+| Reproducibility artifact | [inv005-crosscheck-python311-numpy1264](https://github.com/kalmahdy326-lang/holos-reality/actions/runs/43156925600/artifacts/13916118283) |
 
 Numerical landmarks:
 - Maximum one-/two-party marginal difference: \(1.11022302463\times10^{-16}\).
