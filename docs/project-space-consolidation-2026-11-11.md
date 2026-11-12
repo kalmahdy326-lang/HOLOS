@@ -196,3 +196,38 @@ If one of those projects later supplies a clearly defined HOLOS deliverable, imp
 ---
 
 **Governing principle:** preserve the record, separate the workstreams, and let evidence decide what survives.
+
+
+## Source recovery and first migration pass — 2026-11-12
+
+The Project-space Library has now been searched beyond the initial top-level inventory. Additional original records were located:
+
+### Research records
+
+- Master Research Charter v1.0, 5 November 2026 (DOCX, 93,836 bytes; 38 pages).
+- Weekly Research Intelligence Report 004, 8 November 2026 (DOCX, 19,252 bytes; 5 pages).
+- Technical Note 004-A (DOCX, 49,498 bytes; 8 pages), plus a native Markdown source (33,390 bytes).
+- Technical Investigation 001 — GfE Reconstruction (DOCX, 56,079 bytes; 15 pages) and its Jupyter notebook (12,046 bytes).
+- Technical Investigation 002 — Lorentzian Curvature Traces (DOCX, 48,647 bytes; 10 pages) and its Jupyter notebook (7,154 bytes), plus a PDF.
+- Weekly Research Intelligence Report 002 (PDF, 700,586 bytes).
+- Investigation 001 and 002 ZIP packages and the prior holos-reality repository ZIP.
+
+Readable text snapshots for the charter, Report 004, Technical Note 004-A, Investigations 001/002, and the complete screenplay have been committed to the appropriate repositories. The two Investigation 002 notebooks were text-compared and are identical; one canonical notebook is retained. The two Technical Note 004-A DOCX extractions are identical; one canonical extraction is retained. The native Markdown 004-A source is retained separately because it is a distinct source format.
+
+Research archive index: https://github.com/kalmahdy326-lang/holos-reality/tree/main/research/source_archive
+
+### Production records and visual references
+
+- Complete Episode 1 screenplay, “The Moon Has Anger Issues” (DOCX, 48,709 bytes; 25 pages); readable text extraction committed to the production repository.
+- Three paired Khaled/Kevin character-guide PNGs (2,013,102; 1,949,860; and 2,085,157 bytes) were visually inspected and inventoried. The artwork distinguishes Khaled (brown hair, blue eyes, senior researcher) from Kevin (red hair, blue eyes, junior investigator) and includes turnaround/expression views. These are reference sheets, not the actual Godot rigs.
+- Model Initialization ZIP (64,530 bytes) and Autonomous Execution ZIP (21,652 bytes) were located, but their contents could not be inspected because raw-byte materialization was not authorized in this session. No integration or contents claim is made.
+
+Production source archive index: https://github.com/kalmahdy326-lang/HOLOS/tree/main/docs/source_archive
+
+### Exact manuscript remains a separate unresolved source-recovery item
+
+The authoritative manuscript is still identified as the exact text supplied on 4 November 2026: Introduction “The Picture We Cannot See,” Chapter 1 “An Interesting Little Universe,” and Chapter 2 “The Man in the Mirror.” Chapter 3, “The Space Between Things,” had not yet been written. The current Library search surfaced later editorial/audit text that explicitly says the full manuscript text was not available there; it is not a substitute for the authoritative manuscript. Do not reconstruct, paraphrase, or silently merge it from summaries. The exact 4 November source conversation or original manuscript file must be recovered before an immutable manuscript snapshot can be committed.
+
+### Binary preservation boundary
+
+All GitHub imports in this pass are readable text extractions or notebook JSON, not original DOCX/PDF/PNG/ZIP binaries unless explicitly identified otherwise. No original-binary SHA-256 values are claimed. Original Library sources remain untouched. The remaining binary export/checksum and large-asset strategy are open tasks.
