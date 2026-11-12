@@ -248,3 +248,11 @@ The PowerPoint and final-conclusion Markdown were not successfully extracted in 
 A new evidence conflict was identified. An earlier milestone update says Khaled's functional rig was complete and Kevin's independent rig was next; the Milestone 6 document lists both rigs and a two-character prototype as existing work; the current character-rig integration contract says neither original rig scene/dependency set is present in this repository. The repository tree and 231-item Project-space Library inventory contain three visual reference sheets but no verified character scene or rig source files. The small initialization/autonomous ZIP packages could not be opened in this session, so they cannot be used as evidence that the rigs are present.
 
 The defensible status is therefore: visual references located; original rig files not yet recovered/verified; generic adapter CI only. Milestone 6 remains in progress. See [rig source reconciliation](rig-source-reconciliation-2026-11-12.md). Do not replace the missing source with newly generated substitute rigs.
+
+
+### CI after source migration — 2026-11-12
+
+- Research repository workflow #318 passed on commit `ebb629dcdbe00036294927224a2b85d0d8753f87`: https://github.com/kalmahdy326-lang/holos-reality/actions/runs/43159250862
+- Production repository workflow #129 passed on commit `0238b52f9c621ed921b01fe2af008b15d2220bb6`: https://github.com/kalmahdy326-lang/HOLOS/actions/runs/43159222683
+
+These are repository CI checks. They do not validate the archived research conclusions, original binary hashes, missing manuscript text, or actual character-rig integration.
