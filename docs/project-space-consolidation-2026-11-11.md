@@ -241,3 +241,10 @@ All GitHub imports in this pass are readable text extractions or notebook JSON, 
 - Prior `holos-reality-repository.zip` (57,237 bytes; located, contents not yet inspected).
 
 The PowerPoint and final-conclusion Markdown were not successfully extracted in this pass. They remain located but unimported; no content or current-status claims are inferred from their filenames.
+
+
+### Khaled/Kevin rig status reconciliation
+
+A new evidence conflict was identified. An earlier milestone update says Khaled's functional rig was complete and Kevin's independent rig was next; the Milestone 6 document lists both rigs and a two-character prototype as existing work; the current character-rig integration contract says neither original rig scene/dependency set is present in this repository. The repository tree and 231-item Project-space Library inventory contain three visual reference sheets but no verified character scene or rig source files. The small initialization/autonomous ZIP packages could not be opened in this session, so they cannot be used as evidence that the rigs are present.
+
+The defensible status is therefore: visual references located; original rig files not yet recovered/verified; generic adapter CI only. Milestone 6 remains in progress. See [rig source reconciliation](rig-source-reconciliation-2026-11-12.md). Do not replace the missing source with newly generated substitute rigs.
