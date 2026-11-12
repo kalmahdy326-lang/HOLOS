@@ -252,7 +252,7 @@ The defensible status is therefore: visual references located; original rig file
 
 ### CI after source migration — 2026-11-12
 
-- Research repository workflow #318 passed on commit `ebb629dcdbe00036294927224a2b85d0d8753f87`: https://github.com/kalmahdy326-lang/holos-reality/actions/runs/43159250862
-- Production repository workflow #129 passed on commit `0238b52f9c621ed921b01fe2af008b15d2220bb6`: https://github.com/kalmahdy326-lang/HOLOS/actions/runs/43159222683
+- Research repository workflow #319 and quantum-information regressions #57 passed on commit `668a437a32189ccaaaac38495fce2a3dce14a16a`: https://github.com/kalmahdy326-lang/holos-reality/actions/runs/43159374124 and https://github.com/kalmahdy326-lang/holos-reality/actions/runs/43159374140
+- Production repository workflow #130 passed on commit `9fac0e12343e52282ba8a2848a458c95e14ae3a9`: https://github.com/kalmahdy326-lang/HOLOS/actions/runs/43159370351
 
 These are repository CI checks. They do not validate the archived research conclusions, original binary hashes, missing manuscript text, or actual character-rig integration.
