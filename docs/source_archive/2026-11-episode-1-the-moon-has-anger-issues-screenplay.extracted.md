@@ -1,7 +1,7 @@
 ---
 title: "Episode 1 — The Moon Has Anger Issues (Complete Screenplay)"
 source_filename: "HOLOS_Episode_1_The_Moon_Has_Anger_Issues_Complete_Screenplay.docx"
-source_date: "2026-11-2026"
+source_date: "not stated in source metadata"
 source_size_bytes: 48709
 project_author: "Khaled AL-MAHDY"
 record_type: "text extraction; original binary remains in Project-space Library"
@@ -10,7 +10,7 @@ record_type: "text extraction; original binary remains in Project-space Library"
 # Episode 1 — The Moon Has Anger Issues (Complete Screenplay)
 
 **Original source:** HOLOS_Episode_1_The_Moon_Has_Anger_Issues_Complete_Screenplay.docx  
-**Document date:** 2026-11-2026  
+**Document date:** Not stated in the extracted title page  
 **Original size:** 48709 bytes  
 **Extraction note:** Readable text and page markers are preserved. This is not the original DOCX/PDF binary and does not guarantee preservation of formatting, embedded media, comments or tracked changes.
 
