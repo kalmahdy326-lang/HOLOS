@@ -231,3 +231,13 @@ The authoritative manuscript is still identified as the exact text supplied on 4
 ### Binary preservation boundary
 
 All GitHub imports in this pass are readable text extractions or notebook JSON, not original DOCX/PDF/PNG/ZIP binaries unless explicitly identified otherwise. No original-binary SHA-256 values are claimed. Original Library sources remain untouched. The remaining binary export/checksum and large-asset strategy are open tasks.
+
+
+### Additional historical HOLOS artifacts located
+
+- `HOLOS_Theory_of_Nested_Emergence_Presentation.pptx` (537,980 bytes; 21-slide historical presentation, identified in the Library). It belongs in the historical concept archive and must not replace the current reality-first research charter.
+- `holos_final_conclusion.md` (23,030 bytes; located but not yet reviewed or designated current).
+- `HOLOS — Weekly Research Intelligence Report 002` (PDF, 700,586 bytes; located, text extraction not yet available).
+- Prior `holos-reality-repository.zip` (57,237 bytes; located, contents not yet inspected).
+
+The PowerPoint and final-conclusion Markdown were not successfully extracted in this pass. They remain located but unimported; no content or current-status claims are inferred from their filenames.
