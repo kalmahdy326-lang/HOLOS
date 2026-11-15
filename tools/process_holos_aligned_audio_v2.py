@@ -210,12 +210,14 @@ def write_journal(journal: Path, payload: dict[str, Any]) -> None:
 
 
 def read_journal(journal: Path) -> dict[str, Any] | None:
+    if not journal.exists():
+        return None
     try:
-        payload = json.loads(journal.read_text())
-    except (OSError, ValueError):
-        return None
+        payload = json.loads(journal.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise RuntimeError(f"Commit journal exists but is invalid; refusing to continue: {journal}") from exc
     if not isinstance(payload, dict) or payload.get("version") != JOURNAL_VERSION:
-        return None
+        raise RuntimeError(f"Commit journal version/shape is invalid; refusing to continue: {journal}")
     return payload
 
 
@@ -236,6 +238,26 @@ def recover_interrupted_promotion(
     payload = read_journal(journal)
     if payload is None:
         return None
+    expected = {output_wav.resolve(), output_timeline.resolve()}
+    entries = payload.get("destinations")
+    staged_entries = payload.get("staged")
+    if not isinstance(entries, list) or len(entries) != 2 or not isinstance(staged_entries, list) or len(staged_entries) != 2:
+        raise RuntimeError(f"Invalid commit journal structure; preserving it for inspection: {journal}")
+    seen: set[Path] = set()
+    for entry in entries:
+        if not isinstance(entry, dict) or not isinstance(entry.get("existed"), bool):
+            raise RuntimeError(f"Invalid journal destination; preserving it: {journal}")
+        try:
+            destination = Path(entry["path"]).resolve()
+            backup = Path(entry["backup"]).resolve()
+        except (KeyError, TypeError, OSError) as exc:
+            raise RuntimeError(f"Invalid journal path; preserving it: {journal}") from exc
+        if destination not in expected or destination in seen or backup == destination or backup in expected:
+            raise RuntimeError(f"Journal paths do not match requested outputs; preserving it: {journal}")
+        seen.add(destination)
+    staged_paths = [Path(item).resolve() for item in staged_entries if isinstance(item, str)]
+    if seen != expected or len(staged_paths) != 2 or len(set(staged_paths)) != 2 or any(p in expected for p in staged_paths):
+        raise RuntimeError(f"Journal paths do not match requested outputs; preserving it: {journal}")
     summary: dict[str, list[str]] = {"restored": [], "removed": [], "left": []}
     try:
         for entry in payload.get("destinations", []):
@@ -312,7 +334,22 @@ def promote_outputs(
         for destination in destinations:
             if destination.exists():
                 backup = backup_dir / (destination.name + ".bak")
-                shutil.copy2(destination, backup)
+                backup_dir.mkdir(parents=True, exist_ok=True)
+                temp_backup = backup.with_name(backup.name + ".tmp")
+                try:
+                    temp_backup.unlink()
+                except FileNotFoundError:
+                    pass
+                shutil.copy2(destination, temp_backup)
+                with temp_backup.open("rb") as backup_stream:
+                    os.fsync(backup_stream.fileno())
+                os.replace(temp_backup, backup)
+                if os.name != "nt":
+                    backup_fd = os.open(backup_dir, os.O_RDONLY)
+                    try:
+                        os.fsync(backup_fd)
+                    finally:
+                        os.close(backup_fd)
                 backups[destination] = backup
             else:
                 backups[destination] = None
