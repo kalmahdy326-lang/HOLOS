@@ -69,4 +69,3 @@ The four-turn exchange passed the following checks:
 Internal phoneme intervals remain dictionary-based subdivisions inside acoustically aligned word intervals; they are not dedicated phoneme-aligner output.
 
 Godot integration was not performed and no production project files were changed.
-
