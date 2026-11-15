@@ -234,3 +234,16 @@ The separation keeps scientific dependencies and evidentiary claims independent 
 The research programme's governing rule is: “We are not trying to make our theory right. We are trying to find out what is right.” No finite-dimensional quantum-information result is to be presented as a derivation of gravity or spacetime without a separate, independently reviewed bridge.
 
 The production repository's current implementation status and offline acceptance requirements remain in [Milestone 6 — Local Production Engine](docs/milestone-6-local-production-engine.md). The actual Khaled/Kevin source rigs and disconnected-network acceptance test remain unverified in this repository.
+
+
+12. Episode 1 Preproduction Package
+
+The Episode 1 source extraction has now been translated into a structured **draft** body storyboard covering all seven scenes and the post-credit scene. This is previsualization planning, not an approved final edit.
+
+- [Episode 1 body storyboard and production breakdown](docs/episode1-body-storyboard-draft.md) — 65 proposed shots with camera coverage, action, dialogue/sound anchors, continuity and asset requirements.
+- [Machine-readable storyboard breakdown](config/episode1/episode1_storyboard_breakdown_v1.json) — versioned scene/shot structure for future tooling.
+- [Storyboard JSON Schema](config/schemas/holos-storyboard-breakdown-v1.schema.json) — structural contract for the planning data.
+- [Screenplay provenance and editorial gates](docs/episode1-screenplay-provenance-and-editorial-gates.md) — records what is verified and what must be compared with the original DOCX.
+- [Opening and credits storyboard](storyboard.md) — approved bookend direction, now linked to the body draft.
+
+The extracted screenplay is a consolidated chat-derived working copy and has not been certified verbatim against the original DOCX. The storyboard therefore remains DRAFT. Full-episode audio, the authoritative review WAV, original Khaled/Kevin rigs, environment assets, shot durations, delivery settings and final credits remain subject to source handoff and approval. The structured planning data is contract-tested in the Python test suite.
