@@ -98,6 +98,43 @@ SUPPORTED_VISEMES = {"rest", "closed", "open", "wide", "round", "teeth"}
 VALID_SPEAKERS = {"KEVIN", "KHALED"}
 # Events may not exceed the measured audio duration by more than this epsilon.
 DURATION_EPSILON_SECONDS = 0.05
+
+# Keep the vocabulary in lockstep with godot/holos_timeline.gd. These are
+# semantic viseme labels; a character-specific rig maps them to real controls.
+VISEME_TO_GODOT = {name: name for name in ("rest", "closed", "open", "wide", "round", "teeth")}
+SPEAKER_NORMALIZE = {"KEVIN": "KEVIN", "KHALED": "KHALED"}
+
+
+def build_godot_timeline(
+    events: list[dict[str, Any]],
+    audio_duration: float | None = None,
+    version: int = 1,
+) -> dict[str, Any]:
+    """Serialize validated phoneme events for the existing HolosTimeline consumer.
+
+    Events remain flat because the Godot consumer evaluates phoneme intervals;
+    grouping turns would discard the per-phoneme animation timing.
+    """
+    if version != 1:
+        raise ValueError(f"Unsupported Godot timeline schema version: {version}")
+    converted: list[dict[str, Any]] = []
+    previous_start = -1.0
+    for index, event in enumerate(events):
+        speaker = SPEAKER_NORMALIZE.get(str(event.get("speaker", "")).upper())
+        viseme = VISEME_TO_GODOT.get(str(event.get("viseme", "")).lower())
+        try:
+            start, end = float(event["start"]), float(event["end"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError(f"Invalid event timing at index {index}") from exc
+        if speaker is None or viseme is None or not math.isfinite(start) or not math.isfinite(end):
+            raise ValueError(f"Unsupported speaker, viseme, or timing at event {index}")
+        if start < previous_start - 1e-6 or start < 0 or end <= start:
+            raise ValueError(f"Invalid event ordering or duration at index {index}")
+        if audio_duration is not None and end > audio_duration + DURATION_EPSILON_SECONDS:
+            raise ValueError(f"Event {index} exceeds audio duration")
+        converted.append({**event, "speaker": speaker, "viseme": viseme})
+        previous_start = start
+    return {"schema_version": version, "events": converted}
 JOURNAL_SUFFIX = ".commit-journal.json"
 JOURNAL_VERSION = 1
 
@@ -165,20 +202,41 @@ def journal_path_for(output_wav: Path) -> Path:
     return output_wav.with_name(output_wav.name + JOURNAL_SUFFIX)
 
 
+def _fsync_file(path: Path) -> None:
+    with path.open("r+b") as stream:
+        os.fsync(stream.fileno())
+
+
+def _fsync_directory(path: Path) -> None:
+    if os.name == "nt":
+        return
+    fd = os.open(path, os.O_RDONLY)
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+
+
 def write_journal(journal: Path, payload: dict[str, Any]) -> None:
     """Write the journal atomically: temp file + os.replace."""
     temp = journal.with_name(journal.name + ".tmp")
-    temp.write_text(json.dumps(payload, indent=2) + "\n")
+    with temp.open("w", encoding="utf-8", newline="\n") as stream:
+        stream.write(json.dumps(payload, indent=2) + "\n")
+        stream.flush()
+        os.fsync(stream.fileno())
     os.replace(temp, journal)
+    _fsync_directory(journal.parent)
 
 
 def read_journal(journal: Path) -> dict[str, Any] | None:
+    if not journal.exists():
+        return None
     try:
-        payload = json.loads(journal.read_text())
-    except (OSError, ValueError):
-        return None
+        payload = json.loads(journal.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise RuntimeError(f"Commit journal exists but is invalid; refusing to continue: {journal}") from exc
     if not isinstance(payload, dict) or payload.get("version") != JOURNAL_VERSION:
-        return None
+        raise RuntimeError(f"Commit journal version/shape is invalid; refusing to continue: {journal}")
     return payload
 
 
@@ -199,6 +257,36 @@ def recover_interrupted_promotion(
     payload = read_journal(journal)
     if payload is None:
         return None
+    expected = {output_wav.resolve(), output_timeline.resolve()}
+    entries = payload.get("destinations")
+    staged_entries = payload.get("staged")
+    if not isinstance(entries, list) or len(entries) != 2 or not isinstance(staged_entries, list) or len(staged_entries) != 2:
+        raise RuntimeError(f"Invalid commit journal structure; preserving it for inspection: {journal}")
+    seen: set[Path] = set()
+    for entry in entries:
+        if not isinstance(entry, dict) or not isinstance(entry.get("existed"), bool):
+            raise RuntimeError(f"Invalid journal destination; preserving it: {journal}")
+        try:
+            destination = Path(entry["path"]).resolve()
+            backup = Path(entry["backup"]).resolve()
+        except (KeyError, TypeError, OSError) as exc:
+            raise RuntimeError(f"Invalid journal path; preserving it: {journal}") from exc
+        if destination not in expected or destination in seen or backup == destination or backup in expected:
+            raise RuntimeError(f"Journal paths do not match requested outputs; preserving it: {journal}")
+        seen.add(destination)
+    staged_paths = [Path(item).resolve() for item in staged_entries if isinstance(item, str)]
+    expected_staged = {
+        output_wav.with_name(output_wav.name + ".staged").resolve(),
+        output_timeline.with_name(output_timeline.name + ".staged").resolve(),
+    }
+    expected_backup_names = {p.name + ".bak" for p in expected}
+    backup_paths = [Path(entry["backup"]).resolve() for entry in entries]
+    if (seen != expected or set(staged_paths) != expected_staged
+            or len(set(backup_paths)) != 2
+            or any(p.name not in expected_backup_names
+                   or not p.parent.is_relative_to(output_wav.parent.resolve())
+                   for p in backup_paths)):
+        raise RuntimeError(f"Journal paths do not match requested outputs; preserving it: {journal}")
     summary: dict[str, list[str]] = {"restored": [], "removed": [], "left": []}
     try:
         for entry in payload.get("destinations", []):
@@ -258,6 +346,11 @@ def promote_outputs(
     backup_dir.mkdir(parents=True, exist_ok=True)
     journal = journal_path_for(output_wav)
 
+    # Ensure staged bytes are durable before recording a recoverable transaction.
+    for source in staged:
+        _fsync_file(source)
+        _fsync_directory(source.parent)
+
     # Journal first: it records the pre-state before anything is modified.
     write_journal(journal, {
         "version": JOURNAL_VERSION,
@@ -275,7 +368,21 @@ def promote_outputs(
         for destination in destinations:
             if destination.exists():
                 backup = backup_dir / (destination.name + ".bak")
-                shutil.copy2(destination, backup)
+                backup_dir.mkdir(parents=True, exist_ok=True)
+                temp_backup = backup.with_name(backup.name + ".tmp")
+                try:
+                    temp_backup.unlink()
+                except FileNotFoundError:
+                    pass
+                shutil.copy2(destination, temp_backup)
+                _fsync_file(temp_backup)
+                os.replace(temp_backup, backup)
+                if os.name != "nt":
+                    backup_fd = os.open(backup_dir, os.O_RDONLY)
+                    try:
+                        os.fsync(backup_fd)
+                    finally:
+                        os.close(backup_fd)
                 backups[destination] = backup
             else:
                 backups[destination] = None
@@ -283,6 +390,7 @@ def promote_outputs(
             fault_hook("after_backups")
         for index, (source, destination) in enumerate(zip(staged, destinations)):
             os.replace(source, destination)
+            _fsync_directory(destination.parent)
             committed.append(destination)
             if fault_hook:
                 fault_hook(f"after_commit:{index}")
@@ -314,8 +422,11 @@ def promote_outputs(
             "Output promotion failed; rollback completed and the commit journal was removed. "
             "Previously existing outputs were restored and no new partial outputs remain."
         ) from exc
+    # The journal is the recovery authority until both replacements are durable.
     replaced = [str(d) for d in destinations if backups.get(d) is not None]
     created = [str(d) for d in destinations if backups.get(d) is None]
+    journal.unlink()
+    _fsync_directory(journal.parent)
     return {"replaced": replaced, "created": created}
 
 
@@ -602,7 +713,8 @@ def build_output_document(
         "input_audio_reference": str(input_wav.resolve()),
         "approved_transcript": [{"speaker": s, "text": t} for s, t in APPROVED_TURNS],
         "source_sha256": sha256(input_wav.resolve()),
-        "events": events,
+        "schema_version": 1,
+        "events": build_godot_timeline(events)["events"],
         "limitations": [
             "WhisperX supplies acoustic word/character timing here, not dedicated phoneme timing.",
             "Internal phoneme boundaries are dictionary-based subdivisions inside aligned word intervals; they are estimates, not acoustically verified phoneme timings.",
@@ -659,20 +771,45 @@ def self_test() -> int:
             check(name, True)
 
     print("Self-test 3: timeline document validation")
-    base_event = {"speaker": "KEVIN", "start": 0.0, "end": 0.1, "phoneme": "T", "viseme": "wide", "source_word": "Tell"}
     def doc(events: list[dict[str, Any]]) -> dict[str, Any]:
         return {"events": events}
+    valid_fixture = []
+    for index, token in enumerate(approved_tokens()):
+        valid_fixture.append({
+            "speaker": "KEVIN" if index < 10 or 15 <= index < 23 else "KHALED",
+            "start": index * 0.1, "end": index * 0.1 + 0.05,
+            "phoneme": "T", "viseme": "wide", "source_word": token,
+        })
     try:
-        validate_timeline_document(doc([base_event]), 15.0)
-        check("valid single event accepted", True)
+        validate_timeline_document(doc(valid_fixture), 15.0)
+        check("complete valid approved timeline accepted", True)
     except RuntimeError as exc:
-        check("valid single event accepted", False, str(exc)[:80])
+        check("complete valid approved timeline accepted", False, str(exc)[:80])
+    converted = build_godot_timeline([
+        {"speaker": "kevin", "start": 0.0, "end": 0.1, "phoneme": "SIL", "viseme": "rest", "source_word": None},
+        {"speaker": "KHALED", "start": 0.2, "end": 0.3, "phoneme": "M", "viseme": "closed", "source_word": "me"},
+    ], audio_duration=1.0)
+    check("Godot conversion keeps flat event schema and normalizes speakers",
+          converted["events"][0]["speaker"] == "KEVIN" and converted["events"][1]["speaker"] == "KHALED")
+    check("silence remains rest in Godot vocabulary",
+          converted["events"][0]["phoneme"] == "SIL" and converted["events"][0]["viseme"] == "rest")
+    for bad_event in [
+        {"speaker": "NARRATOR", "start": 0.0, "end": 0.1, "viseme": "open"},
+        {"speaker": "KEVIN", "start": 0.0, "end": 0.1, "viseme": "jawdrop"},
+        {"speaker": "KEVIN", "start": 0.0, "end": 1.1, "viseme": "open"},
+    ]:
+        try:
+            build_godot_timeline([bad_event], audio_duration=1.0)
+            check("unknown or out-of-range Godot values rejected", False)
+        except ValueError:
+            check("unknown or out-of-range Godot values rejected", True)
+
     for name, events in [
-        ("out-of-order rejected", [dict(base_event, start=0.2, end=0.3), dict(base_event, start=0.1, end=0.15)]),
-        ("bad viseme rejected", [dict(base_event, viseme="jawdrop")]),
-        ("non-positive duration rejected", [dict(base_event, start=0.1, end=0.1)]),
-        ("SIL not rest rejected", [dict(base_event, phoneme="SIL", viseme="open", source_word=None)]),
-        ("event beyond audio duration rejected", [dict(base_event, start=15.0, end=15.2)]),
+        ("out-of-order rejected", [dict(valid_fixture[0], start=0.2, end=0.3), dict(valid_fixture[0], start=0.1, end=0.15)]),
+        ("bad viseme rejected", [dict(valid_fixture[0], viseme="jawdrop")]),
+        ("non-positive duration rejected", [dict(valid_fixture[0], start=0.1, end=0.1)]),
+        ("SIL not rest rejected", [dict(valid_fixture[0], phoneme="SIL", viseme="open", source_word=None)]),
+        ("event beyond audio duration rejected", [dict(valid_fixture[0], start=15.0, end=15.2)]),
     ]:
         try:
             validate_timeline_document(doc(events), 15.0)
@@ -700,16 +837,19 @@ def self_test() -> int:
         staged_wav, staged_json = tmp / "out.wav.staged", tmp / "out.json.staged"
         staged_wav.write_bytes(b"NEW-WAV")
         staged_json.write_bytes(b"{}")
-        out_wav.write_bytes(b"OLD-WAV")  # pre-existing output that must be preserved on failure
-        out_json.mkdir()  # force the SECOND commit to fail, after the first succeeded
+        out_wav.write_bytes(b"OLD-WAV")
+        out_json.write_bytes(b"OLD-JSON")
+        def fail_second_commit(checkpoint: str) -> None:
+            if checkpoint == "after_commit:0":
+                raise OSError("injected second-commit failure")
         try:
-            promote_outputs(staged_wav, staged_json, out_wav, out_json, tmp / "backup")
+            promote_outputs(staged_wav, staged_json, out_wav, out_json, tmp / "backup", fault_hook=fail_second_commit)
             check("promotion failure detected", False, "promotion unexpectedly succeeded")
         except RuntimeError as exc:
             check("promotion failure detected", True)
             check("first-committed WAV rolled back to previous content", out_wav.read_bytes() == b"OLD-WAV")
             check("no partial new WAV left staged", not staged_wav.exists())
-            check("no partial new JSON committed", out_json.is_dir())
+            check("timeline restored to previous content", out_json.read_bytes() == b"OLD-JSON")
             check("commit journal removed after successful rollback", not journal_path_for(out_wav).exists())
             check("failure message reports rollback", "rollback completed" in str(exc))
 
@@ -721,9 +861,11 @@ def self_test() -> int:
         staged_wav.write_bytes(b"NEW-WAV")
         staged_json.write_bytes(b"{}")
         out_wav.write_bytes(b"OLD-WAV")
-        out_json.mkdir()  # second commit fails, then the injected rollback fault fires
+        out_json.write_bytes(b"OLD-JSON")
 
         def hook(checkpoint: str) -> None:
+            if checkpoint == "after_commit:0":
+                raise OSError("injected second-commit failure")
             if checkpoint == "rollback:start":
                 raise ValueError("injected rollback fault (test)")
 
@@ -800,6 +942,45 @@ def self_test() -> int:
             check("newly committed WAV removed by recovery", not out_wav.exists())
             check("timeline not created", not out_json.exists())
             check("journal deleted after recovery", not journal_path_for(out_wav).exists())
+
+    print("Self-test 9: invalid recovery journals fail closed")
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td)
+        out_wav, out_json = tmp / "out.wav", tmp / "out.json"
+        out_wav.write_bytes(b"KEEP-WAV")
+        out_json.write_bytes(b"KEEP-JSON")
+        journal = journal_path_for(out_wav)
+        journal.write_text("{not-json", encoding="utf-8")
+        try:
+            recover_interrupted_promotion(out_wav, out_json)
+            check("malformed journal rejected", False)
+        except RuntimeError:
+            check("malformed journal rejected", True)
+        check("malformed journal preserved", journal.exists())
+        check("destinations untouched on invalid journal",
+              out_wav.read_bytes() == b"KEEP-WAV" and out_json.read_bytes() == b"KEEP-JSON")
+
+    print("Self-test 10: incomplete backup temp cannot replace original")
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td)
+        out_wav, out_json = tmp / "out.wav", tmp / "out.json"
+        backup_dir = tmp / "backup"
+        backup_dir.mkdir()
+        out_wav.write_bytes(b"KEEP-WAV")
+        out_json.write_bytes(b"KEEP-JSON")
+        (backup_dir / "out.wav.bak.tmp").write_bytes(b"PARTIAL")
+        write_journal(journal_path_for(out_wav), {
+            "version": JOURNAL_VERSION,
+            "destinations": [
+                {"path": str(out_wav), "existed": True, "backup": str(backup_dir / "out.wav.bak")},
+                {"path": str(out_json), "existed": True, "backup": str(backup_dir / "out.json.bak")},
+            ],
+            "staged": [str(out_wav.with_name("out.wav.staged")), str(out_json.with_name("out.json.staged"))],
+        })
+        summary = recover_interrupted_promotion(out_wav, out_json)
+        check("partial temporary backup ignored", summary is not None and not summary["restored"])
+        check("original files remain intact",
+              out_wav.read_bytes() == b"KEEP-WAV" and out_json.read_bytes() == b"KEEP-JSON")
 
     print()
     if failures:

@@ -53,7 +53,7 @@ func _run() -> void:
 
 
 func _test_valid_timeline() -> void:
-	var timeline = HolosTimelineScript.from_dictionary({"events": _base_events()}, 3.0)
+	var timeline = HolosTimelineScript.from_dictionary({"schema_version": 1, "events": _base_events()}, 3.0)
 	_check("valid timeline accepted", timeline.is_valid(), timeline.validation_error)
 	_check("all events retained", timeline.events.size() == 10, str(timeline.events.size()))
 
@@ -61,6 +61,10 @@ func _test_valid_timeline() -> void:
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	file.store_string(JSON.stringify({"events": _base_events()}))
 	file.close()
+	var versioned = HolosTimelineScript.from_dictionary({"schema_version": 1, "events": _base_events()}, 3.0)
+	_check("versioned processor output accepted", versioned.is_valid(), versioned.validation_error)
+	_check("unsupported schema version rejected",
+		not HolosTimelineScript.from_dictionary({"schema_version": 99, "events": _base_events()}).is_valid())
 	var loaded = HolosTimelineScript.from_file(path, 3.0)
 	_check("timeline loads from file", loaded.is_valid(), loaded.validation_error)
 	_check("missing file reported", not HolosTimelineScript.from_file("user://does_not_exist.json").is_valid())

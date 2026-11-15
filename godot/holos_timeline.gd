@@ -58,6 +58,9 @@ func is_valid() -> bool:
 
 
 func _load(data: Dictionary, audio_duration: float) -> void:
+	if data.has("schema_version") and data.get("schema_version") != 1:
+		validation_error = "Timeline validation failed: unsupported schema_version"
+		return
 	var raw_events = data.get("events", [])
 	if typeof(raw_events) != TYPE_ARRAY or (raw_events as Array).is_empty():
 		validation_error = "Timeline validation failed: no events"

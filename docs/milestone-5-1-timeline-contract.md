@@ -10,6 +10,22 @@
 `tools/process_holos_aligned_audio_v2.py` and evaluates it deterministically.
 `godot/test_scenes/timeline_selftest.gd` is its headless self-test.
 
+## Processor output compatibility
+
+The processor emits the existing flat event schema with a `schema_version`
+field. `build_godot_timeline()` normalizes speaker/viseme values against the
+consumer's accepted vocabulary and checks chronology, positive durations and
+the optional measured audio duration. It keeps events flat so phoneme timing
+is retained. Silence remains an explicit `SIL` event with the `rest` viseme;
+unrepresented acoustic gaps also evaluate to rest.
+
+The consumer does not own audio playback. Offline rendering derives time from
+the requested frame index and FPS. Interactive playback must pass the same
+audio transport position to each character adapter; this repository has no
+integrated audio player or character rig adapter yet. Viseme labels are
+semantic values only: no blend-shape names or mesh controls are assumed to
+exist. Those mappings require inspection of each original rig.
+
 ## Deterministic evaluation rule
 
 `HolosTimeline.state_at(time_seconds, speaker)` is a pure function of time.
