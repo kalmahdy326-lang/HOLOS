@@ -116,27 +116,15 @@ Inter-turn gaps measured from aligned word boundaries:
 - Speaker order is consistent with Kevin, Khaled, Kevin, Khaled.
 - The full exchange is substantially longer than the defective 15-second benchmark because the complete fourth line is present.
 
-### Pending approval
+### User decision
 
-WhisperX transcribed the two occurrences of the approved word as:
+WhisperX transcribed the two occurrences as `kilometers`; the locked transcript uses `kilometres`. The user auditioned the review segment and approved the pronunciation. The approved transcript remains unchanged, and the two ASR spellings are recorded as explicit normalization metadata.
 
-```text
-kilometers
-```
-
-The locked repository transcript uses:
-
-```text
-kilometres
-```
-
-This is not sufficient evidence by itself that the spoken performance is wrong: automatic speech recognition can normalize or misrecognize the distinction. The audio should be auditioned or the pronunciation should be explicitly approved before strict transcript acceptance.
-
-The timing report therefore does **not** silently rewrite the locked transcript or declare the final audio accepted. It records the ASR observation and preserves the approved `kilometres` wording as the production transcript.
+This approval resolves the pronunciation review. It does not validate the dictionary-based internal phoneme subdivisions as measured phoneme boundaries, nor does it establish Godot runtime or visual lip-sync acceptance.
 
 ## Extraction recommendation
 
-If the pronunciation review approves the audio as matching the intended `kilometres` pronunciation, use:
+The user approved the pronunciation after auditioning the review segment. For the reviewed exchange, use the approved `kilometres` transcript and the recorded word-alignment timestamps:
 
 ```text
 Input:  /home/ubuntu/HOLOS_Episode_1_The_Moon_Has_Anger_Issues_FULL.mp3
@@ -146,7 +134,7 @@ End:    16.816 seconds
 
 Retain at least 50–100 ms of context around the cut for auditioning, then perform a zero-crossing or short equal-power edit if a standalone WAV is required. Do not overwrite the original MP3.
 
-If the audio is confirmed to say the US form `kilometers` and the approved script requires the UK form `kilometres`, reject this source for strict production acceptance and record replacement takes rather than changing the approved script silently.
+The ASR spelling remains a documented normalization only; it does not alter the approved dialogue.
 
 ## Status
 
@@ -155,7 +143,7 @@ Exchange located: YES
 Four turns complete: YES
 Leading But absent: YES
 Final line complete: YES
-Strict transcript acceptance: PENDING kilometres/kilometers pronunciation review
-Corrected benchmark WAV generated: NO
+Transcript pronunciation review: APPROVED by user
+Four-turn review WAV generated: YES (two provenance variants; hashes differ)
 Godot integration performed: NO
 ```
