@@ -80,17 +80,17 @@ The source hash and measured source duration are required. To create a review-re
 Example shape (replace placeholders with the selected, verified files and hashes):
 
 ```text
-python tools/build_holos_full_episode_timeline.py
-  --alignment handoffs/milestone-5-1-2026-11-15/HOLOS_FullEpisode_WhisperX_Aligned.json
-  --source-mp3 <verified-source-mp3-path>
-  --expected-source-sha256 <64-character-sha256>
-  --audio-duration-seconds 914.880
-  --absolute-output <new-absolute-timeline-path>
-  --review-wav <selected-review-wav-path>
-  --expected-review-wav-sha256 <64-character-sha256>
-  --review-offset-seconds 0.091
-  --relative-output <new-review-relative-timeline-path>
-  --manifest-output <new-manifest-path>
+python tools/build_holos_full_episode_timeline.py \
+  --alignment handoffs/milestone-5-1-2026-11-15/HOLOS_FullEpisode_WhisperX_Aligned.json \
+  --source-mp3 "<verified-source-mp3-path>" \
+  --expected-source-sha256 "<64-character-sha256>" \
+  --audio-duration-seconds 914.880 \
+  --absolute-output "<new-absolute-timeline-path>" \
+  --review-wav "<selected-review-wav-path>" \
+  --expected-review-wav-sha256 "<64-character-sha256>" \
+  --review-offset-seconds 0.091 \
+  --relative-output "<new-review-relative-timeline-path>" \
+  --manifest-output "<new-manifest-path>"
 ```
 
 The builder refuses to replace existing outputs. Install the repository's alignment requirements, including `pronouncing`, before generating phoneme-labelled estimates. Internal phoneme subdivisions remain estimates; this builder does not provide dedicated phoneme alignment.
