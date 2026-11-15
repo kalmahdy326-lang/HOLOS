@@ -678,8 +678,8 @@ def build_output_document(
         "input_audio_reference": str(input_wav.resolve()),
         "approved_transcript": [{"speaker": s, "text": t} for s, t in APPROVED_TURNS],
         "source_sha256": sha256(input_wav.resolve()),
-        "events": events,
-        "godot_timeline": build_godot_timeline(events),
+        "schema_version": 1,
+        "events": build_godot_timeline(events)["events"],
         "limitations": [
             "WhisperX supplies acoustic word/character timing here, not dedicated phoneme timing.",
             "Internal phoneme boundaries are dictionary-based subdivisions inside aligned word intervals; they are estimates, not acoustically verified phoneme timings.",
