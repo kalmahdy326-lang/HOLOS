@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import sys
 import unittest
@@ -51,8 +52,8 @@ class HandoffTimelineBuilderTests(unittest.TestCase):
     def test_handoff_timelines_validate_against_processor_contract(self) -> None:
         absolute = copy.deepcopy(self.absolute)
         relative = copy.deepcopy(self.relative)
-        absolute["schema_version"] = 1
-        relative["schema_version"] = 1
+        self.assertEqual(absolute.get("schema_version"), 1)
+        self.assertEqual(relative.get("schema_version"), 1)
         absolute_counts = builder.validate_event_contract(absolute, 914.880)
         relative_counts = builder.validate_event_contract(relative, 16.825)
         self.assertEqual(absolute_counts["event_count"], 189)
@@ -74,6 +75,17 @@ class HandoffTimelineBuilderTests(unittest.TestCase):
         self.assertNotEqual(
             self.manifest["review_wav_sha256"],
             "e9d8a3a88f310b1558a884fcec87f8cf16741019ddbcede2a2db2cc2db74194f",
+        )
+
+    def test_manifest_hashes_both_versioned_timeline_variants(self) -> None:
+        self.assertEqual(self.manifest["relative_timeline_offset_seconds"], 0.091)
+        self.assertEqual(
+            self.manifest["timeline_sha256"],
+            hashlib.sha256(ABSOLUTE_PATH.read_bytes()).hexdigest(),
+        )
+        self.assertEqual(
+            self.manifest["relative_timeline_sha256"],
+            hashlib.sha256(RELATIVE_PATH.read_bytes()).hexdigest(),
         )
 
 

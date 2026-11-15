@@ -15,7 +15,10 @@
   "speech_start_seconds": 0.191,
   "speech_end_seconds": 16.816,
   "timeline": "/home/ubuntu/output/HOLOS_Milestone51_WhisperX_Acoustic_Phoneme_Timeline_Aligned.json",
-  "timeline_sha256": "bb9e257f0bdd44a6da1b1739176dee07e345f62c509c6472da1d6763fa0773e9",
+  "timeline_sha256": "0bcc0d952fb579ce1d2bd98223e1f845ce1dd03e47887a909c0773ca5e3937e0",
+  "relative_timeline": "handoffs/milestone-5-1-2026-11-15/HOLOS_Milestone51_FourTurn_Review_Phoneme_Timeline_Relative.json",
+  "relative_timeline_sha256": "1b4b36471695523fe8acc1537d928fdc4290bfe0e13b890d422c454bfcdcc560",
+  "relative_timeline_offset_seconds": 0.091,
   "transcript_status": "approved after pronunciation review",
   "asr_normalizations": [
     {

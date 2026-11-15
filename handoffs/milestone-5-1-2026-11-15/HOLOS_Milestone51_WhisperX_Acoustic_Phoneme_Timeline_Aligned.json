@@ -1,4 +1,5 @@
 {
+  "schema_version": 1,
   "status": "acoustic word boundaries accepted; internal phoneme boundaries are estimates",
   "source_mp3": "/home/ubuntu/HOLOS_Episode_1_The_Moon_Has_Anger_Issues_FULL.mp3",
   "source_mp3_sha256": "e4b13c06a6c3fbca9449cffb9135d7259b62e059a3c2d1fa37085afae65b865f",

@@ -4,8 +4,9 @@
 
 - The source MP3 hash is verified.
 - The approved transcript and pronunciation decision are recorded.
-- The supplied full-episode word alignment and flat event timelines are checked in the PR handoff.
-- The portable builder emits schema-versioned output through the repository's strict processor contract.
+- The supplied full-episode word alignment and the opening four-turn flat event timelines are checked in the PR handoff. Both handoff timelines now declare `schema_version: 1`, and the manifest references were refreshed; the event timelines still cover only the opening four turns.
+- The portable builder emits schema-versioned output through the repository's strict processor contract. It now accepts a separate, explicitly approved speaker-cued transcript for generic full-episode token/speaker validation; it still consumes an existing alignment rather than running ASR or diarization.
+- Python and Godot recognize the provisional cast IDs `KEVIN`, `KHALED`, `ORBIT`, and `THE_MOON`; confirm `ORBIT` and `THE_MOON` against the canonical screenplay before production use.
 - Godot headless tests load the handoff timeline files through the existing `HolosTimeline` consumer.
 
 ## Still required for production animation acceptance
@@ -19,7 +20,7 @@ The two review WAV variants have different hashes:
 
 They remain separate. Before a production controller can reference audio, select one exact WAV as the production source, verify its hash and audio format, and keep its timeline offset tied to that same file.
 
-After the production Godot project and selected WAV are present:
+After the canonical screenplay/transcript, source audio, production Godot project, and selected WAV are present:
 
 1. Integrate audio playback with one shared transport clock. The director and both actor adapters must consume the same audio position for play, pause, resume, seek, and stop.
 2. Load the relative flat timeline using the chosen WAV's provenance and duration.

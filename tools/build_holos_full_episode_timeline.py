@@ -81,6 +81,40 @@ def prepare_exchange_words(aligned: dict[str, Any]) -> tuple[list[dict[str, Any]
     return exchange, normalizations
 
 
+def prepare_full_episode_words(
+    aligned: dict[str, Any], approved_turns: list[tuple[str, str]]
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Verify the entire aligned word sequence against user-approved turns.
+
+    Unlike the opening-exchange compatibility path, this function performs no
+    implicit spelling normalization. Any discrepancy must be resolved in the
+    canonical transcript or recorded through an explicit review decision.
+    """
+    if not approved_turns:
+        raise ValueError("Full-episode transcript contains no spoken turns")
+    for speaker, text in approved_turns:
+        if strict.normalize_speaker(speaker) not in strict.VALID_SPEAKERS:
+            raise RuntimeError(f"Unsupported transcript speaker ID: {speaker!r}")
+        if not text.strip():
+            raise RuntimeError(f"Empty transcript text for speaker {speaker!r}")
+    words = strict.flatten_words(aligned)
+    expected_by_turn = [strict.tokens(text) for _, text in approved_turns]
+    expected = [token for turn in expected_by_turn for token in turn]
+    observed = [strict.normalize_token(str(word["word"])) for word in words]
+    if observed != expected:
+        first_diff = next(
+            (i for i, (a, b) in enumerate(zip(observed, expected)) if a != b),
+            min(len(observed), len(expected)),
+        )
+        raise RuntimeError(
+            "FULL-EPISODE TRANSCRIPT FAILURE: aligned words do not exactly match the approved transcript; "
+            f"first difference {first_diff}, observed={observed[first_diff:first_diff + 5]!r}, "
+            f"expected={expected[first_diff:first_diff + 5]!r}, "
+            f"word counts {len(observed)} vs {len(expected)}"
+        )
+    return words, []
+
+
 def validate_event_contract(document: dict[str, Any], audio_duration: float) -> dict[str, int]:
     """Apply the existing Python event validator and require schema version 1."""
     if document.get("schema_version") != 1:
@@ -108,11 +142,16 @@ def build_absolute_document(
     alignment_name: str,
     alignment_hash: str,
     audio_duration: float,
+    approved_turns: list[tuple[str, str]] | None = None,
 ) -> dict[str, Any]:
     if not math.isfinite(audio_duration) or audio_duration <= 0:
         raise ValueError("Audio duration must be finite and greater than zero.")
-    words, normalizations = prepare_exchange_words(aligned)
-    events = strict.build_events(words)
+    turns = strict.APPROVED_TURNS if approved_turns is None else approved_turns
+    if turns == strict.APPROVED_TURNS:
+        words, normalizations = prepare_exchange_words(aligned)
+    else:
+        words, normalizations = prepare_full_episode_words(aligned, turns)
+    events = strict.build_events(words, turns)
     _annotate_normalizations(events, normalizations)
     converted = strict.build_godot_timeline(events, audio_duration=audio_duration, version=1)
     document: dict[str, Any] = {
@@ -124,7 +163,7 @@ def build_absolute_document(
         "alignment_name": alignment_name,
         "alignment_sha256": alignment_hash,
         "approved_transcript": [
-            {"speaker": speaker, "text": text} for speaker, text in strict.APPROVED_TURNS
+            {"speaker": strict.normalize_speaker(speaker), "text": text} for speaker, text in turns
         ],
         "speech_word_envelope_seconds": {
             "start": float(words[0]["start"]),
@@ -226,6 +265,7 @@ def publish_new_files(files: dict[Path, str]) -> None:
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--alignment", required=True, help="WhisperX alignment JSON; relative paths use repository root.")
+    parser.add_argument("--transcript", help="Optional canonical transcript JSON with transcript_version and ordered utterances[].")
     parser.add_argument("--source-mp3", required=True, help="Verified source MP3 path.")
     parser.add_argument("--expected-source-sha256", required=True, help="Expected source MP3 SHA-256.")
     parser.add_argument("--expected-alignment-sha256", help="Optional expected alignment-file SHA-256.")
@@ -247,6 +287,7 @@ def main(argv: list[str] | None = None) -> int:
         source = resolve_repo_path(args.source_mp3)
         alignment_path = resolve_repo_path(args.alignment)
         absolute_path = resolve_repo_path(args.absolute_output)
+        transcript_path = resolve_repo_path(args.transcript) if args.transcript else None
         if not source.is_file():
             raise FileNotFoundError(f"Source MP3 not found: {source}")
         if not alignment_path.is_file():
@@ -259,12 +300,39 @@ def main(argv: list[str] | None = None) -> int:
         alignment_hash = sha256_file(alignment_path)
         if args.expected_alignment_sha256 and alignment_hash.lower() != args.expected_alignment_sha256.lower():
             raise RuntimeError("Alignment JSON SHA-256 mismatch.")
+        transcript_version = "opening-four-turn-approved"
+        if transcript_path is None:
+            approved_turns = strict.APPROVED_TURNS
+            transcript_name = "embedded-four-turn-approval"
+            canonical_payload = json.dumps(
+                [{"speaker": s, "text": t} for s, t in approved_turns],
+                ensure_ascii=False, separators=(",", ":"),
+            ).encode("utf-8")
+            transcript_hash = hashlib.sha256(canonical_payload).hexdigest()
+        else:
+            if not transcript_path.is_file():
+                raise FileNotFoundError(f"Canonical transcript not found: {transcript_path}")
+            transcript_data = json.loads(transcript_path.read_text(encoding="utf-8"))
+            if not isinstance(transcript_data, dict) or not isinstance(transcript_data.get("utterances"), list):
+                raise RuntimeError("Canonical transcript JSON must be an object with an utterances array.")
+            if transcript_data.get("approval_status") != "approved":
+                raise RuntimeError("Canonical transcript must carry approval_status='approved' before production alignment.")
+            if not isinstance(transcript_data.get("transcript_version"), str) or not transcript_data["transcript_version"].strip():
+                raise RuntimeError("Canonical transcript must carry a non-empty transcript_version.")
+            approved_turns = []
+            for index, utterance in enumerate(transcript_data["utterances"]):
+                if not isinstance(utterance, dict) or not isinstance(utterance.get("speaker"), str) or not isinstance(utterance.get("text"), str):
+                    raise RuntimeError(f"Malformed canonical transcript utterance at index {index}.")
+                approved_turns.append((utterance["speaker"], utterance["text"]))
+            transcript_version = str(transcript_data.get("transcript_version", "unversioned"))
+            transcript_name = transcript_path.name
+            transcript_hash = sha256_file(transcript_path)
         aligned = json.loads(alignment_path.read_text(encoding="utf-8"))
         if not isinstance(aligned, dict):
             raise RuntimeError("Alignment JSON root must be an object.")
         absolute = build_absolute_document(
             aligned, source.name, source_hash, alignment_path.name, alignment_hash,
-            args.audio_duration_seconds,
+            args.audio_duration_seconds, approved_turns,
         )
         absolute_text = json_text(absolute)
         absolute_hash = hashlib.sha256(absolute_text.encode("utf-8")).hexdigest()
@@ -298,6 +366,9 @@ def main(argv: list[str] | None = None) -> int:
             "source_audio_sha256": source_hash,
             "alignment_name": alignment_path.name,
             "alignment_sha256": alignment_hash,
+            "canonical_transcript_name": transcript_name,
+            "canonical_transcript_sha256": transcript_hash,
+            "transcript_version": transcript_version,
             "audio_duration_seconds": args.audio_duration_seconds,
             "absolute_timeline_name": absolute_path.name,
             "absolute_timeline_sha256": absolute_hash,
@@ -311,7 +382,10 @@ def main(argv: list[str] | None = None) -> int:
                     outputs[relative_path].encode("utf-8")
                 ).hexdigest() if relative_path else None,
             },
-            "transcript_status": "approved after pronunciation review",
+            "transcript_status": (
+                "approved after pronunciation review" if transcript_path is None
+                else "approved canonical transcript; aligned tokens matched exactly"
+            ),
             "godot_integration": "not performed",
         }
         outputs[manifest_path] = json_text(manifest)

@@ -1,4 +1,5 @@
 {
+  "schema_version": 1,
   "status": "review-WAV-relative acoustic timeline; internal phoneme boundaries are estimates",
   "source_mp3": "/home/ubuntu/HOLOS_Episode_1_The_Moon_Has_Anger_Issues_FULL.mp3",
   "source_mp3_sha256": "e4b13c06a6c3fbca9449cffb9135d7259b62e059a3c2d1fa37085afae65b865f",
@@ -3053,5 +3054,5 @@
   ],
   "timebase": "derived review WAV starting at full-MP3 time 0.091 seconds",
   "absolute_source_timeline": "/home/ubuntu/output/HOLOS_Milestone51_WhisperX_Acoustic_Phoneme_Timeline_Aligned.json",
-  "absolute_source_timeline_sha256": "bb9e257f0bdd44a6da1b1739176dee07e345f62c509c6472da1d6763fa0773e9"
+  "absolute_source_timeline_sha256": "0bcc0d952fb579ce1d2bd98223e1f845ce1dd03e47887a909c0773ca5e3937e0"
 }

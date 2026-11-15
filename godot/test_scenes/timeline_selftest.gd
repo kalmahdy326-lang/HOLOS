@@ -41,6 +41,7 @@ func _base_events() -> Array:
 func _run() -> void:
 	print("HOLOS timeline self-test")
 	_test_valid_timeline()
+	_test_full_episode_profile()
 	_test_rejections()
 	_test_state_at()
 	_test_handoff_timelines()
@@ -69,6 +70,29 @@ func _test_valid_timeline() -> void:
 	var loaded = HolosTimelineScript.from_file(path, 3.0)
 	_check("timeline loads from file", loaded.is_valid(), loaded.validation_error)
 	_check("missing file reported", not HolosTimelineScript.from_file("user://does_not_exist.json").is_valid())
+
+
+func _test_full_episode_profile() -> void:
+	var turns := [
+		{"speaker": "THE MOON", "text": "But the whole changed."},
+		{"speaker": "ORBIT", "text": "Acknowledged."},
+	]
+	var events := [
+		{"speaker": "THE_MOON", "start": 0.0, "end": 0.1, "phoneme": "B", "viseme": "closed", "source_word": "But"},
+		{"speaker": "THE_MOON", "start": 0.1, "end": 0.2, "phoneme": "DH", "viseme": "open", "source_word": "the"},
+		{"speaker": "THE_MOON", "start": 0.2, "end": 0.3, "phoneme": "W", "viseme": "open", "source_word": "whole"},
+		{"speaker": "THE_MOON", "start": 0.3, "end": 0.4, "phoneme": "CH", "viseme": "wide", "source_word": "changed."},
+		{"speaker": "ORBIT", "start": 0.5, "end": 0.7, "phoneme": "AO", "viseme": "round", "source_word": "Acknowledged."},
+	]
+	var data := {"schema_version": 1, "approved_transcript": turns, "events": events}
+	var timeline = HolosTimelineScript.from_dictionary(data, 1.0)
+	_check("full-cast transcript accepts canonical 'But'", timeline.is_valid(), timeline.validation_error)
+	_check("THE_MOON speaker state resolves", timeline.viseme_at(0.05, "THE_MOON") == "closed")
+	var bad_events: Array = events.duplicate(true)
+	bad_events[0]["speaker"] = "ORBIT"
+	var bad_data := {"schema_version": 1, "approved_transcript": turns, "events": bad_events}
+	var bad_timeline = HolosTimelineScript.from_dictionary(bad_data, 1.0)
+	_check("full-cast speaker/transcript mismatch rejected", not bad_timeline.is_valid())
 
 
 func _test_rejections() -> void:
@@ -139,6 +163,8 @@ func _test_handoff_timelines() -> void:
 	_check("relative handoff JSON parses", typeof(relative_data) == TYPE_DICTIONARY)
 	if typeof(absolute_data) != TYPE_DICTIONARY or typeof(relative_data) != TYPE_DICTIONARY:
 		return
+	_check("absolute handoff declares schema v1", absolute_data.get("schema_version") == 1)
+	_check("relative handoff declares schema v1", relative_data.get("schema_version") == 1)
 	var absolute_timeline = HolosTimelineScript.from_dictionary(absolute_data, 914.880)
 	var relative_timeline = HolosTimelineScript.from_dictionary(relative_data, 16.825)
 	_check("absolute handoff timeline accepted", absolute_timeline.is_valid(), absolute_timeline.validation_error)
