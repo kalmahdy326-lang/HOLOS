@@ -49,6 +49,15 @@ jobs:
           unzip "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot-bin"
           chmod +x "$RUNNER_TEMP/godot-bin/Godot_v4.4.1-stable_linux.x86_64"
 
+
+      - name: Validate Godot project import and script parsing
+        id: godot_import
+        env:
+          HOLOS_GODOT: ${{ runner.temp }}/godot-bin/Godot_v4.4.1-stable_linux.x86_64
+        run: |
+          "$HOLOS_GODOT" --headless --editor --path godot --quit
+          test -d godot/.godot
+
       - name: Run Godot offscreen renderer integration tests
         id: godot_tests
         env:
@@ -63,6 +72,7 @@ jobs:
           PYTHON_JOB: ${{ steps.python_tests.outcome }}
           AUDIT_JOB: ${{ steps.asset_audit.outcome }}
           GODOT_JOB: ${{ steps.godot_tests.outcome }}
+          GODOT_IMPORT_JOB: ${{ steps.godot_import.outcome }}
         run: |
           mkdir -p output/automation-reports
           {
@@ -73,6 +83,7 @@ jobs:
             echo "- Workflow run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
             echo "- Python/media regression tests: ${PYTHON_JOB:-not_run}"
             echo "- Source inventory and static Godot asset audit: ${AUDIT_JOB:-not_run}"
+            echo "- Godot project import/script parse validation: ${GODOT_IMPORT_JOB:-not_run}"
             echo "- Godot offscreen renderer integration tests: ${GODOT_JOB:-not_run}"
             echo
             echo "## Scope"
