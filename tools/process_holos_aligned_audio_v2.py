@@ -202,11 +202,30 @@ def journal_path_for(output_wav: Path) -> Path:
     return output_wav.with_name(output_wav.name + JOURNAL_SUFFIX)
 
 
+def _fsync_file(path: Path) -> None:
+    with path.open("rb") as stream:
+        os.fsync(stream.fileno())
+
+
+def _fsync_directory(path: Path) -> None:
+    if os.name == "nt":
+        return
+    fd = os.open(path, os.O_RDONLY)
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+
+
 def write_journal(journal: Path, payload: dict[str, Any]) -> None:
     """Write the journal atomically: temp file + os.replace."""
     temp = journal.with_name(journal.name + ".tmp")
-    temp.write_text(json.dumps(payload, indent=2) + "\n")
+    with temp.open("w", encoding="utf-8", newline="\n") as stream:
+        stream.write(json.dumps(payload, indent=2) + "\n")
+        stream.flush()
+        os.fsync(stream.fileno())
     os.replace(temp, journal)
+    _fsync_directory(journal.parent)
 
 
 def read_journal(journal: Path) -> dict[str, Any] | None:
@@ -256,7 +275,17 @@ def recover_interrupted_promotion(
             raise RuntimeError(f"Journal paths do not match requested outputs; preserving it: {journal}")
         seen.add(destination)
     staged_paths = [Path(item).resolve() for item in staged_entries if isinstance(item, str)]
-    if seen != expected or len(staged_paths) != 2 or len(set(staged_paths)) != 2 or any(p in expected for p in staged_paths):
+    expected_staged = {
+        output_wav.with_name(output_wav.name + ".staged").resolve(),
+        output_timeline.with_name(output_timeline.name + ".staged").resolve(),
+    }
+    expected_backup_names = {p.name + ".bak" for p in expected}
+    backup_paths = [Path(entry["backup"]).resolve() for entry in entries]
+    if (seen != expected or set(staged_paths) != expected_staged
+            or len(set(backup_paths)) != 2
+            or any(p.name not in expected_backup_names
+                   or not p.parent.is_relative_to(output_wav.parent.resolve())
+                   for p in backup_paths)):
         raise RuntimeError(f"Journal paths do not match requested outputs; preserving it: {journal}")
     summary: dict[str, list[str]] = {"restored": [], "removed": [], "left": []}
     try:
@@ -317,6 +346,11 @@ def promote_outputs(
     backup_dir.mkdir(parents=True, exist_ok=True)
     journal = journal_path_for(output_wav)
 
+    # Ensure staged bytes are durable before recording a recoverable transaction.
+    for source in staged:
+        _fsync_file(source)
+        _fsync_directory(source.parent)
+
     # Journal first: it records the pre-state before anything is modified.
     write_journal(journal, {
         "version": JOURNAL_VERSION,
@@ -357,6 +391,7 @@ def promote_outputs(
             fault_hook("after_backups")
         for index, (source, destination) in enumerate(zip(staged, destinations)):
             os.replace(source, destination)
+            _fsync_directory(destination.parent)
             committed.append(destination)
             if fault_hook:
                 fault_hook(f"after_commit:{index}")
@@ -392,6 +427,7 @@ def promote_outputs(
     replaced = [str(d) for d in destinations if backups.get(d) is not None]
     created = [str(d) for d in destinations if backups.get(d) is None]
     journal.unlink()
+    _fsync_directory(journal.parent)
     return {"replaced": replaced, "created": created}
 
 
