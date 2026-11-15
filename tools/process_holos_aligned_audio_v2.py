@@ -735,7 +735,8 @@ def self_test() -> int:
 
     def check(name: str, condition: bool, detail: str = "") -> None:
         status = "PASS" if condition else "FAIL"
-        print(f"  [{status}] {name}{(' \u2014 ' + detail) if detail else ''}")
+        detail_suffix = f" — {detail}" if detail else ""
+        print(f"  [{status}] {name}{detail_suffix}")
         if not condition:
             failures.append(name)
 
