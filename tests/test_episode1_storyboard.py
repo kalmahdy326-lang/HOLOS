@@ -1,4 +1,5 @@
 import json
+import re
 import unittest
 from pathlib import Path
 
@@ -6,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 BREAKDOWN = ROOT / "config" / "episode1" / "episode1_storyboard_breakdown_v1.json"
 SCHEMA = ROOT / "config" / "schemas" / "holos-storyboard-breakdown-v1.schema.json"
+STORYBOARD = ROOT / "docs" / "episode1-body-storyboard-draft.md"
 SHOT_FIELD_COUNT = 8
 
 
@@ -14,6 +16,7 @@ class Episode1StoryboardContractTests(unittest.TestCase):
     def setUpClass(cls):
         cls.document = json.loads(BREAKDOWN.read_text(encoding="utf-8"))
         cls.schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
+        cls.storyboard = STORYBOARD.read_text(encoding="utf-8")
 
     def test_provenance_and_approval_state_are_explicit(self):
         source = self.document["source"]
@@ -45,9 +48,17 @@ class Episode1StoryboardContractTests(unittest.TestCase):
             self.assertLessEqual(scene["pages"][0], scene["pages"][1])
             self.assertTrue(scene["continuity"].strip())
             for shot in scene["shots"]:
+                self.assertTrue(shot[0].startswith(scene["scene_id"] + "_"))
                 self.assertEqual(len(shot), SHOT_FIELD_COUNT)
                 self.assertTrue(all(isinstance(value, str) and value.strip() for value in shot))
                 self.assertRegex(shot[0], r"^(S0[1-7]_[0-9]{3}|PC_[0-9]{3})$")
+
+    def test_markdown_and_json_shot_ids_match_in_order(self):
+        pattern = r"\|\s*\*\*((?:S0[1-7]_[0-9]{3}|PC_[0-9]{3}))\*\*\s*\|"
+        markdown_ids = re.findall(pattern, self.storyboard)
+        json_ids = [shot[0] for scene in self.document["scenes"] for shot in scene["shots"]]
+        self.assertEqual(markdown_ids, json_ids)
+        self.assertEqual(len(markdown_ids), 65)
 
     def test_schema_matches_eight_field_shot_records(self):
         shot_schema = self.schema["properties"]["scenes"]["items"]["properties"]["shots"]["items"]
