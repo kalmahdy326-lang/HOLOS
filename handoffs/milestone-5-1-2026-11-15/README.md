@@ -15,7 +15,7 @@ e4b13c06a6c3fbca9449cffb9135d7259b62e059a3c2d1fa37085afae65b865f
 - `HOLOS_FullEpisode_WhisperX_Aligned.json`: full-episode WhisperX word/character alignment.
 - `HOLOS_Milestone51_WhisperX_Acoustic_Phoneme_Timeline_Aligned.json`: absolute full-MP3-time flat event timeline.
 - `HOLOS_Milestone51_FourTurn_Review_Phoneme_Timeline_Relative.json`: timeline offset to the padded review WAV.
-- `build_holos_full_episode_timeline.py`: reproducible builder with explicit, user-approved `kilometers` → `kilometres` ASR normalization.
+- `build_holos_full_episode_timeline.py`: Manus-environment builder supplied for provenance; its hard-coded `/home/ubuntu` paths and external processor import make it non-runnable from this repository as-is.
 - `HOLOS_Episode1_four_turn_review_manifest.json`: source, extraction, format and artifact hashes.
 - `HOLOS_FullEpisode_FourTurn_Approved_Handoff.md`: transcript, boundaries and verification record.
 - `HOLOS_FullEpisode_FourTurn_Exchange_Timing_Report.md`: measured timing report.
@@ -66,6 +66,6 @@ The four-turn exchange passed the following checks:
 - User pronunciation approval.
 - Flat event schema and chronological positive-duration events.
 
-Internal phoneme intervals remain dictionary-based subdivisions inside acoustically aligned word intervals; they are not dedicated phoneme-aligner output.
+The two timeline JSONs contain 189 flat events each, but omit top-level `schema_version`. The current Godot loader tolerates unversioned input; the canonical processor emits `schema_version: 1`. Internal phoneme intervals are dictionary-based subdivisions inside acoustically aligned word intervals, not dedicated phoneme-aligner output.
 
 Godot integration was not performed and no production project files were changed.
