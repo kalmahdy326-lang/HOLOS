@@ -314,8 +314,10 @@ def promote_outputs(
             "Output promotion failed; rollback completed and the commit journal was removed. "
             "Previously existing outputs were restored and no new partial outputs remain."
         ) from exc
+    # The journal is the recovery authority until both replacements are durable.
     replaced = [str(d) for d in destinations if backups.get(d) is not None]
     created = [str(d) for d in destinations if backups.get(d) is None]
+    journal.unlink()
     return {"replaced": replaced, "created": created}
 
 
