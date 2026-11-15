@@ -2,7 +2,7 @@
 
 **Selected direction:** Alternative B — darker, suspenseful palette with a sharper title reveal. Approved by the project owner on 2026-11-15.
 
-**Purpose:** Define the renderable bookends for a future complete Episode 1 cut. This is not a storyboard of the episode body; those shots must be derived from the canonical screenplay and original rigs.
+**Purpose:** Define the renderable bookends for a future complete Episode 1 cut. The episode body now has a separate 65-shot draft breakdown derived from the repository's extracted screenplay; that companion remains subject to original-DOCX verification, project-author approval, source-audio lock and original-rig integration.
 
 **Working format:** 1280×720, 24 fps, 16:9 (repository starter setting; confirm for delivery). Full-frame graphics, no logo redraw. Until official brand assets arrive, use “HOLOS” as plain text in a local fallback font and disclose that substitution.
 
@@ -20,9 +20,11 @@ Use near-black navy, deep indigo, cold silver-blue type, and a small restrained 
 | 0:06–0:10 | The orbital arc completes a controlled sweep behind the title; no new text is introduced. | Background remains subdued; no camera shake. | Motif builds modestly, leaving room for a clean transition. | Stable title hold, safe-area checked. |
 | 0:10–0:12 | Title and eclipse field fade fully to black; the first approved episode image follows from black. | Clean fade to black; the first screenplay-derived shot fades up. | Theme resolves or hands off cleanly at the body entry. | Cut point must align with the first approved story shot. |
 
-## Episode body — blocked, no invented shots
+## Episode body — draft breakdown prepared; production lock blocked
 
-The episode-body storyboard cannot be responsibly filled from the available repository. The ending conflict is unresolved, and the original source audio, canonical screenplay, environments, and Khaled/Kevin production rigs are missing. After handoff, create one row per approved screenplay shot with action, acting, camera, dialogue/audio timing, and continuity state. Do not substitute generic figures or invented dialogue.
+A separate [65-shot body storyboard and production breakdown](docs/episode1-body-storyboard-draft.md) now covers all seven screenplay scenes and the post-credit scene. Its machine-readable companion is [episode1_storyboard_breakdown_v1.json](config/episode1/episode1_storyboard_breakdown_v1.json). The breakdown adds proposed camera coverage, action beats, performance intent, continuity notes, sound/VFX anchors and required asset categories without adding dialogue or assigning unverified frame timing.
+
+The source extraction identifies the original screenplay DOCX but explicitly says the extracted 25-page text is a consolidated chat-derived working copy that was not compared verbatim with that DOCX. The ending and full dialogue therefore still require source reconciliation and project-author confirmation. Original source audio, the authoritative WAV choice, environments and Khaled/Kevin production rigs also remain outstanding. Treat the companion as previs planning, not an approved final storyboard, animatic or completed episode. Do not substitute generic figures or invented dialogue.
 
 ## Closing credits — 24 seconds initially; extend if needed for readability
 
