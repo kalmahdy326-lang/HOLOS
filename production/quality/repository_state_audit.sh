@@ -17,6 +17,7 @@ import json
 import os
 import subprocess
 from pathlib import Path
+from datetime import datetime, timezone
 
 root = Path(os.environ["REPO_ROOT"])
 report = Path(os.environ["REPORT_PATH"])
@@ -28,11 +29,11 @@ def git(*args):
 branch = git("branch", "--show-current")
 commit = git("rev-parse", "HEAD")
 # Parse NUL-delimited porcelain output so unusual filenames remain safe. Exclude this
-# report from both tracked-change and untracked counts, regardless of whether it exists.
+# report from both tracked-change/untracked path lists and counts, whether or not it exists.
 raw = subprocess.check_output(["git", "-C", str(root), "status", "--porcelain=v1", "-z", "--untracked-files=all"])
 entries = raw.split(b"\0")
-working_tree_count = 0
-untracked_count = 0
+dirty_paths = []
+untracked_paths = []
 i = 0
 while i < len(entries) and entries[i]:
     record = entries[i]
@@ -47,9 +48,11 @@ while i < len(entries) and entries[i]:
     if name == report_rel:
         continue
     if status == "??":
-        untracked_count += 1
+        untracked_paths.append(name)
     else:
-        working_tree_count += 1
+        dirty_paths.append(name)
+working_tree_count = len(dirty_paths)
+untracked_count = len(untracked_paths)
 
 # Paths are repository-relative and intentionally include both governance records and
 # source-evidence examples from the repository evidence criteria/intake. This is an
@@ -123,8 +126,25 @@ def inspect(rel):
             size += len(chunk)
     return {"path": rel, "status": "PRESENT", "sha256": h.hexdigest(), "size_bytes": size}
 
+generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+governance_inventory = [inspect(p) for p in governance_docs]
+source_inventory = [inspect(p) for p in source_evidence]
 payload = {
-    "record_type": "REPOSITORY_STATE_AUDIT",
+    "record_type": "REPOSITORY_STATE_AUDIT_REPORT",
+    "project": "HOLOS",
+    "episode": "Episode 1",
+    "generated_at": generated_at,
+    "git": {
+        "branch": branch or "DETACHED_HEAD",
+        "commit": commit,
+        "commit_short": commit[:7],
+        "dirty_files": sorted(dirty_paths),
+        "untracked_files": sorted(untracked_paths),
+        "dirty_file_count": working_tree_count,
+        "untracked_file_count": untracked_count,
+        "report_excluded_from_status": report_rel,
+    },
+    "audit_status": "INFORMATIONAL",
     "audit_classification": "INFORMATIONAL",
     "completion_claim_authorized": False,
     "repository": {
@@ -135,8 +155,15 @@ payload = {
         "untracked_path_count_excluding_report": untracked_count,
         "excluded_from_counts_and_hashing": [report_rel],
     },
-    "governance_document_inventory": [inspect(p) for p in governance_docs],
-    "expected_source_evidence_inventory": [inspect(p) for p in source_evidence],
+    "required_files": governance_inventory + source_inventory,
+    "governance_document_inventory": governance_inventory,
+    "expected_source_evidence_inventory": source_inventory,
+    "notes": [
+        "Informational repository snapshot only; it does not establish production readiness or episode completion.",
+        "Git status path arrays and counts are observed at invocation start and exclude this generated report.",
+        "PRESENT means bytes exist at the inspected path; authority, validity, approval, integration, and review are not inferred.",
+        "LFS_POINTER_ONLY identifies pointer text only, never downloaded media bytes.",
+    ],
     "evidence_boundary": (
         "This audit reports repository metadata and inspected working-tree bytes only. "
         "PRESENT means bytes exist at this path, not that they are authoritative, valid, approved, "

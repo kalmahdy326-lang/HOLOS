@@ -22,7 +22,7 @@ Before preflight, the producer and delivery owner must approve and lock one vers
 - Subtitle/caption language, format, inclusion/sidecar or burn-in policy, and applicable timing/legibility requirements.
 - Credits and rights/provenance requirements, plus named approvers and signoff roles.
 
-Any absent or ambiguous required profile value blocks final acceptance. Do not assume 1920×1080, 30 FPS, a color space, codec, loudness target, or a tolerance unless the approved profile explicitly selects it. Any change to a locked profile requires documented change approval, a new profile version/hash, and revalidation of affected output.
+The user-provided Episode 1 specification names **1920×1080 at 30 FPS** and **48 kHz stereo final audio** as requested targets. Record these as requested values, not as a signed delivery profile or measured output. The delivery owner must lock a versioned profile that confirms these targets or documents an approved change. Do not infer other values (including color space, codec, loudness target, or tolerances). Any absent or ambiguous required profile value blocks final acceptance. Any change to a locked profile requires documented change approval, a new profile version/hash, and revalidation of affected output.
 
 ### Preflight — automated and accountable
 

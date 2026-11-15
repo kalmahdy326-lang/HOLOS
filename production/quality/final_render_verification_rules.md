@@ -2,7 +2,7 @@
 
 This page is a concise entry point, not a replacement checklist. Follow the complete [Final Render Verification protocol](final_render_verification.md) and record decisions in the [Final Verification Checklist](final_verification_checklist.md).
 
-A successful render command, passing CI, or valid metadata alone does not establish acceptance. Before rendering, lock an approved, versioned delivery profile. Derive dimensions, frame rate/timebase, codecs, audio settings, color, and tolerances from that profile; do not assume defaults or claim compliance without measured evidence.
+A successful render command, passing CI, or valid metadata alone does not establish acceptance. The user-provided Episode 1 target is 1920×1080 at 30 FPS with 48 kHz stereo final audio; record it as requested, not approved or measured. Before rendering, lock an approved, versioned delivery profile that confirms these values or documents an approved change. Derive other dimensions, frame rate/timebase, codecs, audio settings, color, and tolerances from that profile; do not assume defaults or claim compliance without measured evidence.
 
 Acceptance requires **both**:
 

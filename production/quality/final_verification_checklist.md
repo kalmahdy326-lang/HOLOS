@@ -7,7 +7,7 @@
 
 Mark `COMPLETE` only when every applicable check below passes, all required approvals are recorded, and every report, review, and approval refers to the same exact candidate SHA-256 and the same locked profile/version/hash. Any failed, missing, unresolved, or mismatched-hash check blocks `COMPLETE`. A changed input, profile, scene, render, or assembly creates a new candidate hash and invalidates affected evidence; revalidate and review the new candidate. Record `NOT APPLICABLE` with rationale and approver where a check truly does not apply; do not silently omit it.
 
-Delivery dimensions, frame rate/timebase, codecs, color, audio track layout/sample rate, tolerances, and other delivery settings must be taken from an approved, versioned delivery profile. Do not assume or hard-code dimensions, FPS, or audio settings. Missing or ambiguous required profile values block acceptance; this checklist does not claim current compliance.
+The user-provided Episode 1 target is 1920×1080 at 30 FPS with 48 kHz stereo final audio. These are requested values only: the approved, versioned delivery profile must confirm them or record an approved change, and actual media must be measured. Other delivery settings and tolerances must come from that locked profile. Missing or ambiguous profile values block acceptance; this checklist does not claim current compliance.
 
 ## 1. Canonical source, script, and approval
 
@@ -62,7 +62,7 @@ Evidence refs / notes: ______________________________
 
 ## 6. Locked profile, render, and automated technical checks
 
-- [ ] Approved delivery profile is locked and identified by ID/path, version, SHA-256, approver, and approval date; every required output setting and tolerance is specified.
+- [ ] Approved delivery profile is locked and identified by ID/path, version, SHA-256, approver, and approval date; it confirms the requested 1920×1080/30 FPS and 48 kHz stereo targets or records an approved change, and specifies every other required output setting and tolerance.
 - [ ] Candidate identity, source/edit manifests, exact input hashes, render/assembly commands, renderer/backend, software/tool versions, environment, operator, attempt ID, and logs are recorded.
 - [ ] Every expected frame exists exactly once and in order; expected and observed counts/ranges reconcile to the approved manifest. Missing, corrupt, out-of-order, or unexplained duplicate frames fail.
 - [ ] Full encoded video decodes without errors; dimensions, aspect ratios, frame rate/timebase/CFR-VFR, color metadata, pixel format/bit depth, codecs, and container are compared to the approved profile.

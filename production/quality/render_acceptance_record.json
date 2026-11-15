@@ -3,6 +3,17 @@
   "project": "HOLOS",
   "episode": "Episode 1",
   "deliverable_scope": "Full episode body render or assembled delivery master; exact candidate scope must be selected and identified before verification.",
+  "requested_target_profile": {
+    "source": "User-provided Episode 1 specification",
+    "approval_status": "PENDING_VERSIONED_PROFILE_APPROVAL",
+    "video_width_px": 1920,
+    "video_height_px": 1080,
+    "frame_rate_fps": 30,
+    "final_audio_sample_rate_hz": 48000,
+    "final_audio_channel_count": 2,
+    "final_audio_channel_layout": "stereo",
+    "note": "Requested target values only; do not treat as approved profile fields or measured output. The approved profile may confirm or document an approved change."
+  },
   "render": {
     "path": null,
     "sha256": null,

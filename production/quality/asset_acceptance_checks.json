@@ -272,7 +272,7 @@
         },
         {
           "id": "AUDIO_FORMAT_MATCHES_PROFILE",
-          "criterion": "Measured codec/sample rate/channel layout/bit depth satisfy the approved audio delivery profile for this asset.",
+          "criterion": "Measured codec/sample rate/channel layout/bit depth satisfy the approved audio delivery profile. The user-provided Episode 1 target is 48,000 Hz, 2-channel stereo, pending profile approval and byte-level verification.",
           "evidence_required": [
             "measured media metadata",
             "approved profile reference"
@@ -1297,7 +1297,7 @@
         },
         {
           "id": "VIDEO_FORMAT_MATCHES_PROFILE",
-          "criterion": "Measured resolution, frame rate, aspect ratio, codec, and pixel format match the approved delivery profile.",
+          "criterion": "Measured resolution, frame rate, aspect ratio, codec, and pixel format match the approved delivery profile. The user-provided Episode 1 target is 1920x1080 at 30 FPS, pending profile approval and measurement.",
           "evidence_required": [
             "ffprobe/media metadata",
             "approved profile reference"
@@ -1318,7 +1318,7 @@
         },
         {
           "id": "AUDIO_POLICY_AND_FORMAT_VALID",
-          "criterion": "Audio presence is required/optional as specified and measured codec/rate/channels match approved profile.",
+          "criterion": "Audio presence is required/optional as specified and measured codec/rate/channels match the approved profile. The requested final-audio target is 48,000 Hz, 2-channel stereo, pending profile approval and measurement.",
           "evidence_required": [
             "audio metadata",
             "approved profile reference"
@@ -2435,5 +2435,5 @@
       "Blank template only; no asset is identified or present, no checks have been run, and no asset is accepted."
     ]
   },
-  "catalog_boundary": "This catalog defines checks and a blank template only. It does not assert asset presence, test execution, approval, integration, or acceptance. Resolution, frame rate, and audio format must be compared with an approved delivery profile applicable to the asset; no universal fixed profile is implied."
+  "catalog_boundary": "This catalog defines checks and a blank template only. It does not assert asset presence, test execution, approval, integration, or acceptance. The user-provided Episode 1 target is 1920x1080 at 30 FPS with 48 kHz stereo final audio; these values remain requested targets pending profile approval and measured evidence. Other resolution, frame-rate, and audio-format decisions must be compared with the approved profile applicable to the asset; no universal fixed profile is implied."
 }

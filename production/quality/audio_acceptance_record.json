@@ -4,6 +4,13 @@
   "episode": "Episode 1",
   "item_id": "audio_acceptance",
   "status": "PENDING",
+  "requested_target": {
+    "scope": "Final delivery audio; does not establish the format of an unselected source WAV.",
+    "sample_rate_hz": 48000,
+    "channel_count": 2,
+    "channel_layout": "stereo",
+    "approval_status": "USER_SPECIFIED_TARGET_PENDING_VERSIONED_PROFILE_APPROVAL"
+  },
   "source": {
     "path": null,
     "sha256": null,
