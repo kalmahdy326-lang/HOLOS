@@ -15,7 +15,8 @@ This checklist separates verified repository materials from the source package r
 - [x] Reusable title/credits bookend scene and generic renderer infrastructure exist.
 - [ ] Production WAV bytes and one authoritative review-WAV variant are not present in the repository.
 - [ ] Original Khaled and Kevin production rigs/scenes and dependencies are not present in the inspected repository tree.
-- [ ] Canonical complete Episode 1 screenplay and shot-by-shot approved edit are not established by the current handoff.
+- [x] A 25-page consolidated screenplay text extraction and a 65-shot draft body breakdown are present on PR #8; the extraction explicitly says it has not been compared verbatim with the original DOCX.
+- [ ] Canonical screenplay approval, original-DOCX reconciliation, and a locked shot list with authoritative timing remain outstanding.
 - [ ] Complete episode body, production camera setup, environments, and final render are not present.
 
 ## 2. Required source package
@@ -28,7 +29,7 @@ This checklist separates verified repository materials from the source package r
 - [ ] Approved shot list/storyboard or explicit permission to develop one from the screenplay.
 - [ ] Any pronunciation, performance, timing, or dialogue-change notes.
 
-**Acceptance:** screenplay version and approved dialogue are unambiguous. Do not infer the complete screenplay from an extracted draft or the four-turn opening.
+**Acceptance:** screenplay version and approved dialogue are unambiguous. Reconcile the original DOCX against the repository's consolidated extraction, then have the project author approve the production version. The PR #8 65-shot breakdown is a draft previs aid, not a substitute for this gate or the four-turn opening audio handoff.
 
 ### B. Dialogue and audio masters
 
@@ -89,7 +90,7 @@ Same complete package as Khaled, independently supplied and identified. Kevin mu
 
 | Blocker | Why it blocks production |
 |---|---|
-| No canonical complete screenplay | Cannot establish all scenes, dialogue, ending or approved shot list |
+| Original screenplay not reconciled/locked | The 25-page extraction is chat-derived and uncertified against the original DOCX; cannot yet lock all dialogue, ending, or shot timing |
 | No selected authoritative review WAV | Cannot safely bind the 0.091-second-relative timeline to one exact review file |
 | No supplied production audio master bytes | Cannot perform audio-clock integration or verify runtime against the master |
 | No original Khaled/Kevin rigs | Cannot map visemes to actual controls or render the approved characters |
