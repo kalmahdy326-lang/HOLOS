@@ -32,6 +32,20 @@ class EpisodeConfigTests(unittest.TestCase):
         data = {**VALID, "audio": {"dialogue": None, "music": None, "music_gain_db": -18}}
         validate_episode(data)
 
+    def test_accepts_scene_config_object(self):
+        shot = {**VALID["scenes"][0]["shots"][0],
+                "scene_config": {"card_mode": "title", "episode_title": "Episode 1"}}
+        data = {**VALID, "scenes": [{"scene_id": "scene_01", "shots": [shot]}]}
+        validate_episode(data)
+
+    def test_rejects_invalid_scene_config(self):
+        for value in ([], {"": "invalid"}):
+            with self.subTest(value=value):
+                shot = {**VALID["scenes"][0]["shots"][0], "scene_config": value}
+                data = {**VALID, "scenes": [{"scene_id": "scene_01", "shots": [shot]}]}
+                with self.assertRaisesRegex(ConfigError, "scene_config"):
+                    validate_episode(data)
+
     def test_rejects_out_of_range_music_gain_setting(self):
         for value in (-61, 1, True):
             with self.subTest(value=value):

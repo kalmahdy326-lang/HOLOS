@@ -104,6 +104,7 @@ def _render_configured_shot(
         "debug_overlay": (
             mode == "debug" and bool(render_settings.get("debug_overlay", False))
         ),
+        "scene_config": dict(shot.get("scene_config", {})),
     }
 
     absolute_output = output_dir if output_dir.is_absolute() else root / output_dir
