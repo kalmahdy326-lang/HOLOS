@@ -41,3 +41,28 @@ Then update the milestone table based on actual file evidence. Do not generate s
 ## Acceptance boundary
 
 A green generic adapter CI run is not a rig validation. Milestone 6 remains in progress until both real character rigs load, render repeatably, pass their individual benchmarks, and the two-character interaction benchmark passes in the target local/offline environment.
+
+
+## 14 November 2026 — asset recovery and hash-status addendum
+
+A further read-only metadata check was performed while preparing the dual-track Council governance. The three named character-reference PNGs were visually inspected in the Project Library. Their raw bytes could not be materialized in this session: the file service returned “This Project file does not have an authorized raw-byte materialization path.” Consequently, no SHA-256 values were computed and no binary copies were added to GitHub.
+
+| Source asset | Recorded size | Inspection status | SHA-256 | GitHub mirror |
+|---|---:|---|---|---|
+| HOLOS Character Guide: Moonlit Investigators.png | 2,013,102 bytes | Visually inspected reference/turnaround sheet | NOT COMPUTED — raw bytes unavailable | Not mirrored |
+| HOLOS Character Reference Sheet.png | 1,949,860 bytes | Visually inspected reference sheet | NOT COMPUTED — raw bytes unavailable | Not mirrored |
+| HOLOS: Khaled and Kevin Character Sheet.png | 2,085,157 bytes | Visually inspected paired character sheet | NOT COMPUTED — raw bytes unavailable | Not mirrored |
+| HOLOS_Model_Initialization_Package.zip | 64,530 bytes | Located by metadata only; archive contents not inspected | NOT COMPUTED — raw bytes unavailable | Not mirrored |
+| HOLOS_Autonomous_Execution_Package.zip | 21,652 bytes | Located by metadata only; archive contents not inspected | NOT COMPUTED — raw bytes unavailable | Not mirrored |
+
+The visual inspection of a PNG is not a byte-level integrity check. A Library filename and size are not a content inventory of a ZIP. No archive is assumed to contain a Godot rig. The original files remain untouched.
+
+The corrected Milestone 5.1 WAV and approved four-line transcript were not present in the accessible GitHub production tree or supplied as accessible binary/text inputs for this check. The local project path /home/ubuntu/holos_rigging is not directly accessible through the GitHub repository connector. Therefore:
+- no audio/transcript comparison was performed;
+- no phoneme timeline was promoted or changed;
+- no production scene or character script was edited;
+- no local Godot render or offline acceptance test is claimed.
+
+### Recovery gate
+
+To continue, provide raw-byte access to the three PNGs and two ZIPs, plus the corrected WAV, approved transcript and complete local Godot project source (including project settings and dependencies). Inventory and verified backup must precede migration or mutation. Keep this addendum as a record of the access limitation; do not replace “NOT COMPUTED” with an inferred hash.
