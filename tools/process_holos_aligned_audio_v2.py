@@ -750,6 +750,25 @@ def self_test() -> int:
         check("complete valid approved timeline accepted", True)
     except RuntimeError as exc:
         check("complete valid approved timeline accepted", False, str(exc)[:80])
+    converted = build_godot_timeline([
+        {"speaker": "kevin", "start": 0.0, "end": 0.1, "phoneme": "SIL", "viseme": "rest", "source_word": None},
+        {"speaker": "KHALED", "start": 0.2, "end": 0.3, "phoneme": "M", "viseme": "closed", "source_word": "me"},
+    ], audio_duration=1.0)
+    check("Godot conversion keeps flat event schema and normalizes speakers",
+          converted["events"][0]["speaker"] == "KEVIN" and converted["events"][1]["speaker"] == "KHALED")
+    check("silence remains rest in Godot vocabulary",
+          converted["events"][0]["phoneme"] == "SIL" and converted["events"][0]["viseme"] == "rest")
+    for bad_event in [
+        {"speaker": "NARRATOR", "start": 0.0, "end": 0.1, "viseme": "open"},
+        {"speaker": "KEVIN", "start": 0.0, "end": 0.1, "viseme": "jawdrop"},
+        {"speaker": "KEVIN", "start": 0.0, "end": 1.1, "viseme": "open"},
+    ]:
+        try:
+            build_godot_timeline([bad_event], audio_duration=1.0)
+            check("unknown or out-of-range Godot values rejected", False)
+        except ValueError:
+            check("unknown or out-of-range Godot values rejected", True)
+
     for name, events in [
         ("out-of-order rejected", [dict(valid_fixture[0], start=0.2, end=0.3), dict(valid_fixture[0], start=0.1, end=0.15)]),
         ("bad viseme rejected", [dict(valid_fixture[0], viseme="jawdrop")]),
