@@ -37,3 +37,10 @@ The source MP3 SHA-256 matches the recorded handoff hash. The MP3 itself is not 
 The supplied word-level boundaries are structurally consistent, and the user approved the pronunciation. Internal phoneme boundaries in the event timelines are dictionary-based estimates, not dedicated phoneme alignment. The bundled builder also references Manus-only absolute paths and a processor module absent from this repository. The timeline JSONs are unversioned; the current Godot loader accepts them, while the canonical repository processor emits `schema_version: 1`.
 
 No Godot runtime, headless validation against these timelines, production scene integration, shared audio clock, character-rig mapping, or visual lip-sync validation has been performed. Milestone 5.1 is therefore **not yet production-accepted**.
+
+
+## Production integration boundary
+
+The checked-in `godot/` directory is the minimal adapter test project. It does not contain the Episode 1 production dialogue controller, director, Kevin or Khaled scenes/rig assets, or a WAV. The review WAVs remain distinct provenance variants and neither has been selected as the production asset.
+
+This PR adds headless loading of the supplied event timelines to the adapter test suite. It does not connect the events to a production controller or claim an audio-derived runtime clock, rig mapping, rendered lip-sync, or visual review. Those steps require the actual production Godot project and an explicitly selected, hash-verified WAV variant.
