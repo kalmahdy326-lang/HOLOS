@@ -1,6 +1,6 @@
 # Milestone 5.1 four-turn source acceptance record
 
-Status: **source wording and pronunciation approved; acoustic alignment and Godot runtime validation remain pending.**
+Status: **source wording and pronunciation approved; acoustic word-alignment evidence received; Godot integration and runtime validation remain pending.**
 
 ## Approved transcript
 
@@ -11,11 +11,11 @@ The repository's locked wording remains authoritative:
 - **KEVIN:** It's 380,000 kilometres from the nearest decent restaurant.
 - **KHALED:** The nearest restaurant is also 380,000 kilometres away from you.
 
-The user confirmed that the pronunciation review was good. The approved spelling remains **kilometres**. The reported WhisperX spelling **kilometers** is treated as an ASR orthographic normalization and is not copied into the transcript.
+The user confirmed that the pronunciation review was good. The approved spelling remains **kilometres**. WhisperX's **kilometers** output is retained as an explicit ASR spelling normalization; the approved transcript was not changed.
 
-## Reported absolute timings in the full-episode MP3
+## Reported absolute timings
 
-These timings were supplied in the full-episode analysis report and are absolute MP3 times. They are not the timings from the 15-second benchmark WAV.
+The supplied full-episode report gives these absolute MP3 times, not the old 15-second benchmark times:
 
 | Turn | Speaker | Start (s) | End (s) |
 |---|---|---:|---:|
@@ -24,20 +24,16 @@ These timings were supplied in the full-episode analysis report and are absolute
 | 3 | KEVIN | 6.933 | 11.054 |
 | 4 | KHALED | 11.834 | 16.816 |
 
-Reported extraction envelope: 0.191–16.816 s. A padded audition derivative was previously created locally using 0.091–16.916 s; the source MP3 was not modified.
+## Handoff artifacts
 
-## Evidence and provenance
+The full-episode alignment, absolute event timeline, review-relative timeline, builder, review manifest, approved handoff, timing report, and provenance note are preserved in [the PR handoff directory](../handoffs/milestone-5-1-2026-11-15/README.md).
 
-- Source named in the supplied report: `HOLOS_Episode_1_The_Moon_Has_Anger_Issues_FULL.mp3`
-- Source SHA-256 recorded during local review: `e4b13c06a6c3fbca9449cffb9135d7259b62e059a3c2d1fa37085afae65b865f`
-- The report states the exchange begins with “Tell”, follows KEVIN → KHALED → KEVIN → KHALED, and includes the complete final words “away from you”.
-- The user explicitly approved the pronunciation after auditioning the review segment.
-- The timing measurements and transcript checks above are reported evidence; the original MP3 and full WhisperX alignment JSON are not stored in this repository.
+The Codex review records the checked archive hash, structural checks, event offset comparison, and limitations in [CODEX_REVIEW.md](../handoffs/milestone-5-1-2026-11-15/CODEX_REVIEW.md).
 
-## Remaining gate
+The source MP3 SHA-256 matches the recorded handoff hash. The MP3 itself is not committed. The Manus and Codex review WAV files have different hashes and remain separate provenance variants; the PR records both without substituting one for the other.
 
-This record does **not** supply word-level or phoneme-level timestamps. Do not synthesize phoneme events from turn boundaries. Milestone 5.1 still requires a fresh alignment artifact derived from the accepted source, validation against the strict processor and flat `schema_version` event contract, and Godot/runtime validation before production acceptance.
+## Current gate
 
-## Manus availability
+The supplied word-level boundaries are structurally consistent, and the user approved the pronunciation. Internal phoneme boundaries in the event timelines are dictionary-based estimates, not dedicated phoneme alignment. The bundled builder also references Manus-only absolute paths and a processor module absent from this repository. The timeline JSONs are unversioned; the current Godot loader accepts them, while the canonical repository processor emits `schema_version: 1`.
 
-No Manus connector or Manus project access was available in the authoring workspace when this record was prepared. No Manus artifact is claimed.
+No Godot runtime, headless validation against these timelines, production scene integration, shared audio clock, character-rig mapping, or visual lip-sync validation has been performed. Milestone 5.1 is therefore **not yet production-accepted**.
