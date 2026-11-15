@@ -1,0 +1,20 @@
+# HOLOS Milestone 5.1 -- alignment environment for
+# tools/process_holos_aligned_audio_v2.py
+#
+# Create a dedicated virtualenv on the alignment machine and install:
+#   python3 -m venv .venv-align
+#   .venv-align/bin/pip install -r tools/requirements-alignment.txt
+#
+# ffmpeg is NOT installed by this file: the processor shells out to a system
+# ffmpeg binary. Install it with the system package manager and confirm with
+# "ffmpeg -version" before running the processor.
+#
+# torch is installed as a transitive dependency of whisperx. On a CUDA
+# machine, install the CUDA build of torch FIRST so the wheel matches the
+# local driver, then install this file:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+# The processor defaults to --device cpu --compute-type int8, which also
+# works on CPU-only machines.
+
+whisperx>=3.1.1,<4
+pronouncing>=0.2.0,<1
