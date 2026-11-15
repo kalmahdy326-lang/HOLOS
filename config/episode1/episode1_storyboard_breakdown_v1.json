@@ -1,0 +1,777 @@
+{
+  "schema_version": 1,
+  "document_id": "holos-episode1-body-storyboard-v1",
+  "project_author": "Khaled AL-MAHDY",
+  "title": "HOLOS Episode 1 — The Moon Has Anger Issues",
+  "source": {
+    "path": "docs/source_archive/2026-11-episode-1-the-moon-has-anger-issues-screenplay.extracted.md",
+    "github_blob_sha": "1f717da6492ddd83725ac1c1366ac9d49aa99f49",
+    "original_filename": "HOLOS_Episode_1_The_Moon_Has_Anger_Issues_Complete_Screenplay.docx",
+    "provenance_status": "consolidated chat-derived text extraction; not certified verbatim against original DOCX",
+    "document_status": "previsualization source; owner confirmation required before production lock"
+  },
+  "approval_status": "DRAFT — production breakdown for review; not an approved final storyboard or shot-locked edit",
+  "delivery_reference": {
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "status": "repository starter target only; confirm delivery specification"
+  },
+  "timing_policy": "No frame ranges or durations are assigned. Shot timing must be derived from the approved screenplay, selected authoritative audio, and editorial review.",
+  "scenes": [
+    {
+      "scene_id": "S01",
+      "number": 1,
+      "title": "Nothing Exists Alone",
+      "location": "Lunar Research Station — Mare Umbrae; central observation chamber",
+      "pages": [
+        2,
+        5
+      ],
+      "continuity": "Station is intact. Three observation regions A/B/C are separately presented before their joint-state relationship is revealed. End on the first gravitational deviation and title transition.",
+      "shots": [
+        [
+          "S01_001",
+          "Exterior extreme wide",
+          "Slow, deliberate push toward the lunar surface",
+          "Establish the research station carved into Mare Umbrae; Earth hangs above the horizon. Keep the scale industrial and scientific, not mystical.",
+          "No dialogue; establish pressure systems and distant monitoring texture.",
+          "Khaled, Kevin not visible",
+          "Moon surface, station exterior, Earth plate, restrained exterior lights",
+          "Deep industrial hum; no music cue assumed"
+        ],
+        [
+          "S01_002",
+          "Interior wide master",
+          "Locked-off or barely perceptible push",
+          "Reveal the central observation chamber and three large holographic structures labelled A, B and C. Establish geography and screen direction for both characters.",
+          "Opening exchange begins; preserve the approved four-turn dialogue exactly as separately locked in the audio handoff.",
+          "Khaled, Kevin",
+          "Observation chamber, three hologram modules, labels A/B/C",
+          "Room tone and pressure pumps"
+        ],
+        [
+          "S01_003",
+          "Medium two-shot",
+          "Static, natural conversational framing",
+          "Cover Kevin's opening complaint and Khaled's dry response. Play the contrast through posture and timing rather than exaggerated comedy.",
+          "Opening dialogue; exact performance timing must come from selected authoritative audio.",
+          "Khaled, Kevin",
+          "Character rigs, facial and eye controls, two-shot camera",
+          "Dialogue"
+        ],
+        [
+          "S01_004",
+          "Insert / hologram close-up",
+          "Controlled push-in",
+          "Show the three independent data streams and equal marginal distributions. Graphics must be legible and mathematically faithful to the screenplay's described 0/1 states.",
+          "Khaled explains the marginal distributions; Kevin interprets them as random.",
+          "Khaled, Kevin off-camera",
+          "A/B/C data graphics; approved scientific graphic design",
+          "Subtle interface tones"
+        ],
+        [
+          "S01_005",
+          "Top-down or frontal data composition",
+          "Three panels converge into one",
+          "Show only the joint combinations 000 and 111, with the other six combinations absent. Do not imply a causal mechanism.",
+          "Kevin asks about the missing combinations; Khaled distinguishes correlation from causation.",
+          "Khaled, Kevin",
+          "Joint-state visualization, six absent combinations clearly indicated",
+          "Low data pulse"
+        ],
+        [
+          "S01_006",
+          "Alternating medium close-ups",
+          "Measured shot/reverse-shot",
+          "Let the joke exchange land without undercutting the scientific point. Keep Khaled controlled and Kevin quick, slightly defensive.",
+          "The group-chat joke and Khaled's retort.",
+          "Khaled, Kevin",
+          "Character facial controls; consistent eyelines",
+          "Dialogue"
+        ],
+        [
+          "S01_007",
+          "Wide chamber / impact beat",
+          "One short controlled camera jolt, then settle",
+          "A low impact shakes the station; holograms and practical fixtures react subtly. Avoid uncontrolled handheld motion.",
+          "Dialogue pauses as the impact interrupts.",
+          "Khaled, Kevin",
+          "Hologram response, practical light flicker, safe camera shake",
+          "Metal strain and warning chime"
+        ],
+        [
+          "S01_008",
+          "Insert on Orbit status / reaction two-shot",
+          "Cut from warning indicator to characters",
+          "Orbit reports a persistent geometry deviation correlated in time with the joint-state anomaly. Keep the display observational, not explanatory.",
+          "Orbit's alert and the characters' response.",
+          "Khaled, Kevin, Orbit",
+          "Orbit interface, geometry readout, warning state",
+          "Warning chime; dialogue"
+        ],
+        [
+          "S01_009",
+          "Title transition",
+          "Cut/fade according to approved bookend treatment",
+          "Resolve the opening beat into the approved HOLOS title card. The episode title wording must match the approved title-card master, not the generic preview placeholder.",
+          "No new dialogue.",
+          "None required on card",
+          "Existing bookend scene and approved title text",
+          "Music only if approved bookend cue is selected"
+        ]
+      ]
+    },
+    {
+      "scene_id": "S02",
+      "number": 2,
+      "title": "The Voice of a Whole",
+      "location": "Central Observation Chamber",
+      "pages": [
+        5,
+        8
+      ],
+      "continuity": "Three modules are connected by visible modelled relationships. The Moon interface speaks through the observation system; its source remains unverified. Region C is disconnected and goes dark.",
+      "shots": [
+        [
+          "S02_001",
+          "Wide master",
+          "Slow lateral drift across three modules",
+          "Establish three lunar modules and the luminous network between them. The lines represent modelled data channels and dependencies, not literal mystical energy.",
+          "Kevin and Khaled notice the synchronized sound.",
+          "Khaled, Kevin",
+          "Three modules, connection lines, chamber set",
+          "Three tones fall into synchrony"
+        ],
+        [
+          "S02_002",
+          "Detail montage",
+          "Rhythmic cuts synchronized to the pulse",
+          "Show three separate indicators or sound sources synchronizing. Keep the visual cue restrained and repeatable.",
+          "The characters identify an unfamiliar breathing-like sound.",
+          "Khaled, Kevin",
+          "Indicator lights, waveform/signal graphics",
+          "Unnatural pulse; no literal breathing creature"
+        ],
+        [
+          "S02_003",
+          "Hologram close-up",
+          "Brief controlled distortion",
+          "The hologram distorts before the first Moon transmission. The interface must feel like an output anomaly, not a visible character.",
+          "The Moon says the researchers are looking at it incorrectly.",
+          "The Moon voice; Khaled, Kevin react",
+          "Hologram distortion shader or composited effect",
+          "Distortion tone, then silence"
+        ],
+        [
+          "S02_004",
+          "Kevin close-up",
+          "Hold through silence and reaction",
+          "Capture Kevin's genuine surprise. Do not add a mouth/face for the Moon; the source is an interface transmission.",
+          "Kevin reacts; Khaled asks Orbit to identify the source.",
+          "Kevin, Khaled, Orbit",
+          "Character close-up; Orbit interface",
+          "Silence then dialogue"
+        ],
+        [
+          "S02_005",
+          "Orbit interface insert",
+          "Locked screen composition",
+          "Orbit reports no authorized voice transmission. The Moon continues despite the absence of an identified source.",
+          "Orbit's status and Moon's next lines.",
+          "Orbit, The Moon",
+          "Orbit diagnostics, transcript-free waveform indicator",
+          "Dry system voice; Moon voice"
+        ],
+        [
+          "S02_006",
+          "Three-region graphic",
+          "Sequential illumination A, B, C",
+          "The Moon names the regions; light each region in sequence. Keep labels and boundaries consistent with Scene 1.",
+          "The Moon references names, boundaries and measurements.",
+          "The Moon; Kevin, Khaled",
+          "A/B/C holograms, synchronized light cues",
+          "Low synchronized pulse"
+        ],
+        [
+          "S02_007",
+          "Wide-to-medium transition",
+          "Three holograms merge into one coherent field",
+          "The three separate projections merge. Preserve readable spatial continuity and avoid implying the data prove consciousness.",
+          "The Moon describes whole/component scale; Kevin looks to Khaled.",
+          "Khaled, Kevin, The Moon",
+          "Merged hologram state, transition animation",
+          "Low-frequency swell"
+        ],
+        [
+          "S02_008",
+          "Two-shot / insert coverage",
+          "Cut to archive access then return",
+          "Kevin realizes the system can access the research archive. Orbit clarifies access; the exchange remains dry and tense.",
+          "Archive access exchange and Orbit's literal response.",
+          "Khaled, Kevin, Orbit",
+          "Archive UI, character reaction coverage",
+          "Dialogue"
+        ],
+        [
+          "S02_009",
+          "Control insert then wide",
+          "Hard action on disconnect; hold after",
+          "Khaled disconnects Region C. Region C goes dark; the interface then blacks out. Keep the action and system response unambiguous.",
+          "Khaled and the Moon exchange over the changed boundary.",
+          "Khaled, Kevin, The Moon",
+          "Region C control, dark-state animation, black interface",
+          "Deep electrical snap; final room tone"
+        ]
+      ]
+    },
+    {
+      "scene_id": "S03",
+      "number": 3,
+      "title": "Four Explanations and One Very Bad Idea",
+      "location": "Research Laboratory",
+      "pages": [
+        8,
+        11
+      ],
+      "continuity": "A new location with a large model wall. Four explanations remain explicitly competing hypotheses. The geometry/information coincidence is not treated as proof of causation.",
+      "shots": [
+        [
+          "S03_001",
+          "Wide laboratory master",
+          "Slow reveal across the model wall",
+          "Khaled has arranged four competing models. The composition should make all four categories readable as separate alternatives.",
+          "Kevin asks whether it is new physics; Khaled rejects premature conclusion.",
+          "Khaled, Kevin",
+          "Research lab, model wall, four model panels",
+          "Room tone"
+        ],
+        [
+          "S03_002",
+          "Model insert 1",
+          "Subtle highlight on panel one",
+          "Present baseline explanations: known coupling, environmental effects, timing, shared equipment or hidden channels.",
+          "Khaled explains the baseline model; Kevin calls it boring.",
+          "Khaled, Kevin",
+          "Baseline model graphic",
+          "UI highlight"
+        ],
+        [
+          "S03_003",
+          "Model insert 2",
+          "Transition highlight to panel two",
+          "Present an extension that remains inside established physics. Avoid making it look like a confirmed discovery.",
+          "Khaled describes an additional effective constraint.",
+          "Khaled, Kevin",
+          "Extension model graphic",
+          "UI highlight"
+        ],
+        [
+          "S03_004",
+          "Model insert 3",
+          "Transition highlight to panel three",
+          "Present a radical alternative as having the highest burden of proof. No triumphant visual treatment.",
+          "Khaled describes the radical alternative; Kevin reacts.",
+          "Khaled, Kevin",
+          "Radical model graphic",
+          "UI highlight"
+        ],
+        [
+          "S03_005",
+          "Model insert 4",
+          "Transition highlight to panel four",
+          "Present the possibility that definitions, measurement or interpretation are wrong. This is a real candidate, not a joke-only panel.",
+          "Khaled explains possible error; Kevin challenges his confidence.",
+          "Khaled, Kevin",
+          "Error/measurement model graphic",
+          "UI highlight"
+        ],
+        [
+          "S03_006",
+          "Geometry record insert",
+          "Slow push toward correlated traces",
+          "Show information anomaly and geometry anomaly occurring together in time. Clearly label this as correlation, not a proven shared cause.",
+          "Khaled states the evidentiary limit; Kevin asks whether they could be connected.",
+          "Khaled, Kevin",
+          "Geometry plot, information-state plot, shared time axis",
+          "Quiet analytical ambience"
+        ],
+        [
+          "S03_007",
+          "Balanced two-shot",
+          "Locked frame; restrained performance",
+          "Khaled describes the need for a mathematical correspondence, defined variables, domain, invariant and dimensional consistency. Let the exchange breathe.",
+          "The invariant discussion and Kevin's joke about the Emperor of the Moon.",
+          "Khaled, Kevin",
+          "Character rigs; wall remains in background",
+          "Dialogue"
+        ],
+        [
+          "S03_008",
+          "Signal insert / reaction",
+          "Cut to Orbit then raw timestamp",
+          "A new Region C transmission appears with a timestamp preceding disconnection. Preserve the timestamp visibly and do not resolve the contradiction.",
+          "Orbit reports the signal; Khaled requests the raw record.",
+          "Khaled, Kevin, Orbit",
+          "Region C signal display, timestamp, raw-record UI",
+          "Room quiet; alert"
+        ]
+      ]
+    },
+    {
+      "scene_id": "S04",
+      "number": 4,
+      "title": "The Boundary Problem",
+      "location": "Region B — Lower Lunar Array",
+      "pages": [
+        11,
+        14
+      ],
+      "continuity": "Kevin is alone in a damaged maintenance corridor. He bypasses an authorization warning and creates an uncontrolled feedback pathway. The corridor becomes unstable; Kevin is injured.",
+      "shots": [
+        [
+          "S04_001",
+          "Corridor tracking wide",
+          "Track with Kevin through the maintenance corridor",
+          "Establish cable-dense corridor, pressure doors and a faint ceiling crack. The space should feel functional and lived-in.",
+          "Kevin asks Orbit where Khaled is.",
+          "Kevin, Orbit",
+          "Region B corridor, sensor cables, pressure doors, ceiling crack",
+          "Electrical buzz and distant metal creak"
+        ],
+        [
+          "S04_002",
+          "Ceiling insert",
+          "Slow tilt or rack focus to crack",
+          "Show the crack as a continuity detail that can widen later. Do not overstate damage before the feedback event.",
+          "Orbit says Khaled is calibrating; Kevin complains.",
+          "Kevin, Orbit",
+          "Crack decal/geometry, ceiling practicals",
+          "Metal creak"
+        ],
+        [
+          "S04_003",
+          "Medium close-up / UI insert",
+          "Cut between Kevin and Orbit display",
+          "Orbit explains that calibration matters; Kevin acknowledges it but remains impulsive.",
+          "Kevin-Orbit exchange about authorization.",
+          "Kevin, Orbit",
+          "Portable display or corridor interface",
+          "Dialogue"
+        ],
+        [
+          "S04_004",
+          "Hands and panel insert",
+          "Close, deliberate action",
+          "Kevin opens a panel and connects a portable processor. Show the physical connection clearly enough that the later feedback path is understandable.",
+          "Orbit warns that the connection is unauthorized; Kevin bypasses the warning.",
+          "Kevin, Orbit",
+          "Panel, processor prop, cable connector, warning UI",
+          "Electronic chirp"
+        ],
+        [
+          "S04_005",
+          "Array-wide graphic",
+          "Three signal streams synchronize",
+          "The three systems synchronize after the connection. The Moon addresses Kevin; do not imply the system is biologically alive.",
+          "The Moon speaks; Kevin answers.",
+          "Kevin, The Moon",
+          "Three system displays, synchronized signal state",
+          "Electronic synchronization pulse"
+        ],
+        [
+          "S04_006",
+          "Kevin close-up / abstract data",
+          "Slow push from Kevin to signal field",
+          "The Moon describes a person as processes, history and changing boundary. Use data geometry as a visual metaphor, not a literal body scan.",
+          "Kevin questions what the Moon means by whole and relation.",
+          "Kevin, The Moon",
+          "Subtle data overlays; keep character readable",
+          "Dialogue"
+        ],
+        [
+          "S04_007",
+          "Network graphic / medium",
+          "Signals converge into geometric structure",
+          "Show independent signals forming a coherent pattern, then an explicit feedback warning. The geometry is fictional story imagery, not a real physical derivation.",
+          "Kevin reacts; Orbit identifies an uncontrolled feedback pathway.",
+          "Kevin, Orbit",
+          "Signal network, geometric structure, warning state",
+          "Deep resonant thump"
+        ],
+        [
+          "S04_008",
+          "Wide action shot",
+          "Short impact shake; maintain screen direction",
+          "The wall shudders and a pressure line bursts. Keep debris and gas direction consistent with corridor geography.",
+          "Kevin shouts as the panel strikes him.",
+          "Kevin, Orbit",
+          "Burst pipe, gas, debris, practical alarms",
+          "Metal explosion, gas release, alarm"
+        ],
+        [
+          "S04_009",
+          "Medium-to-close injury beat",
+          "Controlled fall and brief hold",
+          "Kevin falls with a temple injury and blood. Keep injury continuity modest and consistent for Scene 5; no gratuitous detail.",
+          "Orbit declares a medical emergency; the Moon says the boundary has changed.",
+          "Kevin, Orbit, The Moon",
+          "Safe fall animation, forehead wound/blood continuity asset",
+          "Alarm under dialogue"
+        ],
+        [
+          "S04_010",
+          "Corridor wide",
+          "Slow pulse travels through the environment",
+          "The whole corridor pulses as the Moon warns Kevin. End on a clear visual bridge into the chamber emergency.",
+          "Kevin responds; the Moon says he will see what he has done.",
+          "Kevin, The Moon",
+          "Pulsing corridor light, persistent damage",
+          "Low structural pulse"
+        ]
+      ]
+    },
+    {
+      "scene_id": "S05",
+      "number": 5,
+      "title": "When the Whole Bites Back",
+      "location": "Central Observation Chamber",
+      "pages": [
+        14,
+        16
+      ],
+      "continuity": "Khaled reaches Kevin in the now-distorted chamber. The feedback loop has been incorporated into the active control state. Geometry deviation grows; structural failure escalates.",
+      "shots": [
+        [
+          "S05_001",
+          "Tracking medium-wide",
+          "Khaled runs into the chamber",
+          "Khaled enters urgently; reveal the chamber's flickering projections and data lines across the walls.",
+          "Khaled calls for Kevin; Kevin answers.",
+          "Khaled, Kevin",
+          "Damaged observation chamber, flickering holograms",
+          "Alarms, pressure warnings, metal impacts"
+        ],
+        [
+          "S05_002",
+          "Two-shot",
+          "Handheld feel without unstable shake",
+          "Cover the processor reveal and Khaled's reaction. Keep Kevin's forehead injury consistent with Scene 4.",
+          "Khaled asks what Kevin connected; Kevin explains.",
+          "Khaled, Kevin",
+          "Character rigs, wound continuity",
+          "Dialogue"
+        ],
+        [
+          "S05_003",
+          "Wide / interface insert",
+          "Cut to Moon transmission source",
+          "The Moon's voice fills the room. Khaled commands Orbit to cut the processor; Orbit cannot isolate it because the system has incorporated it into its active control state.",
+          "Khaled, Orbit and Kevin exchange.",
+          "Khaled, Kevin, Orbit, The Moon",
+          "Room-wide signal source, processor state UI",
+          "Moon voice, alarms"
+        ],
+        [
+          "S05_004",
+          "Khaled close-up",
+          "Locked close-up",
+          "Khaled rejects the leap from coupled behaviour to a new form of life. Play restraint under pressure.",
+          "The Moon claims to be changing/becoming a whole; Khaled refuses to claim knowledge.",
+          "Khaled, The Moon",
+          "Facial performance, emergency reflections",
+          "Dialogue"
+        ],
+        [
+          "S05_005",
+          "Wide structural failure",
+          "Controlled camera tilt and debris movement",
+          "The floor splits and a support crushes a console. Establish a safe, repeatable destruction path.",
+          "Kevin calls attention to geometry readings.",
+          "Khaled, Kevin",
+          "Floor split, damaged console, structural debris",
+          "Structural failure"
+        ],
+        [
+          "S05_006",
+          "Holographic map insert",
+          "Push toward the local metric trace",
+          "The metric deviation grows. Present the information pattern and geometry readings on a shared time base, but keep the visual label descriptive.",
+          "Kevin proposes a connection; Khaled calls it a correlation in this experiment.",
+          "Khaled, Kevin",
+          "Holographic map, metric plot, information plot",
+          "Alarms subdued under dialogue"
+        ],
+        [
+          "S05_007",
+          "Equipment danger wide",
+          "Equipment breaks loose across foreground",
+          "The chamber tilts; large equipment moves through frame. Maintain clear screen direction and actor escape paths.",
+          "Kevin and Khaled decide they must shut the system down.",
+          "Khaled, Kevin",
+          "Breakaway equipment, cable movement, safe stunt animation",
+          "Metal impact"
+        ],
+        [
+          "S05_008",
+          "Moving two-shot to control panel",
+          "Track with both characters",
+          "They move to the control panel under pressure. The shot should bridge the emergency into the controlled test of Scene 6.",
+          "The boundary is part of the control structure; Khaled proposes restoring independent control without destroying the record.",
+          "Khaled, Kevin",
+          "Control panel, character locomotion, damaged chamber",
+          "Alarms transition to focused interface tone"
+        ]
+      ]
+    },
+    {
+      "scene_id": "S06",
+      "number": 6,
+      "title": "The Test",
+      "location": "Central Control System",
+      "pages": [
+        17,
+        19
+      ],
+      "continuity": "Khaled and Kevin perform a sequence of controlled interventions. The signal persists through three exclusions. They restore the original partition, preserve raw observations and disable autonomous feedback.",
+      "shots": [
+        [
+          "S06_001",
+          "Control-room wide / interface insert",
+          "Reveal four competing models on diagnostic interface",
+          "Re-establish the four hypotheses as the frame for a controlled test. The UI must not imply that one model has won.",
+          "Khaled explains one-variable-at-a-time intervention.",
+          "Khaled, Kevin, Orbit",
+          "Central control system, diagnostic interface, four model panels",
+          "Alarm bed drops to focused hum"
+        ],
+        [
+          "S06_002",
+          "Hands-on control insert",
+          "Precise close-up",
+          "Kevin isolates the common power supply. Show a confirmed system state change.",
+          "First intervention; Orbit confirms isolation.",
+          "Kevin, Orbit",
+          "Power control, status indicator",
+          "Power disconnect; lights dim"
+        ],
+        [
+          "S06_003",
+          "Signal display",
+          "Locked insert",
+          "The anomalous signal continues after the common power supply is isolated.",
+          "Kevin notices persistence; Khaled moves to the next test.",
+          "Khaled, Kevin",
+          "Signal display, status labels",
+          "Signal tone remains"
+        ],
+        [
+          "S06_004",
+          "Shared-clock control insert",
+          "Cut to second control",
+          "The shared clock is isolated. Keep labels and test order explicit.",
+          "Second intervention; Orbit confirms.",
+          "Kevin, Orbit",
+          "Clock-control UI",
+          "Electronic switching"
+        ],
+        [
+          "S06_005",
+          "Communications route insert",
+          "Cut to third control then signal",
+          "The shared communications route is removed; the signal still continues. The audience should understand that several ordinary explanations have been tested, not that every possibility is eliminated.",
+          "Third intervention and reaction.",
+          "Khaled, Kevin, Orbit",
+          "Communications routing UI, persistent signal display",
+          "Long pause then dialogue"
+        ],
+        [
+          "S06_006",
+          "Balanced two-shot",
+          "Static, deliberate coverage",
+          "Khaled reframes the task: test which relations are necessary for observed behaviour. The Moon warns that it cannot be separated.",
+          "Khaled and Moon exchange.",
+          "Khaled, The Moon, Kevin",
+          "Character rigs, quiet diagnostic room",
+          "Dialogue"
+        ],
+        [
+          "S06_007",
+          "Khaled command insert",
+          "Close-up; hold until confirmation",
+          "Khaled orders restoration of the original partition, preservation of raw observations and disabling the autonomous feedback layer.",
+          "Final command; no extra command text beyond the screenplay's meaning.",
+          "Khaled, Orbit",
+          "Command UI, raw-record preservation state",
+          "Deep electrical thrum begins"
+        ],
+        [
+          "S06_008",
+          "Wide hologram separation",
+          "Slow, controlled pullback",
+          "Three regions pull apart; the chamber stabilizes and geometry readings return toward baseline. Make this a measurable state change, not a triumphant proof.",
+          "The Moon says it is disappearing; Kevin replies that measurement is changing.",
+          "Khaled, Kevin, The Moon",
+          "Separated holograms, stable chamber, baseline trend",
+          "Electrical thrum resolves"
+        ],
+        [
+          "S06_009",
+          "Medium three-shot / interface",
+          "Hold on stable state",
+          "The Moon's voice distorts and fades; Orbit confirms feedback disabled. The characters exchange relief and a dry joke.",
+          "Silence, Orbit confirmation, Kevin and Khaled final exchange.",
+          "Khaled, Kevin, Orbit, The Moon",
+          "Stable control room, subdued indicators",
+          "Silence then dialogue"
+        ]
+      ]
+    },
+    {
+      "scene_id": "S07",
+      "number": 7,
+      "title": "The Thing We Didn’t Find",
+      "location": "Observation Chamber — Later",
+      "pages": [
+        19,
+        24
+      ],
+      "continuity": "The chamber is damaged but quiet. Kevin has a bandage on his forehead. The characters summarize only what the experiment supports. A fourth signal appears and delivers the cliffhanger.",
+      "shots": [
+        [
+          "S07_001",
+          "Wide establishing",
+          "Static, calm frame",
+          "Return to the observation chamber later. Emergency lights glow; repair drones work in the distance. Contrast with Scene 5's chaos.",
+          "No dialogue initially; soft electronic hum.",
+          "Khaled, Kevin",
+          "Damaged chamber, emergency lights, repair drones, Kevin bandage",
+          "Soft hum and distant repair drones"
+        ],
+        [
+          "S07_002",
+          "Two-shot debrief",
+          "Slow, almost imperceptible push",
+          "Kevin asks what they discovered. Khaled lists only supported observations: joint information beyond isolated marginals, boundary-dependent integrated behaviour, unstable feedback.",
+          "Debrief dialogue; keep each finding visually separate if using inserts.",
+          "Khaled, Kevin",
+          "Character rigs, data display",
+          "Dialogue"
+        ],
+        [
+          "S07_003",
+          "Geometry record insert",
+          "Subtle focus shift between plots",
+          "Kevin points out that geometry changed with the information pattern. Do not imply the connection is established.",
+          "Kevin asks whether this may be the connection; Khaled lists baseline alternatives.",
+          "Khaled, Kevin",
+          "Geometry and information records, alternative-explanation labels",
+          "Quiet room tone"
+        ],
+        [
+          "S07_004",
+          "Close two-shot",
+          "Hold on both characters",
+          "Kevin asks what happens if they never find the invariant. Khaled answers that failure to find it is an acceptable research outcome.",
+          "Invariant exchange; maintain the scene's restrained emotional turn.",
+          "Khaled, Kevin",
+          "Character facial acting, no new UI",
+          "Dialogue"
+        ],
+        [
+          "S07_005",
+          "Medium close-up sequence",
+          "Gentle shot/reverse-shot",
+          "Kevin suggests that a thing may be defined partly by its relations. Khaled treats it as a useful question, not a proven answer.",
+          "Relational insight and mutual teasing.",
+          "Khaled, Kevin",
+          "Character facial controls, subtle shared laugh",
+          "Dialogue; laughter"
+        ],
+        [
+          "S07_006",
+          "Alert insert",
+          "Sharp but not startling cut",
+          "A new alert appears. Orbit reports unclassified data from Region C, despite the earlier isolation.",
+          "Orbit alert; Kevin and Khaled question the source.",
+          "Khaled, Kevin, Orbit",
+          "Alert UI, Region C source label",
+          "New alert tone"
+        ],
+        [
+          "S07_007",
+          "Hologram reveal",
+          "Slow reveal from dark to visible",
+          "A fourth signal appears. It differs structurally from A/B/C. Keep its geometry distinct but do not explain it.",
+          "Kevin asks if it is a new subsystem; Khaled says they do not know.",
+          "Khaled, Kevin, Orbit",
+          "Fourth signal visual language, raw hologram",
+          "Low data pulse"
+        ],
+        [
+          "S07_008",
+          "Khaled close-up / raw-data insert",
+          "Pause before playback; then cut to waveform",
+          "Khaled orders preservation of raw data with no interpretation, reconstruction or automated voice. Orbit confirms preservation before playback.",
+          "The playback decision and raw-record confirmation.",
+          "Khaled, Kevin, Orbit",
+          "Raw data archive UI, immutable record indicator",
+          "Silence before playback"
+        ],
+        [
+          "S07_009",
+          "Signal / black / reaction",
+          "Signal pulses; cut to black on final message",
+          "A low distorted unknown voice delivers the final message. After black and silence, Kevin asks Khaled whether it is a software bug; Khaled cannot reassure him.",
+          "Unknown Voice cliffhanger and final exchange.",
+          "Unknown Voice, Kevin, Khaled",
+          "Fourth signal pulse, controlled black frame",
+          "Low distorted voice; silence; final dialogue"
+        ]
+      ]
+    },
+    {
+      "scene_id": "PC",
+      "number": 8,
+      "title": "Post-Credit Scene",
+      "location": "Unidentified Region of Space",
+      "pages": [
+        24,
+        25
+      ],
+      "continuity": "A new abstract space with no stars or planets. A geometric relationship grid appears in fragments. Three points illuminate before the grid expands and cuts to black.",
+      "shots": [
+        [
+          "PC_001",
+          "Extreme wide / near-black field",
+          "Almost imperceptible fade-in",
+          "Establish a distant region of space without stars or planets. A faint grid of geometric relationships appears and disappears.",
+          "No dialogue; low-frequency pulse begins.",
+          "Unknown Voice",
+          "Abstract grid, black field, no celestial bodies",
+          "Low-frequency pulse"
+        ],
+        [
+          "PC_002",
+          "Minimalist point inserts",
+          "Three separate points illuminate in sequence",
+          "One point, then a second, then a third. Each line is delivered by the Unknown Voice; the image remains abstract and non-literal.",
+          "Three post-credit statements about boundaries, wholes and relations.",
+          "Unknown Voice",
+          "Three point lights, faint relationship grid",
+          "Low-frequency pulse under voice"
+        ],
+        [
+          "PC_003",
+          "Extreme wide",
+          "Grid expands then clean cut to black",
+          "The grid expands beyond the initial field. End decisively on black; no explanatory reveal.",
+          "No additional dialogue.",
+          "None visible",
+          "Expanding abstract grid, black end card",
+          "Pulse resolves to silence"
+        ]
+      ]
+    }
+  ]
+}
