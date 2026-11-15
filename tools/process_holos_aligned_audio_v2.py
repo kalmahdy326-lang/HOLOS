@@ -98,6 +98,43 @@ SUPPORTED_VISEMES = {"rest", "closed", "open", "wide", "round", "teeth"}
 VALID_SPEAKERS = {"KEVIN", "KHALED"}
 # Events may not exceed the measured audio duration by more than this epsilon.
 DURATION_EPSILON_SECONDS = 0.05
+
+# Keep the vocabulary in lockstep with godot/holos_timeline.gd. These are
+# semantic viseme labels; a character-specific rig maps them to real controls.
+VISEME_TO_GODOT = {name: name for name in ("rest", "closed", "open", "wide", "round", "teeth")}
+SPEAKER_NORMALIZE = {"KEVIN": "KEVIN", "KHALED": "KHALED"}
+
+
+def build_godot_timeline(
+    events: list[dict[str, Any]],
+    audio_duration: float | None = None,
+    version: int = 1,
+) -> dict[str, Any]:
+    """Serialize validated phoneme events for the existing HolosTimeline consumer.
+
+    Events remain flat because the Godot consumer evaluates phoneme intervals;
+    grouping turns would discard the per-phoneme animation timing.
+    """
+    if version != 1:
+        raise ValueError(f"Unsupported Godot timeline schema version: {version}")
+    converted: list[dict[str, Any]] = []
+    previous_start = -1.0
+    for index, event in enumerate(events):
+        speaker = SPEAKER_NORMALIZE.get(str(event.get("speaker", "")).upper())
+        viseme = VISEME_TO_GODOT.get(str(event.get("viseme", "")).lower())
+        try:
+            start, end = float(event["start"]), float(event["end"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError(f"Invalid event timing at index {index}") from exc
+        if speaker is None or viseme is None or not math.isfinite(start) or not math.isfinite(end):
+            raise ValueError(f"Unsupported speaker, viseme, or timing at event {index}")
+        if start < previous_start - 1e-6 or start < 0 or end <= start:
+            raise ValueError(f"Invalid event ordering or duration at index {index}")
+        if audio_duration is not None and end > audio_duration + DURATION_EPSILON_SECONDS:
+            raise ValueError(f"Event {index} exceeds audio duration")
+        converted.append({**event, "speaker": speaker, "viseme": viseme})
+        previous_start = start
+    return {"schema_version": version, "events": converted}
 JOURNAL_SUFFIX = ".commit-journal.json"
 JOURNAL_VERSION = 1
 
@@ -605,6 +642,7 @@ def build_output_document(
         "approved_transcript": [{"speaker": s, "text": t} for s, t in APPROVED_TURNS],
         "source_sha256": sha256(input_wav.resolve()),
         "events": events,
+        "godot_timeline": build_godot_timeline(events),
         "limitations": [
             "WhisperX supplies acoustic word/character timing here, not dedicated phoneme timing.",
             "Internal phoneme boundaries are dictionary-based subdivisions inside aligned word intervals; they are estimates, not acoustically verified phoneme timings.",
@@ -661,14 +699,20 @@ def self_test() -> int:
             check(name, True)
 
     print("Self-test 3: timeline document validation")
-    base_event = {"speaker": "KEVIN", "start": 0.0, "end": 0.1, "phoneme": "T", "viseme": "wide", "source_word": "Tell"}
     def doc(events: list[dict[str, Any]]) -> dict[str, Any]:
         return {"events": events}
+    valid_fixture = []
+    for index, token in enumerate(approved_tokens()):
+        valid_fixture.append({
+            "speaker": "KEVIN" if index < 10 or 15 <= index < 23 else "KHALED",
+            "start": index * 0.1, "end": index * 0.1 + 0.05,
+            "phoneme": "T", "viseme": "wide", "source_word": token,
+        })
     try:
-        validate_timeline_document(doc([base_event]), 15.0)
-        check("valid single event accepted", True)
+        validate_timeline_document(doc(valid_fixture), 15.0)
+        check("complete valid approved timeline accepted", True)
     except RuntimeError as exc:
-        check("valid single event accepted", False, str(exc)[:80])
+        check("complete valid approved timeline accepted", False, str(exc)[:80])
     for name, events in [
         ("out-of-order rejected", [dict(base_event, start=0.2, end=0.3), dict(base_event, start=0.1, end=0.15)]),
         ("bad viseme rejected", [dict(base_event, viseme="jawdrop")]),
@@ -702,16 +746,19 @@ def self_test() -> int:
         staged_wav, staged_json = tmp / "out.wav.staged", tmp / "out.json.staged"
         staged_wav.write_bytes(b"NEW-WAV")
         staged_json.write_bytes(b"{}")
-        out_wav.write_bytes(b"OLD-WAV")  # pre-existing output that must be preserved on failure
-        out_json.mkdir()  # force the SECOND commit to fail, after the first succeeded
+        out_wav.write_bytes(b"OLD-WAV")
+        out_json.write_bytes(b"OLD-JSON")
+        def fail_second_commit(checkpoint: str) -> None:
+            if checkpoint == "after_commit:0":
+                raise OSError("injected second-commit failure")
         try:
-            promote_outputs(staged_wav, staged_json, out_wav, out_json, tmp / "backup")
+            promote_outputs(staged_wav, staged_json, out_wav, out_json, tmp / "backup", fault_hook=fail_second_commit)
             check("promotion failure detected", False, "promotion unexpectedly succeeded")
         except RuntimeError as exc:
             check("promotion failure detected", True)
             check("first-committed WAV rolled back to previous content", out_wav.read_bytes() == b"OLD-WAV")
             check("no partial new WAV left staged", not staged_wav.exists())
-            check("no partial new JSON committed", out_json.is_dir())
+            check("timeline restored to previous content", out_json.read_bytes() == b"OLD-JSON")
             check("commit journal removed after successful rollback", not journal_path_for(out_wav).exists())
             check("failure message reports rollback", "rollback completed" in str(exc))
 
@@ -723,9 +770,11 @@ def self_test() -> int:
         staged_wav.write_bytes(b"NEW-WAV")
         staged_json.write_bytes(b"{}")
         out_wav.write_bytes(b"OLD-WAV")
-        out_json.mkdir()  # second commit fails, then the injected rollback fault fires
+        out_json.write_bytes(b"OLD-JSON")
 
         def hook(checkpoint: str) -> None:
+            if checkpoint == "after_commit:0":
+                raise OSError("injected second-commit failure")
             if checkpoint == "rollback:start":
                 raise ValueError("injected rollback fault (test)")
 
