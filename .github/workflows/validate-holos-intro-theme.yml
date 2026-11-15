@@ -1,0 +1,24 @@
+name: Validate HOLOS intro theme
+
+on:
+  push:
+    paths:
+      - "music/intro-theme-v1/**"
+      - ".github/workflows/validate-holos-intro-theme.yml"
+  pull_request:
+    paths:
+      - "music/intro-theme-v1/**"
+      - ".github/workflows/validate-holos-intro-theme.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-source-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Validate source package and timing declarations
+        run: python music/intro-theme-v1/tools/validate_intro_theme.py
