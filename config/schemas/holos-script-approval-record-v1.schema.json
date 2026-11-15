@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://holos.example/schemas/holos-script-approval-record-v1.schema.json",
+  "title": "HOLOS Script Approval Record v1",
+  "description": "Versioned approval evidence for a screenplay or dialogue script. Every decision is limited to its explicit approval purpose and exact immutable source version. Only status=approved with all required evidence and scope gates represents production approval.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_id",
+    "project",
+    "episode",
+    "material_type",
+    "source_document",
+    "status",
+    "approval_purpose",
+    "approval_scope",
+    "approver",
+    "decision_time",
+    "evidence_reference",
+    "superseded_record",
+    "change_notes",
+    "comment"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "record_id": { "type": "string", "minLength": 1 },
+    "project": { "type": "string", "minLength": 1 },
+    "episode": { "type": "string", "minLength": 1 },
+    "material_type": { "enum": ["screenplay", "dialogue_script"] },
+    "source_document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "version", "sha256"],
+      "properties": {
+        "path": { "type": ["string", "null"], "minLength": 1 },
+        "version": { "type": ["string", "null"], "minLength": 1 },
+        "sha256": {
+          "oneOf": [
+            { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "status": { "enum": ["pending", "approved", "rejected", "superseded"] },
+    "approval_purpose": { "type": "string", "minLength": 1, "pattern": ".*\\S.*", "description": "The specific use authorized by this decision; the decision applies only to this purpose and the exact immutable source version identified above." },
+    "approval_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonical_for_production", "ending_confirmed"],
+      "properties": {
+        "canonical_for_production": { "type": "boolean" },
+        "ending_confirmed": { "type": "boolean" }
+      }
+    },
+    "approver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "role"],
+      "properties": {
+        "name": { "type": ["string", "null"], "minLength": 1 },
+        "role": { "type": ["string", "null"], "minLength": 1 }
+      }
+    },
+    "decision_time": { "type": ["string", "null"], "format": "date-time" },
+    "evidence_reference": { "type": ["string", "null"] },
+    "superseded_record": { "type": ["string", "null"] },
+    "change_notes": { "type": "string" },
+    "comment": { "type": "string" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "approved" } }, "required": ["status"] },
+      "then": {
+        "properties": {
+          "source_document": {
+            "properties": {
+              "path": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+              "version": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+              "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" }
+            }
+          },
+          "approval_scope": { "properties": { "canonical_for_production": { "const": true } } },
+          "approver": {
+            "properties": {
+              "name": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+              "role": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" }
+            }
+          },
+          "decision_time": { "type": "string", "format": "date-time" },
+          "evidence_reference": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": { "const": "approved" },
+          "material_type": { "const": "screenplay" }
+        },
+        "required": ["status", "material_type"]
+      },
+      "then": { "properties": { "approval_scope": { "properties": { "ending_confirmed": { "const": true } } } } }
+    }
+  ]
+}

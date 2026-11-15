@@ -1,0 +1,43 @@
+{
+  "record_type": "FINAL_ACCEPTANCE_RECORD",
+  "record_version": "1.0.0",
+  "schema_version": "1.0.0",
+  "project": "HOLOS",
+  "episode": "Episode 1",
+  "status": "NOT_READY/PENDING",
+  "accepted": false,
+  "template_notice": "PENDING TEMPLATE ONLY. This record does not authorize COMPLETE and is not evidence of acceptance.",
+  "delivery_profile": {
+    "reference": null,
+    "sha256": null
+  },
+  "final_master": {
+    "path": null,
+    "sha256": null
+  },
+  "gate_results": {
+    "canonical_story_and_editorial_authority": "BLOCKED",
+    "dialogue_and_audio_acceptance": "BLOCKED",
+    "transcript_alignment_and_viseme_validation": "BLOCKED",
+    "production_rigs_and_performance": "BLOCKED",
+    "episode_scenes_environments_and_integration": "BLOCKED",
+    "render_and_shot_review": "NOT_RUN",
+    "final_assembly_and_delivery_profile": "BLOCKED",
+    "subtitles_credits_and_licensing": "BLOCKED",
+    "archive_and_reproducibility": "BLOCKED",
+    "final_acceptance_review": "NOT_RUN"
+  },
+  "unresolved_dependencies": [
+    "Canonical complete approved Episode 1 screenplay and ending, with authoritative story/shot direction.",
+    "Complete approved dialogue and exact authoritative audio bytes; resolve the competing review-WAV variants and record selection, provenance, validation, and hash.",
+    "Validate transcript, acoustic alignment, and viseme timeline against the selected exact audio; production rig mappings and shared-clock integration remain unvalidated.",
+    "Original Khaled and Kevin production rigs, full project/environment assets, production scenes, cameras, and integrated episode body are not established in the inspected evidence.",
+    "Complete production renders and named technical/creative shot reviews are not established.",
+    "Approved final delivery profile, final assembled master, subtitles, credits/music, and licensing/provenance review are not established.",
+    "Final assets, reports, approvals, and delivery master have not been shown as archived in a verified archive manifest.",
+    "Named approvals for final acceptance and all prerequisite gates are absent."
+  ],
+  "approvals": [],
+  "decision_time": null,
+  "archive_reference": null
+}

@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "record_id": "HOLOS-EP01-SCREENPLAY-APPROVAL-PENDING",
+  "project": "HOLOS",
+  "episode": "Episode 1",
+  "material_type": "screenplay",
+  "source_document": {
+    "path": null,
+    "version": null,
+    "sha256": null
+  },
+  "status": "pending",
+  "approval_purpose": "EPISODE_01_SCREENPLAY_FOR_PRODUCTION",
+  "approval_scope": {
+    "canonical_for_production": false,
+    "ending_confirmed": false
+  },
+  "approver": {
+    "name": null,
+    "role": null
+  },
+  "decision_time": null,
+  "evidence_reference": null,
+  "superseded_record": null,
+  "change_notes": "",
+  "comment": "Pending record only. No complete screenplay, immutable source version, hash, approver, decision, or supporting approval evidence has been established. The four-turn handoff does not approve the complete screenplay."
+}

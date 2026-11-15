@@ -1,0 +1,39 @@
+{
+  "schema": "holos.archive_manifest",
+  "schema_version": "1.0.0",
+  "manifest_status": "PENDING",
+  "archive_id": null,
+  "archive_location": null,
+  "custodian": null,
+  "created_at": null,
+  "source_identity": {
+    "commit": null,
+    "delivery_profile": {
+      "identity": null,
+      "version": null,
+      "sha256": null
+    }
+  },
+  "entries": [],
+  "entry_requirements": {
+    "required_fields": [
+      "relative_path",
+      "size_bytes",
+      "sha256",
+      "asset_role",
+      "version",
+      "verification_status"
+    ],
+    "field_types": {
+      "relative_path": "string",
+      "size_bytes": "integer",
+      "sha256": "64-character lowercase hexadecimal SHA-256 string",
+      "asset_role": "string",
+      "version": "string",
+      "verification_status": "NOT_RUN | PASS | FAIL | NOT_PRESENT"
+    }
+  },
+  "archive_verification": "NOT_RUN",
+  "completeness": "NOT_ASSESSED",
+  "evidence_boundary": "This is an empty pending template only. No archive contents, final assets, approvals, or completed episode are asserted to be archived. Populate entries only for bytes actually copied to the identified archive; compute and verify each entry's size and SHA-256 against the archived bytes."
+}

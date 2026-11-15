@@ -1,0 +1,87 @@
+{
+  "record_type": "RELEASE_READINESS_REPORT",
+  "project": "HOLOS",
+  "episode": "Episode 1",
+  "report_version": "v1.0.0",
+  "evaluated_commit": null,
+  "evaluated_profile": null,
+  "overall_status": "NOT_READY",
+  "release_scope": null,
+  "author": null,
+  "reviewer": null,
+  "evaluated_at": null,
+  "evidence_boundary": "Pending template only. This report records no completed gate evaluation and makes no release-readiness claim. Evidence is limited to the supplied repository documents: production_readiness_matrix.md, final_render_verification.md, repository_evidence_criteria.md, episode1-production-asset-intake.md, episode1-shared-audio-clock-integration.md, README.md, and the supplied second user specification. Those documents distinguish repository/tooling groundwork from production acceptance; they state that screenplay/audio/rigger/scene/render and approval dependencies remain unresolved in the inspected evidence set. Missing evidence here does not establish that an artifact does not exist elsewhere. Do not infer approval, assignment, profile values, or completion.",
+  "required_gates": [
+    {
+      "gate_id": "screenplay",
+      "status": "BLOCKED",
+      "evidence_references": [],
+      "blocking_issues": ["Canonical complete approved screenplay and ending are not established by the supplied evidence."]
+    },
+    {
+      "gate_id": "audio",
+      "status": "BLOCKED",
+      "evidence_references": [],
+      "blocking_issues": ["Production audio bytes and a selected authoritative review WAV are not established; competing review-WAV hashes remain unresolved."]
+    },
+    {
+      "gate_id": "character",
+      "status": "BLOCKED",
+      "evidence_references": [],
+      "blocking_issues": ["Original production rigs and production-scene character integration are not established in the supplied evidence."]
+    },
+    {
+      "gate_id": "scene",
+      "status": "BLOCKED",
+      "evidence_references": [],
+      "blocking_issues": ["Complete production scenes, environments, cameras, and integrated episode body are not established."]
+    },
+    {
+      "gate_id": "render",
+      "status": "BLOCKED",
+      "evidence_references": [],
+      "blocking_issues": ["No verified full-body render or final master is established; delivery profile and render acceptance evidence are not recorded."]
+    },
+    {
+      "gate_id": "review",
+      "status": "BLOCKED",
+      "evidence_references": [],
+      "blocking_issues": ["Named independent review records and approvals for exact output versions/hashes are not established."]
+    },
+    {
+      "gate_id": "subtitles",
+      "status": "BLOCKED",
+      "evidence_references": [],
+      "blocking_issues": ["Approved subtitle/caption files and final-master timing/legibility review are not established."]
+    },
+    {
+      "gate_id": "credits",
+      "status": "BLOCKED",
+      "evidence_references": [],
+      "blocking_issues": ["Current credits are described as placeholders; approved complete credits and final credits review are not established."]
+    },
+    {
+      "gate_id": "licensing",
+      "status": "BLOCKED",
+      "evidence_references": [],
+      "blocking_issues": ["Per-asset provenance, rights/license records, and distribution clearance are not established."]
+    },
+    {
+      "gate_id": "archive",
+      "status": "BLOCKED",
+      "evidence_references": [],
+      "blocking_issues": ["A verified archive manifest for accepted final assets, reports, approvals, hashes, and delivery master is not established."]
+    },
+    {
+      "gate_id": "approvals",
+      "status": "BLOCKED",
+      "evidence_references": [],
+      "blocking_issues": ["Named authorized acceptance approvals for the release scope and exact candidate version/hash are not established."]
+    }
+  ],
+  "blocking_issues": [
+    "This is a pending template; no gate has been evaluated for a specific commit or delivery profile.",
+    "The supplied evidence describes unresolved production dependencies and does not establish release readiness.",
+    "All required evidence references are intentionally empty pending artifact-specific validation and named review/approval records."
+  ]
+}

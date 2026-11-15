@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://holos.example/config/schemas/holos-change-request-v1.schema.json",
+  "title": "HOLOS Change Request v1",
+  "description": "Change-control record. Null and empty values are valid for an unsubmitted DRAFT; status-specific gates require populated evidence as the request advances.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_type", "schema_version", "change_request_id", "project", "episode", "title", "category", "priority", "status", "requested_by", "requested_at", "rationale", "summary", "affected_assets", "affected_scenes", "affected_shots", "impact_assessment", "risk_assessment", "implementation_plan", "test_plan", "rollback_plan", "approvals", "separation_of_duties", "emergency_exception", "implementation", "validation", "downstream_review", "closure"
+  ],
+  "properties": {
+    "record_type": { "const": "CHANGE_REQUEST" },
+    "schema_version": { "const": "1.0.0" },
+    "change_request_id": { "$ref": "#/$defs/nullableText" },
+    "project": { "$ref": "#/$defs/nullableText" },
+    "episode": { "$ref": "#/$defs/nullableText" },
+    "title": { "$ref": "#/$defs/nullableText" },
+    "category": { "enum": ["EDITORIAL", "AUDIO", "ANIMATION", "ART", "TECHNICAL", "RENDER", "DELIVERY", "EMERGENCY", null] },
+    "priority": { "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL", null] },
+    "status": { "enum": ["DRAFT", "SUBMITTED", "UNDER_REVIEW", "APPROVED", "REJECTED", "DEFERRED", "IMPLEMENTING", "VALIDATING", "REVIEWING", "CLOSED"] },
+    "requested_by": { "$ref": "#/$defs/roleAssignment" },
+    "requested_at": { "$ref": "#/$defs/nullableDateTime" },
+    "rationale": { "$ref": "#/$defs/nullableText" },
+    "summary": { "$ref": "#/$defs/nullableText" },
+    "affected_assets": { "type": "array", "items": { "$ref": "#/$defs/affectedAsset" } },
+    "affected_scenes": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "affected_shots": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "impact_assessment": { "$ref": "#/$defs/impactAssessment" },
+    "risk_assessment": { "$ref": "#/$defs/riskAssessment" },
+    "implementation_plan": { "$ref": "#/$defs/textList" },
+    "test_plan": { "$ref": "#/$defs/textList" },
+    "rollback_plan": { "$ref": "#/$defs/textList" },
+    "approvals": { "type": "array", "items": { "$ref": "#/$defs/approval" } },
+    "separation_of_duties": { "$ref": "#/$defs/separation" },
+    "emergency_exception": { "$ref": "#/$defs/emergency" },
+    "implementation": { "$ref": "#/$defs/implementation" },
+    "validation": { "$ref": "#/$defs/validation" },
+    "downstream_review": { "$ref": "#/$defs/downstreamReview" },
+    "closure": { "$ref": "#/$defs/closure" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "SUBMITTED" } }, "required": ["status"] },
+      "then": {
+        "properties": {
+          "change_request_id": { "$ref": "#/$defs/nonblankText" }, "project": { "$ref": "#/$defs/nonblankText" }, "episode": { "$ref": "#/$defs/nonblankText" }, "title": { "$ref": "#/$defs/nonblankText" }, "category": { "enum": ["EDITORIAL", "AUDIO", "ANIMATION", "ART", "TECHNICAL", "RENDER", "DELIVERY", "EMERGENCY"] }, "requested_by": { "$ref": "#/$defs/assignedRole" }, "requested_at": { "$ref": "#/$defs/dateTime" }, "rationale": { "$ref": "#/$defs/nonblankText" }, "summary": { "$ref": "#/$defs/nonblankText" }, "affected_assets": { "minItems": 1 }, "implementation_plan": { "minItems": 1 }, "test_plan": { "minItems": 1 }, "rollback_plan": { "minItems": 1 },
+          "impact_assessment": { "properties": { "summary": { "$ref": "#/$defs/nonblankText" }, "domains": { "minProperties": 1 } }, "required": ["summary", "domains"] },
+          "risk_assessment": { "properties": { "level": { "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] }, "risks": { "minItems": 1 }, "mitigations": { "minItems": 1 } }, "required": ["level", "risks", "mitigations"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "APPROVED" } }, "required": ["status"] },
+      "then": {
+        "properties": {
+          "approvals": { "minItems": 1, "contains": { "properties": { "decision": { "const": "APPROVED" }, "approver": { "$ref": "#/$defs/assignedRole" }, "decision_at": { "$ref": "#/$defs/dateTime" } }, "required": ["approver", "decision", "decision_at"] } },
+          "implementation_plan": { "minItems": 1 }, "test_plan": { "minItems": 1 }, "rollback_plan": { "minItems": 1 }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "CLOSED" } }, "required": ["status"] },
+      "then": {
+        "properties": {
+          "implementation": { "properties": { "implementer": { "$ref": "#/$defs/assignedRole" }, "completed_at": { "$ref": "#/$defs/dateTime" }, "evidence": { "minItems": 1 } }, "required": ["implementer", "completed_at", "evidence"] },
+          "validation": { "properties": { "validator": { "$ref": "#/$defs/assignedRole" }, "validation_report": { "$ref": "#/$defs/nonblankText" }, "validation_status": { "const": "PASS" }, "validated_at": { "$ref": "#/$defs/dateTime" }, "failures": { "maxItems": 0 } }, "required": ["validator", "validation_report", "validation_status", "validated_at", "failures"] },
+          "downstream_review": { "properties": { "status": { "enum": ["COMPLETE", "NOT_APPLICABLE"] }, "review_evidence": { "minItems": 1 } }, "required": ["status", "review_evidence"] },
+          "closure": { "properties": { "closed_by": { "$ref": "#/$defs/assignedRole" }, "closed_at": { "$ref": "#/$defs/dateTime" }, "closure_status": { "const": "CLOSED" }, "post_implementation_review": { "$ref": "#/$defs/nonblankText" }, "evidence": { "minItems": 1 } }, "required": ["closed_by", "closed_at", "closure_status", "post_implementation_review", "evidence"] },
+          "approvals": { "minItems": 1, "contains": { "properties": { "decision": { "const": "APPROVED" } }, "required": ["decision"] } }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "nullableText": { "type": ["string", "null"] },
+    "nonblankText": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "dateTime": { "type": "string", "format": "date-time" },
+    "nullableDateTime": { "oneOf": [{ "$ref": "#/$defs/dateTime" }, { "type": "null" }] },
+    "roleAssignment": { "type": "object", "additionalProperties": false, "required": ["role", "person"], "properties": { "role": { "$ref": "#/$defs/nullableText" }, "person": { "$ref": "#/$defs/nullableText" } } },
+    "assignedRole": { "type": "object", "additionalProperties": false, "required": ["role", "person"], "properties": { "role": { "$ref": "#/$defs/nonblankText" }, "person": { "$ref": "#/$defs/nonblankText" } } },
+    "textList": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "sha256": { "type": ["string", "null"], "pattern": "^[a-fA-F0-9]{64}$" },
+    "affectedAsset": {
+      "type": "object", "additionalProperties": false,
+      "required": ["asset_id", "asset_name", "current_version", "current_sha256", "current_source", "proposed_version", "proposed_sha256", "proposed_source", "purpose"],
+      "properties": { "asset_id": { "$ref": "#/$defs/nullableText" }, "asset_name": { "$ref": "#/$defs/nullableText" }, "current_version": { "$ref": "#/$defs/nullableText" }, "current_sha256": { "$ref": "#/$defs/sha256" }, "current_source": { "$ref": "#/$defs/nullableText" }, "proposed_version": { "$ref": "#/$defs/nullableText" }, "proposed_sha256": { "$ref": "#/$defs/sha256" }, "proposed_source": { "$ref": "#/$defs/nullableText" }, "purpose": { "$ref": "#/$defs/nullableText" } }
+    },
+    "impactAssessment": { "type": "object", "additionalProperties": false, "required": ["summary", "domains"], "properties": { "summary": { "$ref": "#/$defs/nullableText" }, "domains": { "type": "object", "additionalProperties": { "type": "object", "additionalProperties": false, "required": ["disposition", "notes"], "properties": { "disposition": { "enum": ["NONE", "REVIEW_REQUIRED", "UPDATE_REQUIRED", "RERUN_REQUIRED", "UNKNOWN", null] }, "notes": { "$ref": "#/$defs/nullableText" } } } } } },
+    "riskAssessment": { "type": "object", "additionalProperties": false, "required": ["level", "risks", "mitigations"], "properties": { "level": { "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL", null] }, "risks": { "$ref": "#/$defs/textList" }, "mitigations": { "$ref": "#/$defs/textList" } } },
+    "approval": { "type": "object", "additionalProperties": false, "required": ["approver", "role", "decision", "decision_at", "scope_version", "scope_sha256", "conditions", "notes", "evidence_reference"], "properties": { "approver": { "$ref": "#/$defs/roleAssignment" }, "role": { "$ref": "#/$defs/nullableText" }, "decision": { "enum": ["APPROVED", "REJECTED", "DEFERRED", null] }, "decision_at": { "$ref": "#/$defs/nullableDateTime" }, "scope_version": { "$ref": "#/$defs/nullableText" }, "scope_sha256": { "$ref": "#/$defs/sha256" }, "conditions": { "$ref": "#/$defs/textList" }, "notes": { "$ref": "#/$defs/nullableText" }, "evidence_reference": { "$ref": "#/$defs/nullableText" } } },
+    "separation": { "type": "object", "additionalProperties": false, "required": ["requester", "implementer", "independent_validator", "approver", "exception_documented", "exception_details", "compensating_review"], "properties": { "requester": { "$ref": "#/$defs/roleAssignment" }, "implementer": { "$ref": "#/$defs/roleAssignment" }, "independent_validator": { "$ref": "#/$defs/roleAssignment" }, "approver": { "$ref": "#/$defs/roleAssignment" }, "exception_documented": { "type": "boolean" }, "exception_details": { "$ref": "#/$defs/nullableText" }, "compensating_review": { "$ref": "#/$defs/nullableText" } } },
+    "emergency": { "type": "object", "additionalProperties": false, "required": ["invoked", "hazard", "scope", "temporary_containment", "authorization", "producer_set_review_window", "retrospective_review_due", "nonwaivable_controls_confirmed", "evidence_reference"], "properties": { "invoked": { "type": "boolean" }, "hazard": { "$ref": "#/$defs/nullableText" }, "scope": { "$ref": "#/$defs/nullableText" }, "temporary_containment": { "$ref": "#/$defs/nullableText" }, "authorization": { "$ref": "#/$defs/nullableText" }, "producer_set_review_window": { "type": "boolean" }, "retrospective_review_due": { "$ref": "#/$defs/nullableDateTime" }, "nonwaivable_controls_confirmed": { "type": "boolean" }, "evidence_reference": { "$ref": "#/$defs/nullableText" } }, "allOf": [{ "if": { "properties": { "invoked": { "const": true } }, "required": ["invoked"] }, "then": { "properties": { "hazard": { "$ref": "#/$defs/nonblankText" }, "scope": { "$ref": "#/$defs/nonblankText" }, "temporary_containment": { "$ref": "#/$defs/nonblankText" }, "authorization": { "$ref": "#/$defs/nonblankText" }, "producer_set_review_window": { "const": true }, "nonwaivable_controls_confirmed": { "const": true } }, "required": ["hazard", "scope", "temporary_containment", "authorization"] } }] },
+    "implementation": { "type": "object", "additionalProperties": false, "required": ["implementer", "started_at", "completed_at", "evidence", "implementation_notes", "deviations"], "properties": { "implementer": { "$ref": "#/$defs/roleAssignment" }, "started_at": { "$ref": "#/$defs/nullableDateTime" }, "completed_at": { "$ref": "#/$defs/nullableDateTime" }, "evidence": { "type": "array", "items": { "type": "string", "minLength": 1 } }, "implementation_notes": { "$ref": "#/$defs/textList" }, "deviations": { "$ref": "#/$defs/textList" } } },
+    "validation": { "type": "object", "additionalProperties": false, "required": ["validator", "validation_report", "validation_status", "validated_at", "checks_rerun", "failures"], "properties": { "validator": { "$ref": "#/$defs/roleAssignment" }, "validation_report": { "$ref": "#/$defs/nullableText" }, "validation_status": { "enum": ["NOT_STARTED", "PASS", "FAIL", "BLOCKED", null] }, "validated_at": { "$ref": "#/$defs/nullableDateTime" }, "checks_rerun": { "$ref": "#/$defs/textList" }, "failures": { "$ref": "#/$defs/textList" } } },
+    "downstreamReview": { "type": "object", "additionalProperties": false, "required": ["status", "affected_dependents", "stale_reviews_identified", "review_evidence"], "properties": { "status": { "enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETE", "NOT_APPLICABLE", null] }, "affected_dependents": { "$ref": "#/$defs/textList" }, "stale_reviews_identified": { "type": "boolean" }, "review_evidence": { "$ref": "#/$defs/textList" } } },
+    "closure": { "type": "object", "additionalProperties": false, "required": ["closed_by", "closed_at", "closure_status", "post_implementation_review", "evidence"], "properties": { "closed_by": { "$ref": "#/$defs/roleAssignment" }, "closed_at": { "$ref": "#/$defs/nullableDateTime" }, "closure_status": { "enum": ["OPEN", "CLOSED", "REJECTED", "DEFERRED", null] }, "post_implementation_review": { "$ref": "#/$defs/nullableText" }, "evidence": { "$ref": "#/$defs/textList" } } }
+  }
+}

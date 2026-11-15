@@ -1,0 +1,28 @@
+{
+  "record_type": "SHOT_REVIEW_RECORD",
+  "shot_id": null,
+  "candidate_render": {
+    "path": null,
+    "sha256": null
+  },
+  "approved_screenplay_passage": {
+    "reference": null,
+    "version": null,
+    "sha256": null
+  },
+  "review_scope": "Each technical or creative review applies only to the exact identified shot and exact candidate render SHA-256 recorded in this record. A review or decision here does not imply review, approval, or acceptance of any other shot, render, or the episode as a whole.",
+  "technical_review": {
+    "result": "NOT_RUN",
+    "reviewer": null,
+    "decision": null,
+    "reviewed_at": null
+  },
+  "creative_review": {
+    "result": "NOT_RUN",
+    "reviewer": null,
+    "decision": null,
+    "reviewed_at": null
+  },
+  "defects": [],
+  "status": "BLOCKED_PENDING_SOURCE"
+}
