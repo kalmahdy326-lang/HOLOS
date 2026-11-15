@@ -1,0 +1,90 @@
+name: HOLOS 30-minute validation
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: holos-30-minute-validation
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out current HOLOS revision
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install FFmpeg and virtual display
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ffmpeg xvfb libgl1-mesa-dri
+
+      - name: Run Python, media, and regression tests
+        id: python_tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Inventory source and audit Godot resources
+        id: asset_audit
+        run: |
+          python tools/holos.py inventory
+          python tools/holos.py audit-godot-assets --godot-project godot
+
+      - name: Download and verify pinned Godot 4.4.1
+        run: |
+          curl --fail --location --retry 10 --retry-all-errors --retry-delay 2 --retry-max-time 180 \
+            https://github.com/godotengine/godot-builds/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.x86_64.zip \
+            --output "$RUNNER_TEMP/godot.zip"
+          echo "d6e382fb531019f85630c1f485a561a0d20c4a2344b6c3847735cfee7da812aa  $RUNNER_TEMP/godot.zip" | sha256sum --check
+          unzip "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot-bin"
+          chmod +x "$RUNNER_TEMP/godot-bin/Godot_v4.4.1-stable_linux.x86_64"
+
+      - name: Run Godot offscreen renderer integration tests
+        id: godot_tests
+        env:
+          HOLOS_GODOT: ${{ runner.temp }}/godot-bin/Godot_v4.4.1-stable_linux.x86_64
+          HOLOS_GODOT_HEADLESS: "0"
+          HOLOS_GODOT_DISPLAY_WRAPPER: xvfb-run
+        run: LIBGL_ALWAYS_SOFTWARE=1 python -m unittest discover -s tests -p "test_godot_integration.py" -v
+
+      - name: Write verified run report
+        if: always()
+        env:
+          PYTHON_JOB: ${{ steps.python_tests.outcome }}
+          AUDIT_JOB: ${{ steps.asset_audit.outcome }}
+          GODOT_JOB: ${{ steps.godot_tests.outcome }}
+        run: |
+          mkdir -p output/automation-reports
+          {
+            echo "# HOLOS scheduled validation"
+            echo
+            echo "- Timestamp (UTC): $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo "- Commit: $GITHUB_SHA"
+            echo "- Workflow run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "- Python/media regression tests: ${PYTHON_JOB:-not_run}"
+            echo "- Source inventory and static Godot asset audit: ${AUDIT_JOB:-not_run}"
+            echo "- Godot offscreen renderer integration tests: ${GODOT_JOB:-not_run}"
+            echo
+            echo "## Scope"
+            echo
+            echo "This report records CI validation of the repository's checked-in engine and generic Godot test fixture. It does not claim that the separate local production project at /home/ubuntu/holos_rigging was accessed, that real Khaled/Kevin character rigs were rendered, or that production animation frames advanced."
+          } > output/automation-reports/holos-validation.md
+
+      - name: Upload verified run report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: holos-validation-${{ github.run_id }}
+          path: output/automation-reports/holos-validation.md
+          if-no-files-found: error
+          retention-days: 90
