@@ -74,7 +74,7 @@ func _test_valid_timeline() -> void:
 func _test_rejections() -> void:
 	var cases: Array = [
 		["out-of-order rejected", func(): return _mutated(func(e: Array):
-			e[1]["start"] = 0.05)],
+			e[2]["start"] = 0.05)],
 		["bad viseme rejected", func(): return _mutated(func(e: Array):
 			e[2]["viseme"] = "jawdrop")],
 		["non-positive duration rejected", func(): return _mutated(func(e: Array):
