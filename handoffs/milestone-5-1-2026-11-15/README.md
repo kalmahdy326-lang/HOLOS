@@ -69,3 +69,28 @@ The four-turn exchange passed the following checks:
 The two timeline JSONs contain 189 flat events each, but omit top-level `schema_version`. The current Godot loader tolerates unversioned input; the canonical processor emits `schema_version: 1`. Internal phoneme intervals are dictionary-based subdivisions inside acoustically aligned word intervals, not dedicated phoneme-aligner output.
 
 Godot integration was not performed and no production project files were changed.
+
+
+## Portable timeline builder
+
+The canonical builder is `tools/build_holos_full_episode_timeline.py`. It consumes a WhisperX alignment and hash-verified source MP3; it does not run ASR or modify audio. Relative input and output paths resolve from the repository root. It calls the repository's strict v2.1 processor and emits versioned flat `schema_version: 1` event timelines.
+
+The source hash and measured source duration are required. To create a review-relative timeline, also provide a specific review WAV, its complete expected SHA-256, and the extraction offset. This is intentional while the two review WAV variants remain distinct.
+
+Example shape (replace placeholders with the selected, verified files and hashes):
+
+```text
+python tools/build_holos_full_episode_timeline.py
+  --alignment handoffs/milestone-5-1-2026-11-15/HOLOS_FullEpisode_WhisperX_Aligned.json
+  --source-mp3 <verified-source-mp3-path>
+  --expected-source-sha256 <64-character-sha256>
+  --audio-duration-seconds 914.880
+  --absolute-output <new-absolute-timeline-path>
+  --review-wav <selected-review-wav-path>
+  --expected-review-wav-sha256 <64-character-sha256>
+  --review-offset-seconds 0.091
+  --relative-output <new-review-relative-timeline-path>
+  --manifest-output <new-manifest-path>
+```
+
+The builder refuses to replace existing outputs. Install the repository's alignment requirements, including `pronouncing`, before generating phoneme-labelled estimates. Internal phoneme subdivisions remain estimates; this builder does not provide dedicated phoneme alignment.
