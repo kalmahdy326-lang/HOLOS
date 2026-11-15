@@ -203,7 +203,7 @@ def journal_path_for(output_wav: Path) -> Path:
 
 
 def _fsync_file(path: Path) -> None:
-    with path.open("rb") as stream:
+    with path.open("r+b") as stream:
         os.fsync(stream.fileno())
 
 
@@ -375,8 +375,7 @@ def promote_outputs(
                 except FileNotFoundError:
                     pass
                 shutil.copy2(destination, temp_backup)
-                with temp_backup.open("rb") as backup_stream:
-                    os.fsync(backup_stream.fileno())
+                _fsync_file(temp_backup)
                 os.replace(temp_backup, backup)
                 if os.name != "nt":
                     backup_fd = os.open(backup_dir, os.O_RDONLY)
