@@ -944,6 +944,45 @@ def self_test() -> int:
             check("timeline not created", not out_json.exists())
             check("journal deleted after recovery", not journal_path_for(out_wav).exists())
 
+    print("Self-test 9: invalid recovery journals fail closed")
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td)
+        out_wav, out_json = tmp / "out.wav", tmp / "out.json"
+        out_wav.write_bytes(b"KEEP-WAV")
+        out_json.write_bytes(b"KEEP-JSON")
+        journal = journal_path_for(out_wav)
+        journal.write_text("{not-json", encoding="utf-8")
+        try:
+            recover_interrupted_promotion(out_wav, out_json)
+            check("malformed journal rejected", False)
+        except RuntimeError:
+            check("malformed journal rejected", True)
+        check("malformed journal preserved", journal.exists())
+        check("destinations untouched on invalid journal",
+              out_wav.read_bytes() == b"KEEP-WAV" and out_json.read_bytes() == b"KEEP-JSON")
+
+    print("Self-test 10: incomplete backup temp cannot replace original")
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td)
+        out_wav, out_json = tmp / "out.wav", tmp / "out.json"
+        backup_dir = tmp / "backup"
+        backup_dir.mkdir()
+        out_wav.write_bytes(b"KEEP-WAV")
+        out_json.write_bytes(b"KEEP-JSON")
+        (backup_dir / "out.wav.bak.tmp").write_bytes(b"PARTIAL")
+        write_journal(journal_path_for(out_wav), {
+            "version": JOURNAL_VERSION,
+            "destinations": [
+                {"path": str(out_wav), "existed": True, "backup": str(backup_dir / "out.wav.bak")},
+                {"path": str(out_json), "existed": True, "backup": str(backup_dir / "out.json.bak")},
+            ],
+            "staged": [str(out_wav.with_name("out.wav.staged")), str(out_json.with_name("out.json.staged"))],
+        })
+        summary = recover_interrupted_promotion(out_wav, out_json)
+        check("partial temporary backup ignored", summary is not None and not summary["restored"])
+        check("original files remain intact",
+              out_wav.read_bytes() == b"KEEP-WAV" and out_json.read_bytes() == b"KEEP-JSON")
+
     print()
     if failures:
         print(f"SELF-TEST FAIL: {len(failures)} check(s) failed: {failures}")
