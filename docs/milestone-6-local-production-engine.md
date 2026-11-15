@@ -143,7 +143,15 @@ are available. Do not substitute the generic adapter fixture for either rig.
 - Assemble shots in configured order.
 - Apply explicit frame rate, codec, pixel format, audio mapping, and duration policy.
 - Preserve source dialogue and soundtrack files unchanged.
+- For separate opening and closing themes, create a duration-exact single music bed with `tools/compose_episode_music_bed.py`; the middle remains silent unless music is added to the approved score.
+- When dialogue and music are both present, `audio.music_gain_db` sets the music level relative to dialogue (default `-18 dB`, accepted range `-60..0 dB`).
 - Record assembly settings and media metadata in a manifest.
+
+The bookend composer accepts stereo, 48 kHz, signed 16-bit PCM WAV sources and
+does not overwrite inputs or existing outputs. The current locally synthesized
+HOLOS theme drafts are 12 seconds for the intro and 24 seconds for the credits
+outro. Replace or approve them before final mastering; they are not a substitute
+for the canonical Episode 1 dialogue or a finished character animation.
 
 ### F. Validation and reporting
 - Verify resolution, frame rate, duration, and expected frame count.

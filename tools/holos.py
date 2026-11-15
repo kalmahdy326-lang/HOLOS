@@ -447,6 +447,7 @@ def main() -> int:
                     output=temporary_output,
                     dialogue=dialogue,
                     music=music,
+                    music_gain_db=float(audio.get("music_gain_db", -18.0)),
                 )
                 metadata = probe_media(temporary_output)
                 validation = validate_media(
@@ -528,6 +529,7 @@ def main() -> int:
                     output=temporary_output,
                     dialogue=dialogue,
                     music=music,
+                    music_gain_db=float(audio.get("music_gain_db", -18.0)),
                 )
                 metadata = probe_media(temporary_output)
                 validation = validate_media(

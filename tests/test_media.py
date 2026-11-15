@@ -49,6 +49,23 @@ class MediaTests(unittest.TestCase):
             )
             self.assertIn("-filter_complex", command)
             self.assertTrue(any("amix=inputs=2" in arg for arg in command))
+            self.assertTrue(any("weights='1 0.125893'" in arg for arg in command))
+
+    def test_music_gain_db_rejects_unsafe_values(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            dialogue = root / "dialogue.wav"
+            music = root / "music.wav"
+            dialogue.write_bytes(b"dialogue")
+            music.write_bytes(b"music")
+            for value in (-61.0, 1.0, float("nan")):
+                with self.subTest(value=value):
+                    with self.assertRaisesRegex(MediaError, "music_gain_db"):
+                        build_assembly_command(
+                            ffmpeg="ffmpeg", frames_dir=root, fps=24,
+                            frame_count=24, output=root / "out.mp4",
+                            dialogue=dialogue, music=music, music_gain_db=value,
+                        )
 
     def test_rejects_missing_audio(self):
         with tempfile.TemporaryDirectory() as temp:

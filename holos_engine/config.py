@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 from typing import Any
 
@@ -102,4 +103,12 @@ def validate_episode(data: Any) -> None:
         and not isinstance(sync_tolerance_ms, bool)
         and sync_tolerance_ms >= 0,
         "audio.sync_tolerance_ms must be a non-negative number.",
+    )
+    music_gain_db = audio.get("music_gain_db", -18.0)
+    _require(
+        isinstance(music_gain_db, (int, float))
+        and not isinstance(music_gain_db, bool)
+        and math.isfinite(float(music_gain_db))
+        and -60.0 <= float(music_gain_db) <= 0.0,
+        "audio.music_gain_db must be finite and between -60 and 0 dB.",
     )
