@@ -751,11 +751,11 @@ def self_test() -> int:
     except RuntimeError as exc:
         check("complete valid approved timeline accepted", False, str(exc)[:80])
     for name, events in [
-        ("out-of-order rejected", [dict(base_event, start=0.2, end=0.3), dict(base_event, start=0.1, end=0.15)]),
-        ("bad viseme rejected", [dict(base_event, viseme="jawdrop")]),
-        ("non-positive duration rejected", [dict(base_event, start=0.1, end=0.1)]),
-        ("SIL not rest rejected", [dict(base_event, phoneme="SIL", viseme="open", source_word=None)]),
-        ("event beyond audio duration rejected", [dict(base_event, start=15.0, end=15.2)]),
+        ("out-of-order rejected", [dict(valid_fixture[0], start=0.2, end=0.3), dict(valid_fixture[0], start=0.1, end=0.15)]),
+        ("bad viseme rejected", [dict(valid_fixture[0], viseme="jawdrop")]),
+        ("non-positive duration rejected", [dict(valid_fixture[0], start=0.1, end=0.1)]),
+        ("SIL not rest rejected", [dict(valid_fixture[0], phoneme="SIL", viseme="open", source_word=None)]),
+        ("event beyond audio duration rejected", [dict(valid_fixture[0], start=15.0, end=15.2)]),
     ]:
         try:
             validate_timeline_document(doc(events), 15.0)
