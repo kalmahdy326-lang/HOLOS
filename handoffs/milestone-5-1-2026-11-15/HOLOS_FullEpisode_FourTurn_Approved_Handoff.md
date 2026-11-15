@@ -78,16 +78,13 @@ The padded review WAV is a review intermediate and must not be confused with an 
 - Fourth line reaches `away from you`: PASS.
 - Pronunciation review: APPROVED by user.
 - Approved transcript spelling: `kilometres` retained.
-- Full phoneme-level production timeline: NOT YET GENERATED.
+- Acoustic word-alignment timeline: GENERATED (189 flat events); internal phoneme subdivisions are estimates, not dedicated phoneme alignment.
 - Godot runtime integration: NOT YET PERFORMED.
 
 ## Current handoff status
 
-The full-episode source and turn-level evidence are now suitable as an audio handoff input. The next required artifact is a fresh alignment package generated from this exact hash-verified source or from a derived clip whose provenance and hash are recorded:
+The bundle now contains the full-episode WhisperX word/character alignment and two derived flat event timelines. The user has approved the pronunciation; the approved spelling remains `kilometres`, with both ASR `kilometers` outputs recorded as explicit normalizations.
 
-```text
-HOLOS_FullEpisode_WhisperX_Aligned.json
-HOLOS_Milestone51_WhisperX_Acoustic_Phoneme_Timeline_Aligned.json
-```
+The event timeline contains 189 events with acoustically aligned word intervals. Internal phoneme intervals are dictionary-based estimates, not dedicated phoneme-aligner output. Do not treat those estimated subdivisions as measured phoneme boundaries.
 
-No phoneme timings may be inferred from the four turn boundaries. The existing intermediate benchmark alignment remains non-authoritative.
+The source MP3 remains unchanged. The padded review WAVs have different hashes in the Manus and Codex workspaces and remain separate provenance variants. Godot integration and production acceptance are still pending.
