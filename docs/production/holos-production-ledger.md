@@ -103,3 +103,21 @@ Append a new entry with:
 - Work explicitly not completed:
 
 **Never claim background or overnight work occurred unless a real execution record proves it.**
+
+
+### Session continuation — episode configuration preflight
+
+- **Date:** 2026-11-17
+- **Branch:** `production/episode-config-preflight`
+- **Pull request:** [PR #17 — require Godot scene path during episode validation](https://github.com/kalmahdy326-lang/HOLOS/pull/17)
+- **Work completed:**
+  - Inspected `holos_engine/config.py`, `tools/holos.py`, `godot/holos_shot_runner.gd`, `examples/episode_01.json`, and `tests/test_config.py`.
+  - Confirmed renderer requires a per-shot `scene` value beginning with `res://`, while the validator previously allowed it to be absent.
+  - Updated validation to require a non-empty `res://` scene path.
+  - Tightened frame validation to reject booleans, which Python otherwise accepts as integers.
+  - Added regression tests for missing/malformed scene paths and boolean frame values.
+  - Made the starter example's replacement scene path explicit and updated the v1 reference.
+- **Status:** Changes committed to the PR branch and files fetched back for verification. PR is open, draft, unmerged.
+- **Tests:** Regression tests added but not executed in this session. The commit-associated workflow lookup returned no runs; do not claim CI passed.
+- **Not done:** No Godot resource existence check was run; no Godot runtime scene was created; no artwork, rig, audio, screenplay, or animation was produced.
+- **Next action:** Obtain a CI run for PR #17 and inspect its result. Then build a production preflight that verifies every configured `res://` resource exists in the selected Godot project before starting batch rendering. Keep the starter episode explicitly non-render-ready until real scenes are recovered or authored and approved.
