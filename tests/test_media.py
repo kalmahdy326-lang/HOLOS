@@ -161,5 +161,69 @@ class MediaTests(unittest.TestCase):
         self.assertTrue(result["valid"], result["errors"])
 
 
+    def test_rejects_truncated_video_stream_when_container_duration_looks_correct(self):
+        metadata = {
+            "streams": [
+                {"codec_type": "video", "width": 1280, "height": 720,
+                 "avg_frame_rate": "24/1", "start_time": "0.000",
+                 "duration": "8.000"}
+            ],
+            "format": {"duration": "10.000"},
+        }
+        result = validate_media(
+            metadata, width=1280, height=720, fps=24,
+            expected_duration=10.0, require_audio=False,
+        )
+        self.assertFalse(result["valid"])
+        self.assertTrue(any("Video stream duration mismatch" in item
+                            for item in result["errors"]))
+
+    def test_rejects_missing_video_stream_duration_even_without_audio(self):
+        metadata = {
+            "streams": [
+                {"codec_type": "video", "width": 1280, "height": 720,
+                 "avg_frame_rate": "24/1", "start_time": "0.000"}
+            ],
+            "format": {"duration": "10.000"},
+        }
+        result = validate_media(
+            metadata, width=1280, height=720, fps=24,
+            expected_duration=10.0, require_audio=False,
+        )
+        self.assertFalse(result["valid"])
+        self.assertTrue(any("Video stream duration is missing" in item
+                            for item in result["errors"]))
+
+    def test_checks_present_audio_even_when_audio_is_optional(self):
+        metadata = {
+            "streams": [
+                {"codec_type": "video", "width": 1280, "height": 720,
+                 "avg_frame_rate": "24/1", "start_time": "0.000",
+                 "duration": "10.000"},
+                {"codec_type": "audio", "start_time": "0.000",
+                 "duration": "8.000"},
+            ],
+            "format": {"duration": "10.000"},
+        }
+        result = validate_media(
+            metadata, width=1280, height=720, fps=24,
+            expected_duration=10.0, require_audio=False,
+        )
+        self.assertFalse(result["valid"])
+        self.assertTrue(any("duration differs from video" in item
+                            for item in result["errors"]))
+        self.assertTrue(result["av_sync"]["checked"])
+
+    def test_rejects_malformed_ffprobe_stream_collection(self):
+        metadata = {"streams": {"codec_type": "video"}, "format": {"duration": "10.0"}}
+        result = validate_media(
+            metadata, width=1280, height=720, fps=24,
+            expected_duration=10.0, require_audio=False,
+        )
+        self.assertFalse(result["valid"])
+        self.assertTrue(any("streams metadata is not a list" in item
+                            for item in result["errors"]))
+
+
 if __name__ == "__main__":
     unittest.main()
