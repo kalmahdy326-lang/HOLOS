@@ -6,6 +6,18 @@
   "evidence_boundary": "This audit reports repository metadata and inspected working-tree bytes only. PRESENT means bytes exist at this path, not that they are authoritative, valid, approved, integrated, reviewed, or production-ready. LFS_POINTER_ONLY identifies pointer text only; it is never treated as downloaded media. A missing path means absent from this checkout, not necessarily absent elsewhere. This audit does not authorize or establish completion.",
   "expected_source_evidence_inventory": [
     {
+      "path": "production/character_references/episode1_character_design.png",
+      "sha256": "8cf49b0c8f132fcfe46d8b6d783f36ab76322495daef97fab7e59d6638b75785",
+      "size_bytes": 1270608,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/character_references/episode1_character_design_manifest.json",
+      "sha256": "9d02f5d49498fa1d7224dcee4c4b572f3fb582dc466b3ea78fc0aee6f578ec77",
+      "size_bytes": 1251,
+      "status": "PRESENT"
+    },
+    {
       "path": "production/screenplay/episode_01_screenplay_v1.md",
       "sha256": null,
       "size_bytes": null,
@@ -84,11 +96,11 @@
       "status": "PRESENT"
     }
   ],
-  "generated_at": "2026-11-15T11:50:57Z",
+  "generated_at": "2026-11-17T05:04:22Z",
   "git": {
     "branch": "feat/episode1-production-integration-scaffold",
-    "commit": "126f49845aecccd7c94c982b73f9a30c1ffd3e84",
-    "commit_short": "126f498",
+    "commit": "074a0ad165e6839ba0e6ad6e8627306ab0f72dd9",
+    "commit_short": "074a0ad",
     "dirty_file_count": 0,
     "dirty_files": [],
     "report_excluded_from_status": "production/quality/repository_state_audit_report.json",
@@ -98,8 +110,8 @@
   "governance_document_inventory": [
     {
       "path": "production/quality/production_readiness_matrix.md",
-      "sha256": "17276a68f0d92280eba338b7b7a80e64106caf7bb94d2e28c41f4d783d8da48d",
-      "size_bytes": 20167,
+      "sha256": "ab930a6a008be27af9763ce25c0d5a2637638e7412b24817c1fb6b52af9a7b47",
+      "size_bytes": 21041,
       "status": "PRESENT"
     },
     {
@@ -200,8 +212,8 @@
     },
     {
       "path": "production/quality/repository_state_audit.sh",
-      "sha256": "189874d02412cd4086acb92a42fbab1cb5117149c59e99461110a6f3a235f951",
-      "size_bytes": 8496,
+      "sha256": "2a4e2c84202ffd5df806dd1b3344cc760f8f09a3916ea7297f422ba29d3dd936",
+      "size_bytes": 8644,
       "status": "PRESENT"
     },
     {
@@ -218,8 +230,8 @@
     },
     {
       "path": "production/quality/cross_document_consistency_review.md",
-      "sha256": "ba85ffe3066dbd96ebc8b98b4561a7e2659ebf2d2d4ae8027288c4e5b2dc4632",
-      "size_bytes": 2455,
+      "sha256": "ac8591bcd27100b7feb0989af38a067186ef4aa37c185a86e3ea659724e07c81",
+      "size_bytes": 2908,
       "status": "PRESENT"
     },
     {
@@ -248,8 +260,8 @@
     },
     {
       "path": "docs/episode1-production-asset-intake.md",
-      "sha256": "372cd78ac53fbbc70e87531af007b67718ad14db167e3e856a0002c71d00f738",
-      "size_bytes": 7002,
+      "sha256": "9839d5a78d35b8f2bf33ffc3f943e3584b8e4df96bb20af31eaba0eb2b686184",
+      "size_bytes": 8165,
       "status": "PRESENT"
     },
     {
@@ -269,7 +281,7 @@
   "record_type": "REPOSITORY_STATE_AUDIT_REPORT",
   "repository": {
     "branch": "feat/episode1-production-integration-scaffold",
-    "commit": "126f49845aecccd7c94c982b73f9a30c1ffd3e84",
+    "commit": "074a0ad165e6839ba0e6ad6e8627306ab0f72dd9",
     "excluded_from_counts_and_hashing": [
       "production/quality/repository_state_audit_report.json"
     ],
@@ -280,8 +292,8 @@
   "required_files": [
     {
       "path": "production/quality/production_readiness_matrix.md",
-      "sha256": "17276a68f0d92280eba338b7b7a80e64106caf7bb94d2e28c41f4d783d8da48d",
-      "size_bytes": 20167,
+      "sha256": "ab930a6a008be27af9763ce25c0d5a2637638e7412b24817c1fb6b52af9a7b47",
+      "size_bytes": 21041,
       "status": "PRESENT"
     },
     {
@@ -382,8 +394,8 @@
     },
     {
       "path": "production/quality/repository_state_audit.sh",
-      "sha256": "189874d02412cd4086acb92a42fbab1cb5117149c59e99461110a6f3a235f951",
-      "size_bytes": 8496,
+      "sha256": "2a4e2c84202ffd5df806dd1b3344cc760f8f09a3916ea7297f422ba29d3dd936",
+      "size_bytes": 8644,
       "status": "PRESENT"
     },
     {
@@ -400,8 +412,8 @@
     },
     {
       "path": "production/quality/cross_document_consistency_review.md",
-      "sha256": "ba85ffe3066dbd96ebc8b98b4561a7e2659ebf2d2d4ae8027288c4e5b2dc4632",
-      "size_bytes": 2455,
+      "sha256": "ac8591bcd27100b7feb0989af38a067186ef4aa37c185a86e3ea659724e07c81",
+      "size_bytes": 2908,
       "status": "PRESENT"
     },
     {
@@ -430,14 +442,26 @@
     },
     {
       "path": "docs/episode1-production-asset-intake.md",
-      "sha256": "372cd78ac53fbbc70e87531af007b67718ad14db167e3e856a0002c71d00f738",
-      "size_bytes": 7002,
+      "sha256": "9839d5a78d35b8f2bf33ffc3f943e3584b8e4df96bb20af31eaba0eb2b686184",
+      "size_bytes": 8165,
       "status": "PRESENT"
     },
     {
       "path": "docs/episode1-shared-audio-clock-integration.md",
       "sha256": "f0daa7ae96fafa64349d795d60ece6336fe6d9f9575f83ea3e7cc14bc8e516ab",
       "size_bytes": 2973,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/character_references/episode1_character_design.png",
+      "sha256": "8cf49b0c8f132fcfe46d8b6d783f36ab76322495daef97fab7e59d6638b75785",
+      "size_bytes": 1270608,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/character_references/episode1_character_design_manifest.json",
+      "sha256": "9d02f5d49498fa1d7224dcee4c4b572f3fb582dc466b3ea78fc0aee6f578ec77",
+      "size_bytes": 1251,
       "status": "PRESENT"
     },
     {
