@@ -266,7 +266,8 @@ class FFmpegIntegrationTests(unittest.TestCase):
                 "render": {"width": 320, "height": 180, "fps": 24},
                 "audio": {"dialogue": None, "music": None, "sync_tolerance_ms": 80},
                 "scenes": [{"scene_id": "scene_01", "shots": [
-                    {"shot_id": "SHOT_A", "start_frame": 0, "end_frame": 4},
+                    {"shot_id": "SHOT_A", "start_frame": 0, "end_frame": 4,
+                     "scene": "res://unused_fixture.tscn"},
                 ]}],
             }
             (root / "examples").mkdir()
