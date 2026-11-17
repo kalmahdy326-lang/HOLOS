@@ -32,7 +32,11 @@ from holos_engine.controller import write_preflight_report
 from holos_engine.godot_adapter import GodotAdapterError, render_shot
 from holos_engine.godot_assets import GodotAssetAuditError, audit_godot_project
 from holos_engine.media import MediaError, assemble_video, probe_media, validate_media
-from holos_engine.preflight import run_preflight
+from holos_engine.preflight import (
+    ScenePreflightError,
+    require_episode_scenes,
+    run_preflight,
+)
 from holos_engine.inventory import InventoryError, write_inventory_report
 
 
@@ -203,6 +207,8 @@ def main() -> int:
         command = subparsers.add_parser(name)
         command.add_argument("--episode", required=True, type=Path)
         command.add_argument("--mode", choices=("debug", "production"), default="production")
+        if name == "preflight":
+            command.add_argument("--godot-project", type=Path, default=Path("godot"))
 
     for name in ("render", "render-episode"):
         command = subparsers.add_parser(name)
@@ -342,13 +348,14 @@ def main() -> int:
             return 0
 
         if args.command == "preflight":
-            result = run_preflight(root, episode)
+            result = run_preflight(root, episode, args.godot_project)
             print(json.dumps(result, indent=2))
-            report = write_preflight_report(root, episode)
+            report = write_preflight_report(root, episode, args.godot_project)
             print(f"Preflight report: {report}")
-            return 1 if result["missing_assets"] else 0
+            return 1 if result["missing_assets"] or not result["scene_resources"]["valid"] else 0
 
         if args.command == "render":
+            require_episode_scenes(root, episode, args.godot_project)
             scene, shot = _find_shot_context(episode, args.shot)
             output_dir = (
                 Path("output") / "renders" / episode["episode_id"] / args.mode / shot["shot_id"]
@@ -368,6 +375,10 @@ def main() -> int:
             return 0
 
         if args.command == "render-episode":
+            # Validate every configured scene before the batch controller creates
+            # manifests, output directories, or starts the first render.
+            require_episode_scenes(root, episode, args.godot_project)
+
             def render_one(scene: dict, shot: dict, output_dir: Path) -> dict:
                 return _render_configured_shot(
                     root=root,
@@ -578,6 +589,7 @@ def main() -> int:
         BatchRenderError,
         EpisodeAssemblyError,
         GodotAssetAuditError,
+        ScenePreflightError,
         InventoryError,
         BackupError,
         ConfigError,
