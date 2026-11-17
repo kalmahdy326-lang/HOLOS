@@ -1,0 +1,22 @@
+{
+  "record_type": "CHARACTER_DESIGN_REFERENCE_INTAKE",
+  "project": "HOLOS",
+  "episode": "Episode 1",
+  "reference_id": "EP1-CHAR-DESIGN-01",
+  "path": "production/character_references/episode1_character_design.png",
+  "source_filename": "Screenshot_20261116-220127.png",
+  "sha256": "8cf49b0c8f132fcfe46d8b6d783f36ab76322495daef97fab7e59d6638b75785",
+  "size_bytes": 1270608,
+  "identity_mapping": {
+    "KHALED": "Character B — dark/black curly hair; beige/tan scarf and layered brown/beige clothing.",
+    "KEVIN": "Character A — red hair; dark/black clothing."
+  },
+  "mapping_authority": "Explicitly identified by the user in the conversation accompanying this reference.",
+  "evidence_class": "User-supplied visual design reference; not a production model, rig, scene, or animation asset.",
+  "approval_status": "USER_IDENTIFIED_REFERENCE; detailed model/animation acceptance not performed.",
+  "limitations": [
+    "Does not establish that original Godot character rigs or the complete production project are present.",
+    "Does not verify modeling, proportions, turnarounds, materials, facial controls, or animation implementation.",
+    "Use this mapping for future Episode 1 character references unless the user supersedes it."
+  ]
+}

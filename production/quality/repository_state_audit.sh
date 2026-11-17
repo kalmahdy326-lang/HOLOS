@@ -87,6 +87,8 @@ governance_docs = [
     "docs/episode1-shared-audio-clock-integration.md",
 ]
 source_evidence = [
+    "production/character_references/episode1_character_design.png",
+    "production/character_references/episode1_character_design_manifest.json",
     "production/screenplay/episode_01_screenplay_v1.md",
     "production/audio/episode_01_approved_script.json",
     "production/audio/episode_01_four_turn_v1.wav",

@@ -12,9 +12,10 @@ This checklist separates verified repository materials from the source package r
 - [x] Absolute and review-relative JSON timelines are present (189 events each).
 - [x] Approved four-turn transcript is embedded in the timeline documents.
 - [x] Source MP3 SHA-256 is recorded as `e4b13c06a6c3fbca9449cffb9135d7259b62e059a3c2d1fa37085afae65b865f`.
+- [x] User-supplied Episode 1 character design reference received; user identifies Character B (dark-haired, beige/brown clothing) as Khaled and Character A (red-haired, dark clothing) as Kevin. The exact source image and hash are recorded in `production/character_references/episode1_character_design_manifest.json`.
 - [x] Reusable title/credits bookend scene and generic renderer infrastructure exist.
 - [ ] Production WAV bytes and one authoritative review-WAV variant are not present in the repository.
-- [ ] Original Khaled and Kevin production rigs/scenes and dependencies are not present in the inspected repository tree.
+- [ ] Original Khaled and Kevin production rigs/scenes and dependencies are not present in the inspected repository tree; the supplied visual reference does not replace them.
 - [ ] Canonical complete Episode 1 screenplay and shot-by-shot approved edit are not established by the current handoff.
 - [ ] Complete episode body, production camera setup, environments, and final render are not present.
 
@@ -43,6 +44,8 @@ This checklist separates verified repository materials from the source package r
 
 ### C. Khaled character production source
 
+**Visual identity reference:** The user identifies **Character B** in the supplied design sheet as Khaled: dark/black curly hair, beige/tan scarf and layered brown/beige clothing. See `production/character_references/episode1_character_design.png` and its hash/mapping manifest. This establishes the intended name-to-design mapping for this reference, not the existence or acceptance of a modeled or rigged character.
+
 - [ ] Original Godot character scene and all referenced resources.
 - [ ] Scripts, skeleton/bone hierarchy, skin/mesh, materials, textures, shaders.
 - [ ] Animation library, facial blend shapes/visemes, mouth/jaw controls, eye controls.
@@ -52,6 +55,8 @@ This checklist separates verified repository materials from the source package r
 - [ ] Source artwork/model files and licenses where applicable.
 
 ### D. Kevin character production source
+
+**Visual identity reference:** The user identifies **Character A** in the supplied design sheet as Kevin: red hair and dark clothing. See `production/character_references/episode1_character_design.png` and its hash/mapping manifest. This establishes the intended name-to-design mapping for this reference, not the existence or acceptance of a modeled or rigged character.
 
 Same complete package as Khaled, independently supplied and identified. Kevin must retain his own approved appearance, proportions, materials, voice/performance and rig mapping. Do not clone Khaled's rig or reuse Khaled's appearance as a placeholder.
 
