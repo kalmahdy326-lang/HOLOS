@@ -101,3 +101,19 @@ Raw-byte materialization was retried using the exact Library file IDs for both a
 ### Updated recovery decision
 
 The previous request to supply the two package files remains valid. If a transfer is possible, include the Model Initialization sidecar too; retain its original name and contents. On receipt, verify the archive against the declared checksum before opening it, then inventory without overwriting. If it does not match, preserve the archive and report the mismatch rather than silently regenerating the checksum.
+
+
+## 2026-11-17 all-branch Git tree audit
+
+The GitHub branch inventory was rechecked and all **20 currently listed branches** were inspected by commit SHA using recursive Git trees. No branch contains a Khaled or Kevin character scene, character rig script, skeletal resource, or 3D model source.
+
+The scene/source assets present across the branches are production infrastructure and generic tests:
+
+- `godot/test_scenes/adapter_test.tscn` and its adapter test script;
+- `godot/scenes/episode_bookend_card.tscn` and its script;
+- `godot/holos_shot_runner.gd`, `godot/holos_timeline.gd`, and `godot/episode_audio_transport.gd`;
+- `godot/holos_scene_preflight.gd` on the later preflight branch.
+
+The media files present on the production branches are the HOLOS theme, the 15-second test audio, approved character/key-art references, and the expression sheet. These are not rig scene sources.
+
+This closes the GitHub-branch search for the currently listed branches. It does not inspect external Manus workspaces, local disks, or the contents of the two ZIP packages whose raw bytes remain inaccessible.
