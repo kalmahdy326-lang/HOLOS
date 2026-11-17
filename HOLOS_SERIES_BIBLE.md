@@ -103,7 +103,9 @@ The Episode 1 materials specify observation regions A, B, and C; individual bina
 
 ### Character artwork and animation direction
 
-The user-confirmed character sheet supplies the current name-to-design mapping. Do not alter their colors, clothing, proportions, or other design specifics without approval. The user has also supplied an [Episode 1 key-art reference](production/character_references/episode1_key_art_reference.png); its [manifest](production/character_references/episode1_key_art_reference_manifest.json) records its source and checksum. It depicts Khaled in beige and red-haired Kevin with the Episode 1 title in a lunar/cosmic composition. Treat it as supplied key-art/reference material, not automatically as final approved poster art, the official logo master, or the binding visual standard for the full series. The overall animation medium (2D, 3D, cutout, hand-drawn, or hybrid) and final rendering style have not been locked by the reviewed source materials. The current character rigs are described as working prototypes, with further work anticipated in phoneme-level lip sync, facial polish, articulated body movement, gaze, and expressive acting.
+The user-confirmed character sheet supplies the name-to-design mapping: Khaled is the dark-haired character in beige; Kevin is the red-haired character in dark clothing. The user explicitly approved the [Episode 1 key-art image](production/character_references/episode1_key_art_reference.png) as the **official series-wide visual style guide** on 2026-11-16. Its [manifest](production/character_references/episode1_key_art_reference_manifest.json) records the image provenance and approval.
+
+Apply the approved image as the series-wide art-direction anchor: cinematic, highly detailed anime-influenced illustration; expressive, stylized-real character rendering; dramatic high-contrast lighting; deep-space navy/indigo and cool silver-blue/cyan against luminous amber/gold accents; and cosmic/lunar compositions with restrained geometric/orbital motifs. Maintain the established character mapping and clothing/color identities; production model/turnaround sheets and verified rigs remain the authority for exact anatomy, proportions, and construction. The glowing sphere, rings, and energy-like effects in the key art are visual motifs only and do not establish new character powers or Episode 1 events. The guide approves visual style, not by itself a release-ready poster, editable official-logo master, or final title-card asset. The animation medium (2D, 3D, cutout, hand-drawn, or hybrid) remains a separate production decision. The current character rigs are described as working prototypes, with further work anticipated in phoneme-level lip sync, facial polish, articulated body movement, gaze, and expressive acting.
 
 ## 5. Episode 1 — current story source summary
 
@@ -146,9 +148,9 @@ The reviewed materials provide a detailed Episode 1 story and a series-level inv
 
 ## 7. Visual direction and title/credits
 
-The selected bookend concept is **Alternative B**: a darker, suspenseful palette and sharper title reveal. The opening/credits storyboard describes a near-black navy/deep-indigo field, cold silver-blue typography, restrained amber accent, eclipse-like disc, and segmented orbital arc. Its specified bookend plan is a 12-second opening and an initially 24-second closing-credit sequence; credit duration may extend for readability. These are bookend directions, not proof that final title/credits copy or an episode render is approved.
+The series-wide style guide is the user-approved key-art image described above. Its dark cosmic blues, cool lunar light, and warm gold accents complement the selected bookend concept, **Alternative B**, which specifies a darker suspenseful palette and sharper title reveal. The opening/credits storyboard describes a near-black navy/deep-indigo field, cold silver-blue typography, restrained amber accent, eclipse-like disc, and segmented orbital arc. Its specified bookend plan is a 12-second opening and an initially 24-second closing-credit sequence; credit duration may extend for readability. Bookend copy, final logo artwork, and a rendered episode remain separate approval/production gates.
 
-The Episode 1 body draft proposes a progression from controlled, legible scientific observation to increased environmental motion during feedback instability; Scene 6 deliberately calms down for the controlled test; Scene 7 returns to stillness before the fourth-signal reveal. Holograms should communicate data and relationships rather than magical energy. These are draft production directions pending review. Final logo, typography, camera/lens language, palette across the series, animation medium, and motion grammar beyond the bookends remain to be locked.
+The Episode 1 body draft proposes a progression from controlled, legible scientific observation to increased environmental motion during feedback instability; Scene 6 deliberately calms down for the controlled test; Scene 7 returns to stillness before the fourth-signal reveal. Holograms should communicate data and relationships rather than magical energy. These body-specific choices remain draft production direction; apply the approved visual treatment without implying unsupported science or inventing story events. Camera/lens language, the editable logo master, title/credit typography, animation medium, and technical motion grammar remain to be specified.
 
 ## 8. Voices, theme song, and sound
 
@@ -202,7 +204,8 @@ This bible is a summary and index. Where it differs from source files, consult t
 ### Status vocabulary used in this bible
 
 - **Source-stated:** Explicitly written in a cited project document; it may still be a draft or an unverified claim.
-- **User-confirmed:** Explicitly identified by the user in this conversation, such as the name-to-design mapping and the supplied theme song’s role.
+- **User-confirmed:** Explicitly identified by the user in this conversation, such as the character-name mapping and the supplied theme song’s role.
+- **User-approved:** Explicitly approved by the user, such as the key-art image’s role as the official series-wide visual style guide on 2026-11-16.
 - **Draft/proposed:** Available as planning material, but not locked or accepted for production.
 - **Verified locally:** Checked in this working copy by a specified reproducible check; this does not imply creative approval.
 - **Unresolved:** Requires source recovery, author approval, validation, or a production decision.
@@ -214,7 +217,7 @@ This bible is a summary and index. Where it differs from source files, consult t
 3. Confirm final use and rights/credits for the supplied theme song; decide whether it is an opening theme, recurring motif, or source for edited intro/outro cues.
 4. Select the authoritative full-episode audio and resolve the two review-WAV variants; verify dialogue against the approved full script.
 5. Review/approve the 65-shot breakdown, then determine durations, frame ranges, animatic, and character/environment requirements.
-6. Confirm whether the supplied Episode 1 key art is an approved final cover/logo reference or exploratory art; lock the series animation medium, body visual style, title/logo, palette, format, and character model specifications.
+6. Apply the approved key art as the series-wide visual style guide; separately confirm whether its wordmark/title treatment is the final logo/title-card master, then lock the animation medium, technical style sheet, format, and production model specifications.
 7. Define season length, runtimes, future episode concepts, and character arcs without resolving mysteries prematurely.
 8. Approve voice casting/performance, final music/sound direction, credits, licenses, and distribution deliverables.
 9. Lock a versioned delivery profile and perform the full offline acceptance test on the target production machine before declaring offline production verified.
