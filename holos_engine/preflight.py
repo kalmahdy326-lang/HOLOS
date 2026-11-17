@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import os
+import json
 import shutil
 import subprocess
+import tempfile
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -130,8 +132,10 @@ def require_episode_scenes(
     project_root: Path,
     episode: dict[str, Any],
     godot_project: Path = Path("godot"),
+    godot_executable: str | None = None,
+    timeout_seconds: int = 120,
 ) -> dict[str, Any]:
-    """Fail before rendering if any configured scene is absent or unsafe."""
+    """Require filesystem safety and successful Godot PackedScene loading."""
     result = inspect_episode_scenes(project_root, episode, godot_project)
     if not result["valid"]:
         details = [
@@ -142,7 +146,98 @@ def require_episode_scenes(
             "Episode scene preflight failed; no shots were rendered: "
             + "; ".join(details)
         )
+    runtime = validate_scenes_with_godot(
+        project_root, episode, godot_project,
+        executable=godot_executable, timeout_seconds=timeout_seconds,
+    )
+    result["runtime"] = runtime
     return result
+
+
+def validate_scenes_with_godot(
+    project_root: Path,
+    episode: dict[str, Any],
+    godot_project: Path = Path("godot"),
+    executable: str | None = None,
+    timeout_seconds: int = 120,
+) -> dict[str, Any]:
+    """Load each configured scene as a PackedScene without instantiating it."""
+    root = project_root.resolve()
+    candidate = godot_project if godot_project.is_absolute() else root / godot_project
+    project = candidate.resolve()
+    if not _inside(root, project) or not project.is_dir():
+        raise ScenePreflightError(f"Godot project must be inside project root: {project}")
+    script = project / "holos_scene_preflight.gd"
+    if not script.is_file():
+        raise ScenePreflightError(f"Godot runtime preflight script not found: {script}")
+    try:
+        from .godot_adapter import find_godot
+        godot = find_godot(executable)
+    except Exception as exc:
+        raise ScenePreflightError(f"Could not locate Godot for scene-load preflight: {exc}") from exc
+
+    manifest = {
+        "scenes": [
+            shot["scene"]
+            for scene_group in episode["scenes"]
+            for shot in scene_group["shots"]
+        ]
+    }
+    manifest_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", encoding="utf-8", prefix="holos-scene-preflight-",
+            suffix=".json", delete=False,
+        ) as stream:
+            json.dump(manifest, stream)
+            stream.write("\\n")
+            manifest_path = Path(stream.name)
+        command = [
+            godot, "--headless", "--path", str(project),
+            "--script", "res://holos_scene_preflight.gd",
+            "--", "--manifest", str(manifest_path),
+        ]
+        try:
+            completed = subprocess.run(
+                command, cwd=project, capture_output=True, text=True,
+                timeout=timeout_seconds, check=False,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise ScenePreflightError(
+                f"Godot scene-load preflight timed out after {timeout_seconds} seconds."
+            ) from exc
+        except OSError as exc:
+            raise ScenePreflightError(f"Could not start Godot scene-load preflight: {exc}") from exc
+
+        marker = "HOLOS_SCENE_PREFLIGHT="
+        payload = next(
+            (line[len(marker):] for line in completed.stdout.splitlines()
+             if line.startswith(marker)),
+            None,
+        )
+        if payload is None:
+            details = (completed.stderr or completed.stdout).strip()
+            raise ScenePreflightError(
+                "Godot did not return a scene-preflight report. " + details[-3000:]
+            )
+        try:
+            result = json.loads(payload)
+        except json.JSONDecodeError as exc:
+            raise ScenePreflightError("Godot returned malformed scene-preflight JSON.") from exc
+        if completed.returncode != 0 or not result.get("valid", False):
+            detail = "; ".join(
+                f"{item.get('scene', '?')}: {item.get('error', 'load failed')}"
+                for item in result.get("errors", [])
+            )
+            raise ScenePreflightError(
+                "Godot could not load every configured scene as a PackedScene: "
+                + (detail or (completed.stderr or completed.stdout).strip()[-3000:])
+            )
+        result["godot_executable"] = godot
+        return result
+    finally:
+        if manifest_path is not None:
+            manifest_path.unlink(missing_ok=True)
 
 
 def tool_version(executable: str, version_args: tuple[str, ...] = ("--version",)) -> str | None:
