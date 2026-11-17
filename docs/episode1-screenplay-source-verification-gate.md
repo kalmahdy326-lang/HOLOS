@@ -49,3 +49,17 @@ A raw-byte materialization request for the Library DOCX was denied. Consequently
 **Updated conclusion:** the expected-named DOCX is located, but the available document itself explicitly disclaims being a certified recovery of the original attachment. The authoritative screenplay gate therefore remains **BLOCKED**. Do not treat the file's presence, filename, 25-page extraction, or “approved continuation” label as proof that it is the final approved screenplay. The project author must identify the authoritative revision or supply the original 957-line source and confirm any unresolved editorial questions.
 
 The existing 65-shot JSON was independently counted: 8 groups (S01–S07 and PC), 65 total shot IDs. This confirms the structure of the draft breakdown only; it does not verify any panel against the authoritative original.
+
+
+### Draft storyboard structural check (2026-11-17)
+
+A read-only comparison of the storyboard JSON, Markdown breakdown, and JSON schema found:
+
+- 65 shot IDs in the JSON; all 65 are unique.
+- 65 shot IDs in the Markdown; the Markdown sequence matches the JSON sequence exactly.
+- Eight ordered groups: S01 (9), S02 (9), S03 (8), S04 (10), S05 (8), S06 (9), S07 (9), and PC (3).
+- Every shot record contains the expected eight editorial/production fields.
+- No `start_frame` or `end_frame` values are assigned; frame timing remains intentionally unlocked.
+- The JSON labels the breakdown DRAFT and names the consolidated chat-derived extraction as its source.
+
+**Result:** the draft's internal structure and Markdown/JSON ordering are consistent. This is a structural integrity check only. It does not validate the proposed coverage against the authoritative original screenplay, establish audio timing, or approve the storyboard.
