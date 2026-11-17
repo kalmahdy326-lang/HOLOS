@@ -14,12 +14,54 @@ import tempfile
 import unittest
 
 from holos_engine.godot_adapter import render_shot
+from holos_engine.preflight import (
+    ScenePreflightError,
+    validate_scenes_with_godot,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 @unittest.skipUnless(os.environ.get("HOLOS_GODOT"), "Set HOLOS_GODOT to run Godot integration test")
 class GodotOffscreenIntegrationTests(unittest.TestCase):
+    def test_runtime_preflight_loads_each_scene_as_packed_scene(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            copied_project = temp_root / "godot"
+            shutil.copytree(ROOT / "godot", copied_project,
+                            ignore=shutil.ignore_patterns(".godot", ".git"))
+            episode = {"scenes": [{"scene_id": "preflight", "shots": [
+                {"shot_id": "A", "scene": "res://test_scenes/adapter_test.tscn"},
+                {"shot_id": "B", "scene": "res://test_scenes/adapter_test.tscn"},
+            ]}]}
+            result = validate_scenes_with_godot(
+                project_root=temp_root, episode=episode,
+                godot_project=Path("godot"), executable=os.environ["HOLOS_GODOT"],
+                timeout_seconds=120,
+            )
+            self.assertTrue(result["valid"])
+            self.assertEqual(len(result["checked"]), 2)
+            self.assertTrue(all(item["valid"] for item in result["checked"]))
+            self.assertIn("major", result["godot_version"])
+
+    def test_runtime_preflight_rejects_invalid_scene_file(self):
+        with tempfile.TemporaryDirectory() as temp:
+            temp_root = Path(temp)
+            copied_project = temp_root / "godot"
+            shutil.copytree(ROOT / "godot", copied_project,
+                            ignore=shutil.ignore_patterns(".godot", ".git"))
+            invalid_scene = copied_project / "test_scenes" / "invalid_preflight.tscn"
+            invalid_scene.write_text("this is not a Godot scene", encoding="utf-8")
+            episode = {"scenes": [{"scene_id": "preflight", "shots": [
+                {"shot_id": "BAD", "scene": "res://test_scenes/invalid_preflight.tscn"},
+            ]}]}
+            with self.assertRaisesRegex(ScenePreflightError, "PackedScene"):
+                validate_scenes_with_godot(
+                    project_root=temp_root, episode=episode,
+                    godot_project=Path("godot"), executable=os.environ["HOLOS_GODOT"],
+                    timeout_seconds=120,
+                )
+
     def test_minimal_scene_renders_expected_frames(self):
         with tempfile.TemporaryDirectory() as temp:
             temp_root = Path(temp)
