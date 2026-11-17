@@ -136,3 +136,15 @@ Append a new entry with:
 - **CI:** Workflow run [#210](https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44050705291) **passed** on code head `5f33c8715ee819030d3cedbf63d54f6209525c1b`. Python/media job: 101 tests passed with 3 Godot-dependent Python tests skipped in that job. Godot offscreen job: 3 integration tests passed using Godot 4.4.1. The earlier run failed because an existing assembly-only fixture lacked the newly required `scene` config field; that fixture was corrected without creating a real scene asset.
 - **Validation limit:** CI's Godot runtime is 4.4.1, while the intended production target is 4.7.2. The path preflight does not itself ask Godot to load every configured scene. Do not treat this as 4.7.2 compatibility or production scene acceptance.
 - **Next action:** Implement a Godot-runtime scene-load preflight that loads each configured scene as a `PackedScene` before batch rendering, then run it under the intended Godot 4.7.2 environment. Keep the starter episode non-render-ready until real production scenes are recovered or authored and approved.
+
+
+### Session continuation — Godot PackedScene runtime preflight
+
+- Date: 2026-11-17
+- Branch: production/godot-packed-scene-preflight
+- Base: PR #18 head 399f3593804c49c34087520970f04f3eb0f2089b
+- Implementation: Add a Godot SceneTree script that receives the complete scene list, uses Godot ResourceLoader to load each resource, and verifies each loaded resource is a PackedScene. It does not instantiate scenes or alter source assets.
+- Integration: Python performs filesystem containment checks first, then invokes Godot in headless mode before either single-shot or batch rendering. Missing Godot, malformed output, timeout, missing resources, load failures, and non-PackedScene resources fail closed.
+- Tests: Add Godot integration coverage for multiple valid scene loads and an invalid .tscn file that exists on disk but cannot load as a PackedScene.
+- Validation boundary: Tests are authored but not yet executed. Existing CI pins Godot 4.4.1; the production target 4.7.2 remains unverified. A successful PackedScene load is not animation, layout, or visual-quality acceptance.
+- Next action: Fetch back and inspect all changed files, run CI, then add/enable a Godot 4.7.2 validation environment before treating the runtime preflight as target-version verified.
