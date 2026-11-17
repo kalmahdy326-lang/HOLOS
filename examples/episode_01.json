@@ -2,7 +2,7 @@
   "schema_version": 1,
   "episode_id": "episode_01",
   "title": "HOLOS — Episode 1",
-  "description": "Starter configuration. Replace placeholder paths and shot timing with verified production data.",
+  "description": "Starter configuration. Replace placeholder scene path and shot timing with verified production data.",
   "render": {
     "width": 1280,
     "height": 720,
@@ -24,11 +24,12 @@
       "shots": [
         {
           "shot_id": "S01_B01",
+          "scene": "res://scenes/REPLACE_WITH_VERIFIED_SHOT_SCENE.tscn",
           "start_frame": 0,
           "end_frame": 240,
           "characters": ["khaled"],
           "assets": [],
-          "notes": "Placeholder timing only. Confirm against the authoritative edit."
+          "notes": "Placeholder scene path and timing only. Replace with a verified production scene and confirm timing against the authoritative edit."
         }
       ]
     }
