@@ -159,3 +159,17 @@ A read-only comparison of the draft JSON, Markdown breakdown, and schema confirm
 3. After screenplay authority is resolved, perform the 65-shot comparison and lock only after author decisions.
 4. Recover and validate the real Khaled/Kevin Godot project and dependencies in Godot 4.7.2; then complete the two-character benchmark.
 5. Build a production-quality vertical slice from a real Episode 1 shot before scaling to all 65 storyboard shots.
+
+
+### Audio-source verification follow-up — 2026-11-17
+
+Two current Library audio assets were materialized as raw bytes and independently checked with SHA-256 and FFprobe:
+
+| Asset | SHA-256 | FFprobe result | Status |
+|---|---|---|---|
+| HOLOS theme.m4a | aee4733881850f4a3a83be5ae6b69c94cdbbbebc4467916ad3aeec5b3e3bd09e | AAC, 48 kHz, stereo, 209.000 s, M4A container | Source theme located and technically identified; final episode cue/usage approval not established |
+| holos_animation_test_audio_15s.wav | 1c352af5c428e01fb6205071127c27b85e0f259bc6506d181cd47a864095e1da | PCM s16le, 48 kHz, stereo, 16-bit, 15.000 s | Test audio only; not a full dialogue master |
+
+A separate open draft PR #6 contains an approved four-turn opening dialogue handoff and two 189-event timelines. Its source MP3 hash is recorded as e4b13c06a6c3fbca9449cffb9135d7259b62e059a3c2d1fa37085afae65b865f; turn boundaries cover 0.191–16.816 seconds. Word boundaries are acoustically aligned, but internal phoneme subdivisions are dictionary-based estimates, not dedicated phoneme alignment. The PR explicitly says no production-scene integration, Godot runtime validation, shared audio clock, rig mapping or visual lip-sync acceptance has occurred. It remains open and unmerged.
+
+The full-episode dialogue MP3 itself was not found in the searched Library results and is not present in the checked-in handoff branch as a media file. The four-turn handoff is only the opening exchange, not complete episode dialogue. Do not mistake the theme or 15-second test WAV for the dialogue master. Final audio integration remains blocked pending the complete source dialogue and verified character rigs.
