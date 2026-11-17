@@ -117,3 +117,17 @@ The scene/source assets present across the branches are production infrastructur
 The media files present on the production branches are the HOLOS theme, the 15-second test audio, approved character/key-art references, and the expression sheet. These are not rig scene sources.
 
 This closes the GitHub-branch search for the currently listed branches. It does not inspect external Manus workspaces, local disks, or the contents of the two ZIP packages whose raw bytes remain inaccessible.
+
+
+## 2026-11-17 contextual classification correction — Library package family
+
+A later read-only inspection of the Library files adjacent to the two ZIPs materially changes how the filenames should be interpreted:
+
+- /HOLOS/README.md is explicitly titled HOLOS Model Initialization — v0.1.0 and describes a finite Rep(Z2) / quantum-double stabilizer research benchmark, not an animation project. It lists model specification, lattice/stabilizer code, tests, validation logs and research manifests.
+- /HOLOS/MODEL_SPECIFICATION.md describes a periodic square–octagon cellulation and quantum-information calculations. It contains no character-rig or Godot-animation scope.
+- /HOLOS/S1_INITIALIZATION_REPORT.md and /HOLOS/EXECUTION_STATUS.md likewise describe the finite research benchmark and its scientific gates.
+- /HOLOS/holos_final_conclusion.md is a research-programme execution conclusion, not an animation handoff.
+
+**Reclassification:** the Library's HOLOS_Model_Initialization_Package.zip is strongly indicated by its surrounding package documentation to be a reality-research benchmark archive, not the missing Khaled/Kevin animation rig export. The similarly named HOLOS_Autonomous_Execution_Package.zip appears to belong to the same research package family, but its own archive contents remain uninspected. Because the ZIP bytes are still unavailable, neither archive's internal member list has been verified. Do not request or use these two archives as character-rig deliverables unless their contents are independently shown to contain the actual Godot character project.
+
+The sidecar checksum remains only a declared value; it has not been verified against the archive bytes. This correction does not resolve the animation source handoff. The missing rig source must be sought in the original animation/Manus workspace or supplied as the actual Godot project export.
