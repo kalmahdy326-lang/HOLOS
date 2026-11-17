@@ -1,0 +1,29 @@
+{
+  "record_type": "CHARACTER_EXPRESSION_REFERENCE_INTAKE",
+  "project": "HOLOS",
+  "source_filename": "file_000000001ef881fda97787a3b3f9ff5c.webp",
+  "repository_path": "production/character_references/holos_expression_sheet_1_1.webp",
+  "user_supplied_title": "Expression Sheet 1.1",
+  "intake_status": "SOURCE_RECEIVED; EXPRESSION_TO_CHARACTER_ASSIGNMENTS_PENDING_REVIEW",
+  "sha256": "245ae91beaede1e2fdc42c299c08ecea477d0fdeb97333aed4ccfc1d257d08ad",
+  "size_bytes": 182186,
+  "attachment_dimensions_px": {
+    "width": 1152,
+    "height": 1536
+  },
+  "handling": "Copied byte-for-byte; no transform, render, or pixel reinspection performed.",
+  "visible_labels_as_supplied": [
+    "Khaled (B)",
+    "Kevin (A)",
+    "Neutral/Relaxed",
+    "Concentrated",
+    "Alarmed",
+    "Relaxed Smile",
+    "Neutral/Determined",
+    "Confident Smirk",
+    "Surprised",
+    "Intense Anger"
+  ],
+  "review_note": "The panels labeled SURPRISED under Kevin (A) appear to depict the dark-haired, beige-scarf Khaled (B) design rather than the established red-haired Kevin (A) design. Do not assign those panels to Kevin in production until the project author confirms or corrects the sheet.",
+  "approval_boundary": "Supplemental expression reference only. Does not supersede the user-approved series-wide key-art style guide or the established character design mapping; no rig controls or animation timing are approved by this image."
+}
