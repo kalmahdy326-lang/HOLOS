@@ -121,3 +121,15 @@ Append a new entry with:
 - **Tests:** Regression tests added but not executed in this session. The commit-associated workflow lookup returned no runs; do not claim CI passed.
 - **Not done:** No Godot resource existence check was run; no Godot runtime scene was created; no artwork, rig, audio, screenplay, or animation was produced.
 - **Next action:** Obtain a CI run for PR #17 and inspect its result. Then build a production preflight that verifies every configured `res://` resource exists in the selected Godot project before starting batch rendering. Keep the starter episode explicitly non-render-ready until real scenes are recovered or authored and approved.
+
+
+### Session continuation — Godot scene-resource preflight
+
+- **Date:** 2026-11-17
+- **Branch:** `production/godot-scene-preflight`
+- **Base:** PR #17 head `48e31ec9894a2fe24ffe262c79b3e5f995866e55`
+- **Work in progress:** Add a read-only preflight that resolves every configured shot `res://` scene against the selected Godot project, requires `project.godot`, rejects traversal and symlink components, and blocks both single-shot and batch rendering before output creation.
+- **Evidence inspected:** Existing `tools/holos.py`, `holos_engine/preflight.py`, `holos_engine/godot_assets.py`, `holos_engine/batch.py`, `holos_engine/godot_adapter.py`, and relevant test patterns.
+- **Tests planned:** Existing scene file, missing scene file, malformed/traversal path, symlink path, and CLI-level proof that a missing scene prevents batch output/render startup.
+- **Validation boundary:** This is a code change on a new draft branch. Tests have not been executed in this GitHub-only session. No Godot runtime validation or animation/rendering is claimed.
+- **Next action:** Fetch back every changed file, inspect the diff, then open a draft PR. Run the Python test suite and Godot checks in a connected runtime/CI environment before calling the preflight verified.
