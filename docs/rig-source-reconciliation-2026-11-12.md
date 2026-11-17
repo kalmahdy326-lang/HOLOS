@@ -41,3 +41,34 @@ Then update the milestone table based on actual file evidence. Do not generate s
 ## Acceptance boundary
 
 A green generic adapter CI run is not a rig validation. Milestone 6 remains in progress until both real character rigs load, render repeatably, pass their individual benchmarks, and the two-character interaction benchmark passes in the target local/offline environment.
+
+
+## 2026-11-17 recovery-session addendum — Project Library enumeration
+
+A further read-only Library inventory was performed during the 2026-11-17 recovery session. The root Library listing was paginated and the `/HOLOS` folder was separately checked. The following exact source candidates were found:
+
+| Library path | File | Size | Current evidentiary status |
+|---|---|---:|---|
+| `/HOLOS/HOLOS_Model_Initialization_Package.zip` | `HOLOS_Model_Initialization_Package.zip` | 64,530 bytes | Located; archive bytes unavailable to this session; contents unknown |
+| `/HOLOS/HOLOS_Autonomous_Execution_Package.zip` | `HOLOS_Autonomous_Execution_Package.zip` | 21,652 bytes | Located; archive bytes unavailable to this session; contents unknown |
+| `/HOLOS/HOLOS_Episode_1_The_Moon_Has_Anger_Issues_Complete_Screenplay.docx` | Complete Episode 1 screenplay | 48,709 bytes | Located; not required for rig recovery; screenplay contents not inspected in this recovery pass |
+
+The Library also lists character-reference images and HOLOS audio assets. These are not substitutes for Godot project sources.
+
+A raw-byte materialization attempt was made for both ZIP packages and the screenplay. The Library returned: `This Project file does not have an authorized raw-byte materialization path.` No archive was opened, extracted, hashed, or modified. The listed sizes are Library metadata, not independently verified filesystem sizes or checksums.
+
+**Important qualification:** the two ZIP filenames are candidate source packages only. Their names do not establish that either contains a Godot project, character rig, benchmark, or the missing Milestone 3/4 deliverables. Do not describe them as rig archives until their contents are inspected.
+
+### Exact next handoff
+
+Provide the two ZIP files as direct attachments in a session that permits reading their bytes, or export them from the Project Library to an accessible local folder and provide the files. Preserve the original filenames and bytes. On receipt:
+
+1. Compute SHA-256 before extraction.
+2. List archive members without extracting over any existing project.
+3. Identify every `project.godot`, `.tscn`, `.scn`, `.gd`, imported resource, addon, benchmark, and render.
+4. Extract only into a new timestamped recovery workspace.
+5. Inventory and hash the extracted tree; inspect project settings and transitive scene dependencies.
+6. Compare the evidence against the reported Khaled Milestone 3, Kevin Milestone 4, and two-character interaction work.
+7. Only then prepare a non-destructive integration branch.
+
+Until this handoff is complete, rig recovery remains blocked by source access, not by the generic renderer.
