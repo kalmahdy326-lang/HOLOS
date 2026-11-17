@@ -57,7 +57,7 @@ The code currently requires:
 - non-empty `scenes` array;
 - unique non-empty `scene_id` values;
 - non-empty `shots` array for each scene;
-- globally unique non-empty `shot_id` values;
+- globally unique non-empty `shot_id` values;\n- each shot must define a non-empty Godot `scene` path beginning with `res://`; the Godot runner separately checks that the resource exists and loads as a `PackedScene`;
 - integer `start_frame >= 0` and integer `end_frame > start_frame`;
 - optional `characters` array of non-empty strings;
 - optional `scene_config` object with non-empty string keys;
@@ -78,7 +78,7 @@ The renderer creates a temporary per-shot config containing:
 - `debug_overlay`
 - `scene_config`
 
-The current `examples/episode_01.json` starter contains a shot without a `scene` property and describes its timing as placeholder. It can demonstrate the current config validator, but it is not render-ready. The validator does not currently require the `scene` field, so a configuration can pass `validate` and still fail when rendered. This is a concrete contract gap to fix with tests and a future schema revision.
+The current `examples/episode_01.json` starter contains an explicit replacement `res://` scene path and placeholder timing. It passes structural path validation but is not render-ready: the named scene resource does not exist until replaced with a verified production scene. The validator now catches a missing or malformed scene path before rendering; the Godot runner remains responsible for checking resource existence and loading it as a `PackedScene`.
 
 The example also includes `render.mode`, `video_codec`, `pixel_format`, shot `assets` and shot `notes`. These are not currently enforced by `config.py`; the CLI mode flag controls debug/production mode, and the current assembly implementation explicitly chooses libx264/yuv420p.
 
@@ -107,7 +107,7 @@ Dialogue text, speaker turns, phoneme timing, voice identity, subtitles and per-
 
 Before v2, define and test:
 1. A checked-in JSON Schema generated from the actual validator contract.
-2. Required shot `scene` field and safe `res://` validation at config-load time.
+2. Versioned migration policy for the now-required shot `scene` field; safe `res://` path validation is enforced in v1.
 3. Explicit `assets[]` declarations with stable asset IDs, hashes and roles.
 4. Dialogue segments with stable IDs, speaker IDs, start/end frames, audio asset references and optional alignment references.
 5. Character performance blocks with canonical character IDs and adapter-specific state payloads.
