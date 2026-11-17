@@ -79,11 +79,20 @@ def validate_episode(data: Any) -> None:
             _require(shot_id not in seen_shots, f"Duplicate shot_id: {shot_id}")
             seen_shots.add(shot_id)
 
+            scene_path = shot.get("scene")
+            _require(
+                isinstance(scene_path, str)
+                and scene_path.startswith("res://")
+                and len(scene_path) > len("res://")
+                and not scene_path.endswith("/"),
+                f"{shot_prefix}.scene must be a non-empty Godot res:// scene path.",
+            )
+
             start = shot.get("start_frame")
             end = shot.get("end_frame")
-            _require(isinstance(start, int) and start >= 0,
+            _require(isinstance(start, int) and not isinstance(start, bool) and start >= 0,
                      f"{shot_prefix}.start_frame must be an integer >= 0.")
-            _require(isinstance(end, int) and end > start,
+            _require(isinstance(end, int) and not isinstance(end, bool) and end > start,
                      f"{shot_prefix}.end_frame must be greater than start_frame.")
 
             characters = shot.get("characters", [])
