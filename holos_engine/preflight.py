@@ -43,8 +43,8 @@ def _resource_parts(value: Any) -> tuple[str, ...]:
     parsed = PurePosixPath(relative)
     if (
         not relative
-        or "\\\\" in relative
-        or "\\x00" in relative
+        or "\\" in relative
+        or "\x00" in relative
         or parsed.is_absolute()
         or any(part in {"", ".", ".."} for part in parts)
         or (parts and ":" in parts[0])
