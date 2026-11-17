@@ -209,6 +209,7 @@ def main() -> int:
         command.add_argument("--mode", choices=("debug", "production"), default="production")
         if name == "preflight":
             command.add_argument("--godot-project", type=Path, default=Path("godot"))
+            command.add_argument("--godot-executable")
 
     for name in ("render", "render-episode"):
         command = subparsers.add_parser(name)
@@ -349,13 +350,23 @@ def main() -> int:
 
         if args.command == "preflight":
             result = run_preflight(root, episode, args.godot_project)
+            result["scene_runtime"] = require_episode_scenes(
+                root, episode, args.godot_project,
+                godot_executable=args.godot_executable,
+            )["runtime"]
             print(json.dumps(result, indent=2))
-            report = write_preflight_report(root, episode, args.godot_project)
+            report = write_preflight_report(
+                root, episode, args.godot_project,
+                scene_runtime=result["scene_runtime"],
+            )
             print(f"Preflight report: {report}")
             return 1 if result["missing_assets"] or not result["scene_resources"]["valid"] else 0
 
         if args.command == "render":
-            require_episode_scenes(root, episode, args.godot_project)
+            require_episode_scenes(
+                root, episode, args.godot_project,
+                godot_executable=args.godot_executable,
+            )
             scene, shot = _find_shot_context(episode, args.shot)
             output_dir = (
                 Path("output") / "renders" / episode["episode_id"] / args.mode / shot["shot_id"]
@@ -377,7 +388,10 @@ def main() -> int:
         if args.command == "render-episode":
             # Validate every configured scene before the batch controller creates
             # manifests, output directories, or starts the first render.
-            require_episode_scenes(root, episode, args.godot_project)
+            require_episode_scenes(
+                root, episode, args.godot_project,
+                godot_executable=args.godot_executable,
+            )
 
             def render_one(scene: dict, shot: dict, output_dir: Path) -> dict:
                 return _render_configured_shot(
