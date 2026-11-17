@@ -1,0 +1,90 @@
+{
+  "record_type": "FINAL_RENDER_ACCEPTANCE_RECORD",
+  "project": "HOLOS",
+  "episode": "Episode 1",
+  "deliverable_scope": "Full episode body render or assembled delivery master; exact candidate scope must be selected and identified before verification.",
+  "requested_target_profile": {
+    "source": "User-provided Episode 1 specification",
+    "approval_status": "PENDING_VERSIONED_PROFILE_APPROVAL",
+    "video_width_px": 1920,
+    "video_height_px": 1080,
+    "frame_rate_fps": 30,
+    "final_audio_sample_rate_hz": 48000,
+    "final_audio_channel_count": 2,
+    "final_audio_channel_layout": "stereo",
+    "note": "Requested target values only; do not treat as approved profile fields or measured output. The approved profile may confirm or document an approved change."
+  },
+  "render": {
+    "path": null,
+    "sha256": null,
+    "size_bytes": null
+  },
+  "approved_profile": {
+    "profile_id": null,
+    "version": null,
+    "sha256": null
+  },
+  "video": {
+    "expected_resolution": null,
+    "observed_resolution": null,
+    "expected_fps": null,
+    "observed_fps": null,
+    "expected_frame_count": null,
+    "observed_frame_count": null,
+    "expected_duration_seconds": null,
+    "observed_duration_seconds": null
+  },
+  "required_streams": {
+    "video": {
+      "required": null,
+      "codec": null,
+      "pixel_format": null,
+      "color_metadata": null,
+      "aspect_ratio": null,
+      "frame_rate_timebase_policy": null
+    },
+    "audio": {
+      "required": null,
+      "codec": null,
+      "sample_rate_hz": null,
+      "channel_count_layout": null,
+      "language_role": null,
+      "duration_tolerance": null
+    },
+    "subtitles_captions": {
+      "required": null,
+      "format": null,
+      "language": null,
+      "delivery_policy": null
+    },
+    "additional_streams_policy": null
+  },
+  "automated_checks": {
+    "status": "NOT_RUN",
+    "file_readable_and_hash_recorded": "NOT_RUN",
+    "stream_metadata_matches_approved_profile": "NOT_RUN",
+    "frame_count_order_continuity_and_completeness": "NOT_RUN",
+    "full_decode_and_corruption_scan": "NOT_RUN",
+    "duration_and_timing_reconciliation": "NOT_RUN",
+    "required_stream_presence_and_layout": "NOT_RUN",
+    "audio_video_stream_timing": "NOT_RUN",
+    "subtitle_and_sidecar_validation": "NOT_RUN",
+    "reports_and_logs": null
+  },
+  "human_review": {
+    "status": "NOT_RUN",
+    "exact_hash_candidate_reviewed": null,
+    "complete_start_to_finish_playback": null,
+    "visual_audio_sync_review": null,
+    "visual_quality_and_placeholder_debug_artifact_review": null,
+    "audio_continuity_and_intelligibility_review": null,
+    "subtitles_credits_and_rights_review": null,
+    "review_notes": null
+  },
+  "reviewer": null,
+  "decision": null,
+  "reviewed_at": null,
+  "failures": [],
+  "accepted": false,
+  "status": "NOT_VERIFIED"
+}

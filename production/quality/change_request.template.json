@@ -1,0 +1,80 @@
+{
+  "record_type": "CHANGE_REQUEST",
+  "schema_version": "1.0.0",
+  "change_request_id": null,
+  "project": null,
+  "episode": null,
+  "title": null,
+  "category": null,
+  "priority": null,
+  "status": "DRAFT",
+  "requested_by": { "role": null, "person": null },
+  "requested_at": null,
+  "rationale": null,
+  "summary": null,
+  "affected_assets": [],
+  "affected_scenes": [],
+  "affected_shots": [],
+  "impact_assessment": {
+    "summary": null,
+    "domains": {}
+  },
+  "risk_assessment": {
+    "level": null,
+    "risks": [],
+    "mitigations": []
+  },
+  "implementation_plan": [],
+  "test_plan": [],
+  "rollback_plan": [],
+  "approvals": [],
+  "separation_of_duties": {
+    "requester": { "role": null, "person": null },
+    "implementer": { "role": null, "person": null },
+    "independent_validator": { "role": null, "person": null },
+    "approver": { "role": null, "person": null },
+    "exception_documented": false,
+    "exception_details": null,
+    "compensating_review": null
+  },
+  "emergency_exception": {
+    "invoked": false,
+    "hazard": null,
+    "scope": null,
+    "temporary_containment": null,
+    "authorization": null,
+    "producer_set_review_window": false,
+    "retrospective_review_due": null,
+    "nonwaivable_controls_confirmed": false,
+    "evidence_reference": null
+  },
+  "implementation": {
+    "implementer": { "role": null, "person": null },
+    "started_at": null,
+    "completed_at": null,
+    "evidence": [],
+    "implementation_notes": [],
+    "deviations": []
+  },
+  "validation": {
+    "validator": { "role": null, "person": null },
+    "validation_report": null,
+    "validation_status": "NOT_STARTED",
+    "validated_at": null,
+    "checks_rerun": [],
+    "failures": []
+  },
+  "downstream_review": {
+    "status": "NOT_STARTED",
+    "affected_dependents": [],
+    "stale_reviews_identified": false,
+    "review_evidence": []
+  },
+  "closure": {
+    "closed_by": { "role": null, "person": null },
+    "closed_at": null,
+    "closure_status": "OPEN",
+    "post_implementation_review": null,
+    "evidence": []
+  }
+}

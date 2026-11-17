@@ -1,0 +1,63 @@
+{
+  "record_type": "AUDIO_ACCEPTANCE_RECORD",
+  "project": "HOLOS",
+  "episode": "Episode 1",
+  "item_id": "audio_acceptance",
+  "status": "PENDING",
+  "requested_target": {
+    "scope": "Final delivery audio; does not establish the format of an unselected source WAV.",
+    "sample_rate_hz": 48000,
+    "channel_count": 2,
+    "channel_layout": "stereo",
+    "approval_status": "USER_SPECIFIED_TARGET_PENDING_VERSIONED_PROFILE_APPROVAL"
+  },
+  "source": {
+    "path": null,
+    "sha256": null,
+    "version": null,
+    "duration_seconds": null,
+    "format": null
+  },
+  "selected_source": null,
+  "selection_status": "NOT_SELECTED",
+  "authoritative": false,
+  "candidate_metadata_only": [
+    {
+      "candidate_id": "MANUS_REVIEW_WAV",
+      "source_path_as_listed_in_intake": "/home/ubuntu/output/HOLOS_Episode1_four_turn_review.wav",
+      "sha256_as_listed_in_intake": "4b8c1d78ac6ca233f9ae2ba3f31566baaa75a83802eac8257ba7cba48cd76730",
+      "selected": false,
+      "bytes_available": false
+    },
+    {
+      "candidate_id": "CODEX_REVIEW_WAV",
+      "source_path": null,
+      "sha256_as_listed_in_intake": "e9d8a3a88f310b1558a884fcec87f8cf16741019ddbcede2a2db2cc2db74194f",
+      "selected": false,
+      "bytes_available": false
+    }
+  ],
+  "evidence_boundary": {
+    "manifest_metadata_is_audio_bytes": false,
+    "manifest_metadata_note": "The four-turn manifest records metadata for the Manus review WAV, including 48000 Hz, 2 channels, 3-byte sample width, 807600 frames, and 16.825 seconds. This is manifest metadata only; the WAV bytes are not supplied here and these values are not independently verified test results.",
+    "candidate_hashes_are_authoritative": false
+  },
+  "technical_checks": {
+    "status": "NOT_RUN",
+    "file_exists": "NOT_RUN",
+    "sha256_verified_from_bytes": "NOT_RUN",
+    "format_probe": "NOT_RUN",
+    "sample_rate_48000_hz": "NOT_RUN",
+    "stereo_channels": "NOT_RUN",
+    "duration_measured": "NOT_RUN",
+    "peak_or_clipping_check": "NOT_RUN",
+    "turn_mapping": "NOT_RUN"
+  },
+  "transcript_alignment_linkage": {
+    "status": "UNVERIFIED",
+    "transcript_linked_to_selected_audio_hash": false,
+    "alignment_linked_to_selected_audio_hash": false
+  },
+  "approver": null,
+  "decision_time": null
+}

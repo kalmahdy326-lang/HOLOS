@@ -1,0 +1,546 @@
+{
+  "audit_classification": "INFORMATIONAL",
+  "audit_status": "INFORMATIONAL",
+  "completion_claim_authorized": false,
+  "episode": "Episode 1",
+  "evidence_boundary": "This audit reports repository metadata and inspected working-tree bytes only. PRESENT means bytes exist at this path, not that they are authoritative, valid, approved, integrated, reviewed, or production-ready. LFS_POINTER_ONLY identifies pointer text only; it is never treated as downloaded media. A missing path means absent from this checkout, not necessarily absent elsewhere. This audit does not authorize or establish completion.",
+  "expected_source_evidence_inventory": [
+    {
+      "path": "production/character_references/episode1_character_design.png",
+      "sha256": "8cf49b0c8f132fcfe46d8b6d783f36ab76322495daef97fab7e59d6638b75785",
+      "size_bytes": 1270608,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/character_references/episode1_character_design_manifest.json",
+      "sha256": "9d02f5d49498fa1d7224dcee4c4b572f3fb582dc466b3ea78fc0aee6f578ec77",
+      "size_bytes": 1251,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/screenplay/episode_01_screenplay_v1.md",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/audio/episode_01_approved_script.json",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/audio/episode_01_four_turn_v1.wav",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/audio/episode_01_wav_format_validation.json",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/audio/episode_01_whisperx_validation.json",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/audio/episode_01_acoustic_word_timeline.json",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/audio/episode_01_acoustic_phoneme_timeline.json",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/audio/episode_01_audio_acceptance_report.json",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/animation/episode_01_acoustic_viseme_timeline.json",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/render/final/holos_episode_01_complete.mp4",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "handoffs/milestone-5-1-2026-11-15/HOLOS_Milestone51_WhisperX_Acoustic_Phoneme_Timeline_Aligned.json",
+      "sha256": "0bcc0d952fb579ce1d2bd98223e1f845ce1dd03e47887a909c0773ca5e3937e0",
+      "size_bytes": 117874,
+      "status": "PRESENT"
+    },
+    {
+      "path": "handoffs/milestone-5-1-2026-11-15/HOLOS_Milestone51_FourTurn_Review_Phoneme_Timeline_Relative.json",
+      "sha256": "1b4b36471695523fe8acc1537d928fdc4290bfe0e13b890d422c454bfcdcc560",
+      "size_bytes": 118119,
+      "status": "PRESENT"
+    },
+    {
+      "path": "handoffs/milestone-5-1-2026-11-15/HOLOS_Episode1_four_turn_review_manifest.json",
+      "sha256": "270e439652cf186041f31e9f8ea5795e5019aa73f5aef19b541c1e495fb4a634",
+      "size_bytes": 1477,
+      "status": "PRESENT"
+    }
+  ],
+  "generated_at": "2026-11-17T05:04:22Z",
+  "git": {
+    "branch": "feat/episode1-production-integration-scaffold",
+    "commit": "074a0ad165e6839ba0e6ad6e8627306ab0f72dd9",
+    "commit_short": "074a0ad",
+    "dirty_file_count": 0,
+    "dirty_files": [],
+    "report_excluded_from_status": "production/quality/repository_state_audit_report.json",
+    "untracked_file_count": 0,
+    "untracked_files": []
+  },
+  "governance_document_inventory": [
+    {
+      "path": "production/quality/production_readiness_matrix.md",
+      "sha256": "ab930a6a008be27af9763ce25c0d5a2637638e7412b24817c1fb6b52af9a7b47",
+      "size_bytes": 21041,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/repository_evidence_criteria.md",
+      "sha256": "b2c24f9d5fcd87cdaec10fea9440b7cc3964cba9a3592b72834a218942a6b33b",
+      "size_bytes": 13276,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/asset_acceptance_criteria.md",
+      "sha256": "7dbc6ac687a0e7bf00925a8e6d613366446d49ce674d9bf38742e07797e4cb0d",
+      "size_bytes": 3032,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/asset_acceptance_specification.md",
+      "sha256": "dc158e96b7665cf60f4f95ba1eea03c437fceb4d74587e3495b292846ac9e549",
+      "size_bytes": 27772,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/change_request_process.md",
+      "sha256": "a4e2e87f06f7a824d0ce05f452029f808db962a5ed8fb7effdeb563ad66a6626",
+      "size_bytes": 9926,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/final_render_verification_rules.md",
+      "sha256": "340d313e053d7c2c4d082375b201962f7779c12f66f998242ed55410615bfdc6",
+      "size_bytes": 1866,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/final_verification_checklist.md",
+      "sha256": "e7878422e25b9b9aeaf9b4f8de5805c05cf8636fcb072f7011b536aa3068bd59",
+      "size_bytes": 12882,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/script_approval_record.json",
+      "sha256": "8be3f1aab1f3a639defd0865b61dfc118edddd36fbd99925e199c326e31557e0",
+      "size_bytes": 830,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/asset_acceptance_checks.json",
+      "sha256": "116e9f87ee06f8f5b8512c3d6fc37476e74c45f8e1aa1bdc5030ed939c2716a8",
+      "size_bytes": 76322,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/change_request_log.json",
+      "sha256": "25c16409f30b1e36926fdffd1a8064add339d2ca5e97d3b6c4e3729eb413efc9",
+      "size_bytes": 198,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/final_acceptance_record.json",
+      "sha256": "5cf748850c7e9514f8a50443bc4d47c986596f96a38e170d8ea6f8abc1f65027",
+      "size_bytes": 2194,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/shot_review_record.json",
+      "sha256": "d4b3d654764eb21b64d117461a3fda6be5db52588614ce73f91ff8fd5d44261d",
+      "size_bytes": 812,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/render_acceptance_record.json",
+      "sha256": "116035c998b967d769fd9786598702cbe54faad63d708c48325cfafb3ca95594",
+      "size_bytes": 2841,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/audio_acceptance_record.json",
+      "sha256": "aee23e99c48cfd8ee296dc2813f023120c8c8e53db26f9ffa56d853821a60086",
+      "size_bytes": 2258,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/licensing_audit.json",
+      "sha256": "0af429cc62817b7d86537e1cb67aeeb39a5eb2a22bcf7072aca4375cc3541b93",
+      "size_bytes": 708,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/archive_manifest.json",
+      "sha256": "6c48d6a87bbe5049c543a647f592731c5f036d073686274f18ef4551fcc78ac5",
+      "size_bytes": 1216,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/release_readiness_report.json",
+      "sha256": "0a25c51893e0f9cb36ac3639738505761fd6b3e19383daf6c2d190db2bf547f9",
+      "size_bytes": 4151,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/repository_state_audit.sh",
+      "sha256": "2a4e2c84202ffd5df806dd1b3344cc760f8f09a3916ea7297f422ba29d3dd936",
+      "size_bytes": 8644,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/change_request.template.json",
+      "sha256": "b39e6f98de5911b1a11ab9618a827f40708a01ed2e31d9ae6e5e9730896e8434",
+      "size_bytes": 2060,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/governance_artifact_roadmap.md",
+      "sha256": "fe9984b10e6818fb1ca152b61f99aaa6ed0cac9ba85990f04b74920a7e8a145b",
+      "size_bytes": 13173,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/cross_document_consistency_review.md",
+      "sha256": "ac8591bcd27100b7feb0989af38a067186ef4aa37c185a86e3ea659724e07c81",
+      "size_bytes": 2908,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/final_render_verification.md",
+      "sha256": "7245eaca31c480a248a30d939cecf89618c0142d82c42c519fb47d44428a5746",
+      "size_bytes": 17511,
+      "status": "PRESENT"
+    },
+    {
+      "path": "config/schemas/holos-script-approval-record-v1.schema.json",
+      "sha256": "6f033533bf2ad81dbd738b6095bd11f9b976cd6a0c99b305206d070dcd3840f3",
+      "size_bytes": 4115,
+      "status": "PRESENT"
+    },
+    {
+      "path": "config/schemas/holos-change-request-v1.schema.json",
+      "sha256": "395efc29f933ec6df2f9d3839b1941b60022cc9862279be839bea3dca021755e",
+      "size_bytes": 13029,
+      "status": "PRESENT"
+    },
+    {
+      "path": "config/schemas/holos-asset-acceptance-checks-v1.schema.json",
+      "sha256": "cb729f0da8a8298753e82126d6aaf44e1ac9a55351f5c497f3087fa99c2f100c",
+      "size_bytes": 4996,
+      "status": "PRESENT"
+    },
+    {
+      "path": "docs/episode1-production-asset-intake.md",
+      "sha256": "9839d5a78d35b8f2bf33ffc3f943e3584b8e4df96bb20af31eaba0eb2b686184",
+      "size_bytes": 8165,
+      "status": "PRESENT"
+    },
+    {
+      "path": "docs/episode1-shared-audio-clock-integration.md",
+      "sha256": "f0daa7ae96fafa64349d795d60ece6336fe6d9f9575f83ea3e7cc14bc8e516ab",
+      "size_bytes": 2973,
+      "status": "PRESENT"
+    }
+  ],
+  "notes": [
+    "Informational repository snapshot only; it does not establish production readiness or episode completion.",
+    "Git status path arrays and counts are observed at invocation start and exclude this generated report.",
+    "PRESENT means bytes exist at the inspected path; authority, validity, approval, integration, and review are not inferred.",
+    "LFS_POINTER_ONLY identifies pointer text only, never downloaded media bytes."
+  ],
+  "project": "HOLOS",
+  "record_type": "REPOSITORY_STATE_AUDIT_REPORT",
+  "repository": {
+    "branch": "feat/episode1-production-integration-scaffold",
+    "commit": "074a0ad165e6839ba0e6ad6e8627306ab0f72dd9",
+    "excluded_from_counts_and_hashing": [
+      "production/quality/repository_state_audit_report.json"
+    ],
+    "root": "/tmp/holos-pr7-quality-gates",
+    "untracked_path_count_excluding_report": 0,
+    "working_tree_changed_path_count_excluding_report": 0
+  },
+  "required_files": [
+    {
+      "path": "production/quality/production_readiness_matrix.md",
+      "sha256": "ab930a6a008be27af9763ce25c0d5a2637638e7412b24817c1fb6b52af9a7b47",
+      "size_bytes": 21041,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/repository_evidence_criteria.md",
+      "sha256": "b2c24f9d5fcd87cdaec10fea9440b7cc3964cba9a3592b72834a218942a6b33b",
+      "size_bytes": 13276,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/asset_acceptance_criteria.md",
+      "sha256": "7dbc6ac687a0e7bf00925a8e6d613366446d49ce674d9bf38742e07797e4cb0d",
+      "size_bytes": 3032,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/asset_acceptance_specification.md",
+      "sha256": "dc158e96b7665cf60f4f95ba1eea03c437fceb4d74587e3495b292846ac9e549",
+      "size_bytes": 27772,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/change_request_process.md",
+      "sha256": "a4e2e87f06f7a824d0ce05f452029f808db962a5ed8fb7effdeb563ad66a6626",
+      "size_bytes": 9926,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/final_render_verification_rules.md",
+      "sha256": "340d313e053d7c2c4d082375b201962f7779c12f66f998242ed55410615bfdc6",
+      "size_bytes": 1866,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/final_verification_checklist.md",
+      "sha256": "e7878422e25b9b9aeaf9b4f8de5805c05cf8636fcb072f7011b536aa3068bd59",
+      "size_bytes": 12882,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/script_approval_record.json",
+      "sha256": "8be3f1aab1f3a639defd0865b61dfc118edddd36fbd99925e199c326e31557e0",
+      "size_bytes": 830,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/asset_acceptance_checks.json",
+      "sha256": "116e9f87ee06f8f5b8512c3d6fc37476e74c45f8e1aa1bdc5030ed939c2716a8",
+      "size_bytes": 76322,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/change_request_log.json",
+      "sha256": "25c16409f30b1e36926fdffd1a8064add339d2ca5e97d3b6c4e3729eb413efc9",
+      "size_bytes": 198,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/final_acceptance_record.json",
+      "sha256": "5cf748850c7e9514f8a50443bc4d47c986596f96a38e170d8ea6f8abc1f65027",
+      "size_bytes": 2194,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/shot_review_record.json",
+      "sha256": "d4b3d654764eb21b64d117461a3fda6be5db52588614ce73f91ff8fd5d44261d",
+      "size_bytes": 812,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/render_acceptance_record.json",
+      "sha256": "116035c998b967d769fd9786598702cbe54faad63d708c48325cfafb3ca95594",
+      "size_bytes": 2841,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/audio_acceptance_record.json",
+      "sha256": "aee23e99c48cfd8ee296dc2813f023120c8c8e53db26f9ffa56d853821a60086",
+      "size_bytes": 2258,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/licensing_audit.json",
+      "sha256": "0af429cc62817b7d86537e1cb67aeeb39a5eb2a22bcf7072aca4375cc3541b93",
+      "size_bytes": 708,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/archive_manifest.json",
+      "sha256": "6c48d6a87bbe5049c543a647f592731c5f036d073686274f18ef4551fcc78ac5",
+      "size_bytes": 1216,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/release_readiness_report.json",
+      "sha256": "0a25c51893e0f9cb36ac3639738505761fd6b3e19383daf6c2d190db2bf547f9",
+      "size_bytes": 4151,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/repository_state_audit.sh",
+      "sha256": "2a4e2c84202ffd5df806dd1b3344cc760f8f09a3916ea7297f422ba29d3dd936",
+      "size_bytes": 8644,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/change_request.template.json",
+      "sha256": "b39e6f98de5911b1a11ab9618a827f40708a01ed2e31d9ae6e5e9730896e8434",
+      "size_bytes": 2060,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/governance_artifact_roadmap.md",
+      "sha256": "fe9984b10e6818fb1ca152b61f99aaa6ed0cac9ba85990f04b74920a7e8a145b",
+      "size_bytes": 13173,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/cross_document_consistency_review.md",
+      "sha256": "ac8591bcd27100b7feb0989af38a067186ef4aa37c185a86e3ea659724e07c81",
+      "size_bytes": 2908,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/quality/final_render_verification.md",
+      "sha256": "7245eaca31c480a248a30d939cecf89618c0142d82c42c519fb47d44428a5746",
+      "size_bytes": 17511,
+      "status": "PRESENT"
+    },
+    {
+      "path": "config/schemas/holos-script-approval-record-v1.schema.json",
+      "sha256": "6f033533bf2ad81dbd738b6095bd11f9b976cd6a0c99b305206d070dcd3840f3",
+      "size_bytes": 4115,
+      "status": "PRESENT"
+    },
+    {
+      "path": "config/schemas/holos-change-request-v1.schema.json",
+      "sha256": "395efc29f933ec6df2f9d3839b1941b60022cc9862279be839bea3dca021755e",
+      "size_bytes": 13029,
+      "status": "PRESENT"
+    },
+    {
+      "path": "config/schemas/holos-asset-acceptance-checks-v1.schema.json",
+      "sha256": "cb729f0da8a8298753e82126d6aaf44e1ac9a55351f5c497f3087fa99c2f100c",
+      "size_bytes": 4996,
+      "status": "PRESENT"
+    },
+    {
+      "path": "docs/episode1-production-asset-intake.md",
+      "sha256": "9839d5a78d35b8f2bf33ffc3f943e3584b8e4df96bb20af31eaba0eb2b686184",
+      "size_bytes": 8165,
+      "status": "PRESENT"
+    },
+    {
+      "path": "docs/episode1-shared-audio-clock-integration.md",
+      "sha256": "f0daa7ae96fafa64349d795d60ece6336fe6d9f9575f83ea3e7cc14bc8e516ab",
+      "size_bytes": 2973,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/character_references/episode1_character_design.png",
+      "sha256": "8cf49b0c8f132fcfe46d8b6d783f36ab76322495daef97fab7e59d6638b75785",
+      "size_bytes": 1270608,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/character_references/episode1_character_design_manifest.json",
+      "sha256": "9d02f5d49498fa1d7224dcee4c4b572f3fb582dc466b3ea78fc0aee6f578ec77",
+      "size_bytes": 1251,
+      "status": "PRESENT"
+    },
+    {
+      "path": "production/screenplay/episode_01_screenplay_v1.md",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/audio/episode_01_approved_script.json",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/audio/episode_01_four_turn_v1.wav",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/audio/episode_01_wav_format_validation.json",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/audio/episode_01_whisperx_validation.json",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/audio/episode_01_acoustic_word_timeline.json",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/audio/episode_01_acoustic_phoneme_timeline.json",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/audio/episode_01_audio_acceptance_report.json",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/animation/episode_01_acoustic_viseme_timeline.json",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "production/render/final/holos_episode_01_complete.mp4",
+      "sha256": null,
+      "size_bytes": null,
+      "status": "MISSING"
+    },
+    {
+      "path": "handoffs/milestone-5-1-2026-11-15/HOLOS_Milestone51_WhisperX_Acoustic_Phoneme_Timeline_Aligned.json",
+      "sha256": "0bcc0d952fb579ce1d2bd98223e1f845ce1dd03e47887a909c0773ca5e3937e0",
+      "size_bytes": 117874,
+      "status": "PRESENT"
+    },
+    {
+      "path": "handoffs/milestone-5-1-2026-11-15/HOLOS_Milestone51_FourTurn_Review_Phoneme_Timeline_Relative.json",
+      "sha256": "1b4b36471695523fe8acc1537d928fdc4290bfe0e13b890d422c454bfcdcc560",
+      "size_bytes": 118119,
+      "status": "PRESENT"
+    },
+    {
+      "path": "handoffs/milestone-5-1-2026-11-15/HOLOS_Episode1_four_turn_review_manifest.json",
+      "sha256": "270e439652cf186041f31e9f8ea5795e5019aa73f5aef19b541c1e495fb4a634",
+      "size_bytes": 1477,
+      "status": "PRESENT"
+    }
+  ]
+}

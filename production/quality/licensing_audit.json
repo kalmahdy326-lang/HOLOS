@@ -1,0 +1,24 @@
+{
+  "record_type": "LICENSING_AUDIT",
+  "status": "NOT_STARTED",
+  "intended_distribution_scope": null,
+  "assets": [],
+  "asset_record_template": {
+    "asset_id": null,
+    "version": null,
+    "sha256": null,
+    "creator": null,
+    "rightsholder": null,
+    "source": null,
+    "license_or_permission_evidence": null,
+    "permitted_use": null,
+    "term": null,
+    "territory": null,
+    "attribution_requirements": null,
+    "reviewer": null,
+    "reviewer_decision": null,
+    "reviewed_at": null,
+    "unresolved_issues": []
+  },
+  "evidence_boundary": "Repository presence does not prove rights clearance. No assets, rights claims, license findings, or approvals are recorded by this template."
+}

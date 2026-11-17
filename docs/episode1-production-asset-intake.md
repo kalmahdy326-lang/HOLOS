@@ -1,0 +1,104 @@
+# HOLOS Episode 1 — Production Asset Intake
+
+**Owner / project author:** Khaled AL-MAHDY  
+**Status:** Intake specification — source assets have not yet been received or validated.  
+**Rule:** Preserve originals. Do not create substitute character rigs, voice tracks, screenplay pages, environments, or approval records.
+
+This checklist separates verified repository materials from the source package required to produce the episode.
+
+## 1. Existing repository evidence
+
+- [x] Milestone 5.1 four-turn handoff is present on PR #6.
+- [x] Absolute and review-relative JSON timelines are present (189 events each).
+- [x] Approved four-turn transcript is embedded in the timeline documents.
+- [x] Source MP3 SHA-256 is recorded as `e4b13c06a6c3fbca9449cffb9135d7259b62e059a3c2d1fa37085afae65b865f`.
+- [x] User-supplied Episode 1 character design reference received; user identifies Character B (dark-haired, beige/brown clothing) as Khaled and Character A (red-haired, dark clothing) as Kevin. The exact source image and hash are recorded in `production/character_references/episode1_character_design_manifest.json`.
+- [x] Reusable title/credits bookend scene and generic renderer infrastructure exist.
+- [ ] Production WAV bytes and one authoritative review-WAV variant are not present in the repository.
+- [ ] Original Khaled and Kevin production rigs/scenes and dependencies are not present in the inspected repository tree; the supplied visual reference does not replace them.
+- [ ] Canonical complete Episode 1 screenplay and shot-by-shot approved edit are not established by the current handoff.
+- [ ] Complete episode body, production camera setup, environments, and final render are not present.
+
+## 2. Required source package
+
+### A. Canonical story and editorial authority
+
+- [ ] Canonical screenplay file (PDF/DOCX/FDX/ Fountain/Markdown or original format).
+- [ ] Version identifier, approval date, and explicit statement that this is the production-approved version.
+- [ ] Complete scene headings, action, dialogue, speaker cues, transitions, and ending.
+- [ ] Approved shot list/storyboard or explicit permission to develop one from the screenplay.
+- [ ] Any pronunciation, performance, timing, or dialogue-change notes.
+
+**Acceptance:** screenplay version and approved dialogue are unambiguous. Do not infer the complete screenplay from an extracted draft or the four-turn opening.
+
+### B. Dialogue and audio masters
+
+- [ ] Original full-episode dialogue master, unmodified.
+- [ ] File format, sample rate, channel count, bit depth/codec, duration, and SHA-256.
+- [ ] Exact edit/export command or DAW session provenance.
+- [ ] Selected four-turn review WAV with full SHA-256 and extraction command.
+- [ ] Confirmation whether the Manus WAV (`4b8c1d78ac6ca233f9ae2ba3f31566baaa75a83802eac8257ba7cba48cd76730`) or Codex WAV (`e9d8a3a88f310b1558a884fcec87f8cf16741019ddbcede2a2db2cc2db74194f`) is authoritative, or supply a new canonical export.
+- [ ] Separate music, ambience, and effects stems if they exist; identify approved versions and rights.
+
+**Acceptance:** one named source audio file is selected by the project owner; its exact bytes are hashed and the timeline timebase/offset is tied to that same file. The two known review WAV variants must remain distinct until this is resolved.
+
+### C. Khaled character production source
+
+**Visual identity reference:** The user identifies **Character B** in the supplied design sheet as Khaled: dark/black curly hair, beige/tan scarf and layered brown/beige clothing. See `production/character_references/episode1_character_design.png` and its hash/mapping manifest. This establishes the intended name-to-design mapping for this reference, not the existence or acceptance of a modeled or rigged character.
+
+- [ ] Original Godot character scene and all referenced resources.
+- [ ] Scripts, skeleton/bone hierarchy, skin/mesh, materials, textures, shaders.
+- [ ] Animation library, facial blend shapes/visemes, mouth/jaw controls, eye controls.
+- [ ] Hair, clothing, accessories, collision/IK resources and imported-source files.
+- [ ] Rig control map documenting exact node paths/property names for each supported viseme.
+- [ ] Known-good idle, speaking, blink, turn, and expression benchmark scenes/renders.
+- [ ] Source artwork/model files and licenses where applicable.
+
+### D. Kevin character production source
+
+**Visual identity reference:** The user identifies **Character A** in the supplied design sheet as Kevin: red hair and dark clothing. See `production/character_references/episode1_character_design.png` and its hash/mapping manifest. This establishes the intended name-to-design mapping for this reference, not the existence or acceptance of a modeled or rigged character.
+
+Same complete package as Khaled, independently supplied and identified. Kevin must retain his own approved appearance, proportions, materials, voice/performance and rig mapping. Do not clone Khaled's rig or reuse Khaled's appearance as a placeholder.
+
+### E. Episode world and production project
+
+- [ ] Complete Godot project archive or repository snapshot, including `project.godot`, addons/plugins, import settings, scripts, scenes, resources, and project-specific settings.
+- [ ] Godot version and renderer target used by the approved project.
+- [ ] Environments, props, backgrounds, lighting, cameras, shaders, fonts, logos and source files.
+- [ ] Scene/shot naming convention and any existing episode layout.
+- [ ] Dependency inventory and a known-good project-open/render instruction.
+- [ ] Backup/archive plus SHA-256 manifest before any integration changes.
+
+### F. Delivery and credits
+
+- [ ] Approved output resolution, frame rate, aspect ratio, color/audio requirements and target container.
+- [ ] Approved episode title, series title, title-card wording, credits text, and contributor spellings/roles.
+- [ ] Approval of draft bookend music or delivery of final licensed/owned music stems.
+- [ ] Required captions/subtitles, accessibility and distribution deliverables.
+
+## 3. Integration sequence after intake
+
+1. Inventory the supplied archive without modifying it; record every file, size and SHA-256.
+2. Make and verify a protected backup.
+3. Open the original Godot project in its specified Godot version and run its existing benchmark.
+4. Confirm the canonical screenplay against the selected audio master; resolve transcript conflicts before extending alignment.
+5. Rebuild and validate the timeline against the exact chosen audio bytes and measured duration.
+6. Inspect each real character rig and write a rig-specific semantic-viseme map from verified controls.
+7. Connect both actors and the director to one audio transport clock; test play, pause, resume, seek and stop.
+8. Build the shot list from approved screenplay/storyboard material, then integrate environments and cameras.
+9. Render short debug samples; review acting, timing, facial deformation, continuity and scene transitions.
+10. Render the full episode, assemble approved audio/music/credits, run media metadata checks, and watch the complete export.
+11. Record final source hashes, tool versions, test results, approvals and export hash.
+
+## 4. Current hard blockers
+
+| Blocker | Why it blocks production |
+|---|---|
+| No canonical complete screenplay | Cannot establish all scenes, dialogue, ending or approved shot list |
+| No selected authoritative review WAV | Cannot safely bind the 0.091-second-relative timeline to one exact review file |
+| No supplied production audio master bytes | Cannot perform audio-clock integration or verify runtime against the master |
+| No original Khaled/Kevin rigs | Cannot map visemes to actual controls or render the approved characters |
+| No full production Godot project/environment assets | Cannot build the episode body or validate original dependencies |
+| No approved final credits/music/delivery specification | Cannot prepare a release-ready final assembly |
+
+**Acceptance boundary:** repository validators and generic adapter tests prove only the files/tooling they exercise. They do not constitute character-rig acceptance, visual lip-sync acceptance, or a completed Episode 1.

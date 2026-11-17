@@ -1,0 +1,2439 @@
+{
+  "record_type": "ASSET_ACCEPTANCE_CHECKS",
+  "project": "HOLOS",
+  "episode": "Episode 1",
+  "version": "v1.0.0",
+  "result_statuses": [
+    "NOT_RUN",
+    "PASS",
+    "FAIL",
+    "BLOCKED",
+    "NOT_APPLICABLE"
+  ],
+  "universal_checks": [
+    {
+      "id": "FILE_EXISTS",
+      "criterion": "The declared authoritative source exists and is readable.",
+      "evidence_required": [
+        "source artifact",
+        "inventory/hash report"
+      ],
+      "applicability": "All assets",
+      "mandatory": true,
+      "default_result": "NOT_RUN"
+    },
+    {
+      "id": "VERSION_RECORDED",
+      "criterion": "A stable version or revision is recorded.",
+      "evidence_required": [
+        "asset manifest"
+      ],
+      "applicability": "All assets",
+      "mandatory": true,
+      "default_result": "NOT_RUN"
+    },
+    {
+      "id": "SHA256_RECORDED",
+      "criterion": "SHA-256 matches the exact bytes under review.",
+      "evidence_required": [
+        "hash command output",
+        "asset manifest"
+      ],
+      "applicability": "All assets",
+      "mandatory": true,
+      "default_result": "NOT_RUN"
+    },
+    {
+      "id": "OWNER_RECORDED",
+      "criterion": "An accountable owner is named.",
+      "evidence_required": [
+        "asset manifest"
+      ],
+      "applicability": "All assets",
+      "mandatory": true,
+      "default_result": "NOT_RUN"
+    },
+    {
+      "id": "REVIEWER_RECORDED",
+      "criterion": "The required reviewer is named and appropriately assigned.",
+      "evidence_required": [
+        "review record"
+      ],
+      "applicability": "All assets",
+      "mandatory": true,
+      "default_result": "NOT_RUN"
+    },
+    {
+      "id": "VALIDATION_REPORT_PRESENT",
+      "criterion": "A type-appropriate validation report identifies method and outcome.",
+      "evidence_required": [
+        "validation report"
+      ],
+      "applicability": "All assets",
+      "mandatory": true,
+      "default_result": "NOT_RUN"
+    },
+    {
+      "id": "LICENSE_OR_PROVENANCE_RECORDED",
+      "criterion": "Source, derivation/provenance, and rights basis are documented.",
+      "evidence_required": [
+        "provenance/license record"
+      ],
+      "applicability": "All assets",
+      "mandatory": true,
+      "default_result": "NOT_RUN"
+    },
+    {
+      "id": "NO_UNRESOLVED_BLOCKING_DEFECT",
+      "criterion": "No unresolved defect or blocking condition remains.",
+      "evidence_required": [
+        "defect log",
+        "review report"
+      ],
+      "applicability": "All assets",
+      "mandatory": true,
+      "default_result": "NOT_RUN"
+    },
+    {
+      "id": "PRODUCTION_USE_RECORDED",
+      "criterion": "Intended production use and scope are explicit.",
+      "evidence_required": [
+        "asset manifest"
+      ],
+      "applicability": "All assets",
+      "mandatory": true,
+      "default_result": "NOT_RUN"
+    },
+    {
+      "id": "APPROVAL_RECORDED",
+      "criterion": "Named approval applies to this exact version/hash and purpose.",
+      "evidence_required": [
+        "approval record"
+      ],
+      "applicability": "All assets",
+      "mandatory": true,
+      "default_result": "NOT_RUN"
+    },
+    {
+      "id": "DEPENDENCIES_AVAILABLE",
+      "criterion": "Required dependencies are identified, versioned, and available.",
+      "evidence_required": [
+        "dependency manifest",
+        "load/test report"
+      ],
+      "applicability": "All assets",
+      "mandatory": true,
+      "default_result": "NOT_RUN"
+    },
+    {
+      "id": "NO_SILENT_REPLACEMENT",
+      "criterion": "No unapproved substitution or post-review change occurred.",
+      "evidence_required": [
+        "change-control history",
+        "hash comparison"
+      ],
+      "applicability": "All assets",
+      "mandatory": true,
+      "default_result": "NOT_RUN"
+    }
+  ],
+  "asset_types": {
+    "SCREENPLAY": {
+      "checks": [
+        {
+          "id": "FILE_CONTENT_COMPLETE",
+          "criterion": "Approved screenplay includes required scenes, action, dialogue, cues, transitions, and ending.",
+          "evidence_required": [
+            "screenplay file",
+            "editorial completeness report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "APPROVAL_EXACT_REVISION",
+          "criterion": "Named approver approves this exact screenplay revision for stated use.",
+          "evidence_required": [
+            "approval record with version/hash/purpose"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "CHANGE_CONTROL_PRESENT",
+          "criterion": "Revision and downstream change-control path are documented.",
+          "evidence_required": [
+            "change-control record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "PRODUCTION_LINKAGE_VALID",
+          "criterion": "Production references this approved screenplay version.",
+          "evidence_required": [
+            "production manifest/reference scan"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "DIALOGUE_SCRIPT": {
+      "checks": [
+        {
+          "id": "FOUR_TURNS_PRESENT",
+          "criterion": "Required four-turn script structure is present where this handoff applies.",
+          "evidence_required": [
+            "script parse/validation report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TURN_IDS_STABLE",
+          "criterion": "Every turn has a unique stable identifier.",
+          "evidence_required": [
+            "script validation report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "SPEAKERS_VALID",
+          "criterion": "Every turn has an allowed, explicit speaker.",
+          "evidence_required": [
+            "script validation report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TEXT_HASHES_VALID",
+          "criterion": "Per-turn text hashes match current text.",
+          "evidence_required": [
+            "hash validation report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "SCREENPLAY_LINKED",
+          "criterion": "Script references the approved screenplay revision.",
+          "evidence_required": [
+            "script metadata",
+            "approval record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "WAV_LINKED",
+          "criterion": "Script is linked to the explicitly selected audio variant.",
+          "evidence_required": [
+            "audio selection record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "SCRIPT_APPROVAL_EXACT_REVISION",
+          "criterion": "Named approval covers exact script revision and purpose.",
+          "evidence_required": [
+            "approval record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "DIALOGUE_AUDIO": {
+      "checks": [
+        {
+          "id": "AUDIO_DECODES",
+          "criterion": "Audio bytes decode without errors.",
+          "evidence_required": [
+            "decoder/metadata report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "AUDIO_FORMAT_MATCHES_PROFILE",
+          "criterion": "Measured codec/sample rate/channel layout/bit depth satisfy the approved audio delivery profile. The user-provided Episode 1 target is 48,000 Hz, 2-channel stereo, pending profile approval and byte-level verification.",
+          "evidence_required": [
+            "measured media metadata",
+            "approved profile reference"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "DURATION_EXPECTATION_VALID",
+          "criterion": "Measured duration is positive and matches approved structure/tolerance.",
+          "evidence_required": [
+            "duration analysis",
+            "approved timing reference"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "PEAK_WITHIN_LIMIT",
+          "criterion": "Measured peak does not exceed the approved limit; clipping is absent.",
+          "evidence_required": [
+            "peak/clipping report",
+            "approved limit reference"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "AUTHORITATIVE_SELECTION_RECORDED",
+          "criterion": "The exact audio hash is explicitly selected as authoritative for its stated purpose.",
+          "evidence_required": [
+            "selection record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TURN_MAPPING_VALID",
+          "criterion": "Audio segments map to the approved dialogue turns.",
+          "evidence_required": [
+            "turn-to-audio mapping report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TIMELINE_LINKAGE_VALID",
+          "criterion": "Dependent timelines bind to this exact audio hash and timebase.",
+          "evidence_required": [
+            "timeline provenance",
+            "hash comparison"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "NO_UNAPPROVED_SUBSTITUTION",
+          "criterion": "Loaded audio is the selected variant, not a silent substitute.",
+          "evidence_required": [
+            "runtime asset manifest",
+            "hash verification"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "TRANSCRIPT": {
+      "checks": [
+        {
+          "id": "TRANSCRIPT_MATCHES_SCRIPT",
+          "criterion": "Transcript agreement with approved script is assessed against declared tolerance.",
+          "evidence_required": [
+            "comparison report",
+            "approved script reference"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TURN_BOUNDARIES_VALID",
+          "criterion": "Speaker/turn boundaries are complete, ordered, and correctly attributed.",
+          "evidence_required": [
+            "boundary validation report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "WORD_TIMING_PRESENT",
+          "criterion": "Word-level timings exist when required by downstream alignment.",
+          "evidence_required": [
+            "transcript/timing validation"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "NONAUTHORITATIVE_PROVENANCE_RECORDED",
+          "criterion": "Machine transcript/intermediate is labeled with its authority limits and source.",
+          "evidence_required": [
+            "provenance metadata"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "NO_SILENT_PROMOTION",
+          "criterion": "Non-authoritative transcript is not treated as approved dialogue or production timeline without review.",
+          "evidence_required": [
+            "integration/configuration inspection"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "ACOUSTIC_WORD_TIMELINE": {
+      "checks": [
+        {
+          "id": "WAV_LINKED",
+          "criterion": "Timeline declares the exact source audio identity/timebase.",
+          "evidence_required": [
+            "timeline metadata",
+            "audio selection record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "WAV_HASH_MATCHES",
+          "criterion": "Recorded source hash equals selected audio hash.",
+          "evidence_required": [
+            "hash comparison report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TURN_MAPPING_VALID",
+          "criterion": "Word events map to correct speaker/turns.",
+          "evidence_required": [
+            "timeline validation report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TIME_ORDER_VALID",
+          "criterion": "Events have valid ordered bounds and no unintended overlap/gaps.",
+          "evidence_required": [
+            "timeline validator output"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "DURATION_MATCH_VALID",
+          "criterion": "Timeline bounds agree with measured audio duration within declared tolerance.",
+          "evidence_required": [
+            "duration comparison",
+            "tolerance configuration"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "ACOUSTIC_PHONEME_TIMELINE": {
+      "checks": [
+        {
+          "id": "WAV_LINKED",
+          "criterion": "Timeline declares exact source audio identity/timebase.",
+          "evidence_required": [
+            "timeline metadata"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "WAV_HASH_MATCHES",
+          "criterion": "Recorded source hash equals selected audio hash.",
+          "evidence_required": [
+            "hash comparison report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TURN_MAPPING_VALID",
+          "criterion": "Phoneme events map to correct speaker/turns.",
+          "evidence_required": [
+            "timeline validation report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TIME_ORDER_VALID",
+          "criterion": "Events have valid ordered bounds and ordering.",
+          "evidence_required": [
+            "timeline validator output"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "DURATION_MATCH_VALID",
+          "criterion": "Timeline bounds agree with source audio within declared tolerance.",
+          "evidence_required": [
+            "duration comparison"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "NO_UNAPPROVED_MANUAL_OVERRIDE",
+          "criterion": "Manual edits are disclosed and authorized; no unapproved timeline is represented as authoritative.",
+          "evidence_required": [
+            "edit/provenance history"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "VISEME_TIMELINE": {
+      "checks": [
+        {
+          "id": "WAV_LINKED",
+          "criterion": "Timeline declares source audio and correct selected timebase.",
+          "evidence_required": [
+            "timeline metadata",
+            "audio selection record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "WAV_HASH_MATCHES",
+          "criterion": "Recorded source hash equals selected audio hash.",
+          "evidence_required": [
+            "hash comparison report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "PHONEME_MAPPING_VALID",
+          "criterion": "Phonemes map to supported semantic visemes.",
+          "evidence_required": [
+            "mapping table",
+            "validator output"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "CHARACTER_MAPPING_VALID",
+          "criterion": "Events map only to intended character/speaker rigs.",
+          "evidence_required": [
+            "speaker-binding tests"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TIMING_VALID",
+          "criterion": "Events have valid bounds and remain within dialogue/audio duration.",
+          "evidence_required": [
+            "timeline validator output"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "NO_UNAPPROVED_MANUAL_TIMELINE",
+          "criterion": "Manual timeline provenance and authority are explicit; no unauthorized override is loaded.",
+          "evidence_required": [
+            "provenance and runtime configuration"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "CHARACTER_RIG": {
+      "checks": [
+        {
+          "id": "SKELETON_VALID",
+          "criterion": "Skeleton hierarchy and required bones are valid.",
+          "evidence_required": [
+            "rig inspection",
+            "automated validation"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "BODY_CONTROLS_VALID",
+          "criterion": "Required body controls are present and addressable.",
+          "evidence_required": [
+            "control inventory",
+            "benchmark"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "FACIAL_CONTROLS_VALID",
+          "criterion": "Required facial controls are present and addressable.",
+          "evidence_required": [
+            "control inventory",
+            "benchmark"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RANGE_OF_MOTION_VALID",
+          "criterion": "Required poses and motions are achievable without constraint failures.",
+          "evidence_required": [
+            "pose/range benchmark"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "DEFORMATION_VALID",
+          "criterion": "Representative deformation has no unacceptable artifacts.",
+          "evidence_required": [
+            "reviewed deformation renders"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "VISEME_SUPPORT_VALID",
+          "criterion": "Required visemes can be formed by this rig.",
+          "evidence_required": [
+            "rig-specific viseme map",
+            "pose renders"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "PERFORMANCE_TEST_VALID",
+          "criterion": "Dialogue, movement, gestures, and reactions work as applicable.",
+          "evidence_required": [
+            "benchmark scene/test report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RENDER_TEST_VALID",
+          "criterion": "Rig renders correctly in representative production conditions.",
+          "evidence_required": [
+            "rendered benchmark",
+            "review record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RIG_APPROVAL_RECORDED",
+          "criterion": "Rigging/required lead approves exact rig revision.",
+          "evidence_required": [
+            "named approval record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "FACIAL_RIG": {
+      "checks": [
+        {
+          "id": "VISEME_SUPPORT_VALID",
+          "criterion": "Required viseme shapes/control mappings are available and distinct.",
+          "evidence_required": [
+            "rig map",
+            "pose test renders"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "BLINK_SUPPORT_VALID",
+          "criterion": "Blink controls produce acceptable non-distracting motion.",
+          "evidence_required": [
+            "animation/render test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "BROW_SUPPORT_VALID",
+          "criterion": "Required brow controls operate as intended.",
+          "evidence_required": [
+            "control inventory",
+            "pose test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "EYE_SUPPORT_VALID",
+          "criterion": "Eye controls/saccades operate within acceptable limits.",
+          "evidence_required": [
+            "control inventory",
+            "motion test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "EMOTIONAL_POSES_VALID",
+          "criterion": "Required emotional poses are achievable and reviewable.",
+          "evidence_required": [
+            "pose sheet",
+            "reviewed renders"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "DEFORMATION_VALID",
+          "criterion": "Facial deformation has no unacceptable seams or artifacts.",
+          "evidence_required": [
+            "rendered deformation review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RENDER_TEST_VALID",
+          "criterion": "Facial rig is validated in representative rendered output.",
+          "evidence_required": [
+            "render test",
+            "review record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "ANIMATION_CLIP": {
+      "checks": [
+        {
+          "id": "CHARACTER_LINKED",
+          "criterion": "Clip identifies compatible character/rig revision.",
+          "evidence_required": [
+            "clip metadata",
+            "dependency manifest"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TIMING_VALID",
+          "criterion": "Duration, timing, and any sync points meet approved intent.",
+          "evidence_required": [
+            "timing report",
+            "approved brief"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TRANSPORT_CLOCK_LINKED",
+          "criterion": "Dialogue-synchronized motion reads the shared transport clock where applicable.",
+          "evidence_required": [
+            "integration test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "INTERRUPTIBLE",
+          "criterion": "Required transitions/interruption behavior work as specified.",
+          "evidence_required": [
+            "runtime test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "NO_UNINTENDED_LOOP",
+          "criterion": "No unintended looping, freeze, or discontinuity occurs.",
+          "evidence_required": [
+            "playback/render review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "PERFORMANCE_REVIEWED",
+          "criterion": "Acting and motion meet approved shot intent.",
+          "evidence_required": [
+            "named animation review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RENDER_TEST_VALID",
+          "criterion": "Clip passes representative render/integration test.",
+          "evidence_required": [
+            "render/test report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "ENVIRONMENT": {
+      "checks": [
+        {
+          "id": "GEOMETRY_VALID",
+          "criterion": "Geometry has no unacceptable holes, normals, or structural defects.",
+          "evidence_required": [
+            "geometry validation",
+            "viewport/render review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "MATERIALS_VALID",
+          "criterion": "Materials and textures resolve and render as intended.",
+          "evidence_required": [
+            "dependency check",
+            "render review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "SCALE_VALID",
+          "criterion": "Scale is consistent with approved scene requirements.",
+          "evidence_required": [
+            "measurement/report",
+            "scene reference"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "PLACEMENT_VALID",
+          "criterion": "Layout supports camera, blocking, and action.",
+          "evidence_required": [
+            "layout review",
+            "scene test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "CONTINUITY_VALID",
+          "criterion": "Visual continuity is maintained across applicable shots.",
+          "evidence_required": [
+            "continuity report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "LICENSE_RECORDED",
+          "criterion": "Rights/provenance permits stated use.",
+          "evidence_required": [
+            "license/provenance evidence"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RENDER_TEST_VALID",
+          "criterion": "Environment passes representative lighting/camera render.",
+          "evidence_required": [
+            "render test",
+            "review record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "PROP": {
+      "checks": [
+        {
+          "id": "GEOMETRY_VALID",
+          "criterion": "Geometry is structurally valid for intended use.",
+          "evidence_required": [
+            "geometry report",
+            "render review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "MATERIALS_VALID",
+          "criterion": "Materials/textures resolve and render correctly.",
+          "evidence_required": [
+            "dependency check",
+            "render review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "SCALE_VALID",
+          "criterion": "Scale matches approved production requirements.",
+          "evidence_required": [
+            "measurement",
+            "approved reference"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "PLACEMENT_VALID",
+          "criterion": "Placement supports camera and action.",
+          "evidence_required": [
+            "scene/layout review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "CONTINUITY_VALID",
+          "criterion": "Prop appearance/state remains consistent across relevant shots.",
+          "evidence_required": [
+            "continuity report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "LICENSE_RECORDED",
+          "criterion": "Rights/provenance permits stated use.",
+          "evidence_required": [
+            "license/provenance evidence"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RENDER_TEST_VALID",
+          "criterion": "Prop passes representative render test.",
+          "evidence_required": [
+            "render test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "SCENE": {
+      "checks": [
+        {
+          "id": "REQUIRED_ASSETS_LOADED",
+          "criterion": "Required dependencies load without missing references.",
+          "evidence_required": [
+            "dependency/load report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "AUDIO_AND_TIMELINE_MATCH",
+          "criterion": "Loaded audio and timeline provenance identify the same approved source/timebase.",
+          "evidence_required": [
+            "scene manifest",
+            "hash verification"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "SINGLE_SHARED_TRANSPORT",
+          "criterion": "Exactly one dialogue transport drives all participating actors.",
+          "evidence_required": [
+            "scene inspection",
+            "integration test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TRANSPORT_CONTROLS_VALID",
+          "criterion": "Play, pause, resume, stop, seek, and position behavior pass.",
+          "evidence_required": [
+            "transport test results"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "CHARACTER_BINDING_VALID",
+          "criterion": "Each speaker drives only its own verified character rig.",
+          "evidence_required": [
+            "speaker-isolation integration tests"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "SEEK_AND_PAUSE_SYNC_VALID",
+          "criterion": "Both actors remain synchronized through seek and pause/resume.",
+          "evidence_required": [
+            "boundary/seek test results"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "NO_TEST_SCENES",
+          "criterion": "Production build excludes test-only scenes.",
+          "evidence_required": [
+            "build configuration inspection"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "NO_DEBUG_UI",
+          "criterion": "No debug UI is exposed in production output.",
+          "evidence_required": [
+            "production build/render inspection"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "NO_PLACEHOLDER_ASSETS",
+          "criterion": "No placeholder asset remains in production scene.",
+          "evidence_required": [
+            "scene inventory and visual review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "HEADLESS_RUN_CLEAN",
+          "criterion": "Headless run completes without errors.",
+          "evidence_required": [
+            "headless log/test report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "MUSIC": {
+      "checks": [
+        {
+          "id": "LICENSE_RECORDED",
+          "criterion": "Rights/license covers intended production and distribution.",
+          "evidence_required": [
+            "license/provenance record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "AUDIO_FORMAT_MATCHES_PROFILE",
+          "criterion": "Measured format satisfies the approved music/delivery profile; do not assume a fixed sample rate or channel count.",
+          "evidence_required": [
+            "measured metadata",
+            "approved profile reference"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TIMING_METADATA_PRESENT",
+          "criterion": "Duration, start/end, edits, and sync points are documented as applicable.",
+          "evidence_required": [
+            "timing metadata"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "LEVELS_AND_MIX_VALID",
+          "criterion": "Levels and dialogue masking meet approved mix criteria.",
+          "evidence_required": [
+            "loudness/peak/mix report",
+            "review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RENDER_TEST_VALID",
+          "criterion": "Music is tested in representative final mix/render.",
+          "evidence_required": [
+            "render/mix test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "SUBTITLE": {
+      "checks": [
+        {
+          "id": "LANGUAGE_RECORDED",
+          "criterion": "Language and locale are declared.",
+          "evidence_required": [
+            "subtitle metadata"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TIMING_VALID",
+          "criterion": "Cue timing/order/duration is valid and syncs to intended clock.",
+          "evidence_required": [
+            "subtitle validator",
+            "sync review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TEXT_MATCHES_APPROVED_DIALOGUE",
+          "criterion": "Text matches approved dialogue or documented localization source.",
+          "evidence_required": [
+            "text comparison/localization review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "LEGIBILITY_VALID",
+          "criterion": "Typography, contrast, safe area, and reading speed satisfy declared requirements.",
+          "evidence_required": [
+            "frame review",
+            "legibility report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "EMBEDDING_OR_SIDECAR_VALID",
+          "criterion": "Required embedded or sidecar delivery form is present and verified.",
+          "evidence_required": [
+            "container/sidecar inspection"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "APPROVAL_RECORDED",
+          "criterion": "Localization review approves exact subtitle revision.",
+          "evidence_required": [
+            "named approval record"
+          ],
+          "applicability": "All assets",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "CREDITS_MANIFEST": {
+      "checks": [
+        {
+          "id": "CREDITS_COMPLETE",
+          "criterion": "Required contributors, roles, notices, and acknowledgments are included.",
+          "evidence_required": [
+            "approved credits source",
+            "completeness review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "SPELLINGS_AND_ROLES_VERIFIED",
+          "criterion": "Names and roles are checked against authoritative records.",
+          "evidence_required": [
+            "verification signoff"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RIGHTS_NOTICES_VALID",
+          "criterion": "Required legal/license notices are accurate and present.",
+          "evidence_required": [
+            "rights review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "TITLE_AND_BRANDING_APPROVED",
+          "criterion": "Title, series wording, and brand assets match approved copy.",
+          "evidence_required": [
+            "copy approval record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RENDERED_CREDITS_REVIEWED",
+          "criterion": "Rendered credits are legible, complete, and timed correctly.",
+          "evidence_required": [
+            "rendered frames",
+            "named review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "RENDER": {
+      "checks": [
+        {
+          "id": "FILE_DECODES",
+          "criterion": "Render exists and fully decodes without corruption.",
+          "evidence_required": [
+            "file/hash record",
+            "full decode report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "VIDEO_FORMAT_MATCHES_PROFILE",
+          "criterion": "Measured resolution, frame rate, aspect ratio, codec, and pixel format match the approved delivery profile. The user-provided Episode 1 target is 1920x1080 at 30 FPS, pending profile approval and measurement.",
+          "evidence_required": [
+            "ffprobe/media metadata",
+            "approved profile reference"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "FRAME_COMPLETENESS_VALID",
+          "criterion": "Actual frame count and sequence meet approved expectations; no missing/duplicate/corrupt frames.",
+          "evidence_required": [
+            "frame-count/sequence report"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "AUDIO_POLICY_AND_FORMAT_VALID",
+          "criterion": "Audio presence is required/optional as specified and measured codec/rate/channels match the approved profile. The requested final-audio target is 48,000 Hz, 2-channel stereo, pending profile approval and measurement.",
+          "evidence_required": [
+            "audio metadata",
+            "approved profile reference"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "AUDIO_VIDEO_DURATION_VALID",
+          "criterion": "Audio/video duration and sync are within declared tolerances.",
+          "evidence_required": [
+            "duration/sync report",
+            "approved tolerance"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "NO_UNINTENDED_BLACK_OR_FREEZE_FRAMES",
+          "criterion": "Visual scan finds no unintended black or freeze frames.",
+          "evidence_required": [
+            "frame scan",
+            "visual review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "NO_UNINTENDED_AUDIO_GAPS",
+          "criterion": "Audio contains no unintended gaps, pops, or clipping.",
+          "evidence_required": [
+            "audio analysis",
+            "listening review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "NO_DEBUG_OR_PLACEHOLDER_ARTIFACTS",
+          "criterion": "No debug UI, placeholder text/assets, or unintended overlays appear.",
+          "evidence_required": [
+            "visual inspection"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "SHOT_REVIEW_PASSED",
+          "criterion": "Named creative/technical review covers exact render revision and purpose.",
+          "evidence_required": [
+            "shot review record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "ASSEMBLY_CONTINUITY_VALID",
+          "criterion": "Transitions and assembled duration/audio continuity meet approved assembly plan.",
+          "evidence_required": [
+            "assembly manifest",
+            "transition review"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "CHARACTER_MODEL": {
+      "checks": [
+        {
+          "id": "DEPENDENCY_AND_USAGE_VALID",
+          "criterion": "Dependencies resolve and asset behaves as intended in its declared production use.",
+          "evidence_required": [
+            "dependency report",
+            "representative integration/render test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RIGHTS_AND_REVIEW_VALID",
+          "criterion": "Rights/provenance and named review cover intended use.",
+          "evidence_required": [
+            "license/provenance",
+            "review record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "SET_DRESSING": {
+      "checks": [
+        {
+          "id": "DEPENDENCY_AND_USAGE_VALID",
+          "criterion": "Dependencies resolve and asset behaves as intended in its declared production use.",
+          "evidence_required": [
+            "dependency report",
+            "representative integration/render test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RIGHTS_AND_REVIEW_VALID",
+          "criterion": "Rights/provenance and named review cover intended use.",
+          "evidence_required": [
+            "license/provenance",
+            "review record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "EFFECT": {
+      "checks": [
+        {
+          "id": "DEPENDENCY_AND_USAGE_VALID",
+          "criterion": "Dependencies resolve and asset behaves as intended in its declared production use.",
+          "evidence_required": [
+            "dependency report",
+            "representative integration/render test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RIGHTS_AND_REVIEW_VALID",
+          "criterion": "Rights/provenance and named review cover intended use.",
+          "evidence_required": [
+            "license/provenance",
+            "review record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "TEXTURE": {
+      "checks": [
+        {
+          "id": "DEPENDENCY_AND_USAGE_VALID",
+          "criterion": "Dependencies resolve and asset behaves as intended in its declared production use.",
+          "evidence_required": [
+            "dependency report",
+            "representative integration/render test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RIGHTS_AND_REVIEW_VALID",
+          "criterion": "Rights/provenance and named review cover intended use.",
+          "evidence_required": [
+            "license/provenance",
+            "review record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "MATERIAL": {
+      "checks": [
+        {
+          "id": "DEPENDENCY_AND_USAGE_VALID",
+          "criterion": "Dependencies resolve and asset behaves as intended in its declared production use.",
+          "evidence_required": [
+            "dependency report",
+            "representative integration/render test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RIGHTS_AND_REVIEW_VALID",
+          "criterion": "Rights/provenance and named review cover intended use.",
+          "evidence_required": [
+            "license/provenance",
+            "review record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "CAMERA_LAYOUT": {
+      "checks": [
+        {
+          "id": "DEPENDENCY_AND_USAGE_VALID",
+          "criterion": "Dependencies resolve and asset behaves as intended in its declared production use.",
+          "evidence_required": [
+            "dependency report",
+            "representative integration/render test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RIGHTS_AND_REVIEW_VALID",
+          "criterion": "Rights/provenance and named review cover intended use.",
+          "evidence_required": [
+            "license/provenance",
+            "review record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    },
+    "SOUND_EFFECT": {
+      "checks": [
+        {
+          "id": "DEPENDENCY_AND_USAGE_VALID",
+          "criterion": "Dependencies resolve and asset behaves as intended in its declared production use.",
+          "evidence_required": [
+            "dependency report",
+            "representative integration/render test"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        },
+        {
+          "id": "RIGHTS_AND_REVIEW_VALID",
+          "criterion": "Rights/provenance and named review cover intended use.",
+          "evidence_required": [
+            "license/provenance",
+            "review record"
+          ],
+          "applicability": "Applicable asset type; assess against declared purpose",
+          "mandatory": true,
+          "default_result": "NOT_RUN"
+        }
+      ]
+    }
+  },
+  "result_template": {
+    "record_type": "ASSET_ACCEPTANCE_RESULT",
+    "status": "PENDING",
+    "asset_id": null,
+    "asset_sha256": null,
+    "asset_version": null,
+    "asset_type": null,
+    "production_use": null,
+    "results": [
+      {
+        "check_id": "FILE_EXISTS",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "VERSION_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "SHA256_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "OWNER_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "REVIEWER_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "VALIDATION_REPORT_PRESENT",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "LICENSE_OR_PROVENANCE_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "NO_UNRESOLVED_BLOCKING_DEFECT",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "PRODUCTION_USE_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "APPROVAL_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "DEPENDENCIES_AVAILABLE",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "NO_SILENT_REPLACEMENT",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "FILE_CONTENT_COMPLETE",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "APPROVAL_EXACT_REVISION",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "CHANGE_CONTROL_PRESENT",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "PRODUCTION_LINKAGE_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "FOUR_TURNS_PRESENT",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TURN_IDS_STABLE",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "SPEAKERS_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TEXT_HASHES_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "SCREENPLAY_LINKED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "WAV_LINKED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "SCRIPT_APPROVAL_EXACT_REVISION",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "AUDIO_DECODES",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "AUDIO_FORMAT_MATCHES_PROFILE",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "DURATION_EXPECTATION_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "PEAK_WITHIN_LIMIT",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "AUTHORITATIVE_SELECTION_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TURN_MAPPING_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TIMELINE_LINKAGE_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "NO_UNAPPROVED_SUBSTITUTION",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TRANSCRIPT_MATCHES_SCRIPT",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TURN_BOUNDARIES_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "WORD_TIMING_PRESENT",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "NONAUTHORITATIVE_PROVENANCE_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "NO_SILENT_PROMOTION",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "WAV_LINKED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "WAV_HASH_MATCHES",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TURN_MAPPING_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TIME_ORDER_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "DURATION_MATCH_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "WAV_LINKED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "WAV_HASH_MATCHES",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TURN_MAPPING_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TIME_ORDER_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "DURATION_MATCH_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "NO_UNAPPROVED_MANUAL_OVERRIDE",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "WAV_LINKED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "WAV_HASH_MATCHES",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "PHONEME_MAPPING_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "CHARACTER_MAPPING_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TIMING_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "NO_UNAPPROVED_MANUAL_TIMELINE",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "SKELETON_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "BODY_CONTROLS_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "FACIAL_CONTROLS_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RANGE_OF_MOTION_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "DEFORMATION_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "VISEME_SUPPORT_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "PERFORMANCE_TEST_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RENDER_TEST_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RIG_APPROVAL_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "VISEME_SUPPORT_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "BLINK_SUPPORT_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "BROW_SUPPORT_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "EYE_SUPPORT_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "EMOTIONAL_POSES_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "DEFORMATION_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RENDER_TEST_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "CHARACTER_LINKED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TIMING_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TRANSPORT_CLOCK_LINKED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "INTERRUPTIBLE",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "NO_UNINTENDED_LOOP",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "PERFORMANCE_REVIEWED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RENDER_TEST_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "GEOMETRY_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "MATERIALS_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "SCALE_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "PLACEMENT_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "CONTINUITY_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "LICENSE_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RENDER_TEST_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "GEOMETRY_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "MATERIALS_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "SCALE_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "PLACEMENT_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "CONTINUITY_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "LICENSE_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RENDER_TEST_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "REQUIRED_ASSETS_LOADED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "AUDIO_AND_TIMELINE_MATCH",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "SINGLE_SHARED_TRANSPORT",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TRANSPORT_CONTROLS_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "CHARACTER_BINDING_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "SEEK_AND_PAUSE_SYNC_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "NO_TEST_SCENES",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "NO_DEBUG_UI",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "NO_PLACEHOLDER_ASSETS",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "HEADLESS_RUN_CLEAN",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "LICENSE_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "AUDIO_FORMAT_MATCHES_PROFILE",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TIMING_METADATA_PRESENT",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "LEVELS_AND_MIX_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RENDER_TEST_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "LANGUAGE_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TIMING_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TEXT_MATCHES_APPROVED_DIALOGUE",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "LEGIBILITY_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "EMBEDDING_OR_SIDECAR_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "APPROVAL_RECORDED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "CREDITS_COMPLETE",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "SPELLINGS_AND_ROLES_VERIFIED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RIGHTS_NOTICES_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "TITLE_AND_BRANDING_APPROVED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RENDERED_CREDITS_REVIEWED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "FILE_DECODES",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "VIDEO_FORMAT_MATCHES_PROFILE",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "FRAME_COMPLETENESS_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "AUDIO_POLICY_AND_FORMAT_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "AUDIO_VIDEO_DURATION_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "NO_UNINTENDED_BLACK_OR_FREEZE_FRAMES",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "NO_UNINTENDED_AUDIO_GAPS",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "NO_DEBUG_OR_PLACEHOLDER_ARTIFACTS",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "SHOT_REVIEW_PASSED",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "ASSEMBLY_CONTINUITY_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "DEPENDENCY_AND_USAGE_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RIGHTS_AND_REVIEW_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "DEPENDENCY_AND_USAGE_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RIGHTS_AND_REVIEW_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "DEPENDENCY_AND_USAGE_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RIGHTS_AND_REVIEW_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "DEPENDENCY_AND_USAGE_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RIGHTS_AND_REVIEW_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "DEPENDENCY_AND_USAGE_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RIGHTS_AND_REVIEW_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "DEPENDENCY_AND_USAGE_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RIGHTS_AND_REVIEW_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "DEPENDENCY_AND_USAGE_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      },
+      {
+        "check_id": "RIGHTS_AND_REVIEW_VALID",
+        "status": "NOT_RUN",
+        "evidence": [],
+        "notes": ""
+      }
+    ],
+    "acceptance_decision": "PENDING",
+    "accepted": false,
+    "reviewer": null,
+    "reviewed_at": null,
+    "approval_purpose": null,
+    "limitations": [
+      "Blank template only; no asset is identified or present, no checks have been run, and no asset is accepted."
+    ]
+  },
+  "catalog_boundary": "This catalog defines checks and a blank template only. It does not assert asset presence, test execution, approval, integration, or acceptance. The user-provided Episode 1 target is 1920x1080 at 30 FPS with 48 kHz stereo final audio; these values remain requested targets pending profile approval and measured evidence. Other resolution, frame-rate, and audio-format decisions must be compared with the approved profile applicable to the asset; no universal fixed profile is implied."
+}
