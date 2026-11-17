@@ -26,7 +26,7 @@
     {
       "id": "ANIM-QUEUE-002",
       "priority": 1,
-      "status": "queued",
+      "status": "completed",
       "title": "Strengthen FFprobe-based final media acceptance",
       "prerequisites": [
         "Inspect tests/test_media.py",
@@ -37,12 +37,15 @@
         "Reject missing, truncated, or mismatched duration outputs",
         "Preserve source media",
         "Record exact validation evidence"
-      ]
+      ],
+      "completed_in_run": "2026-11-17-run-004",
+      "last_verified_workflow": "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44056793036",
+      "note": "Added fail-closed validation for video-stream duration independently of container duration; any present audio is checked for alignment even when audio is optional; malformed stream metadata is rejected. Latest final PR #21 head d1650a7 passed workflow #225: Python/media suite 67 passed, 3 skipped; Godot offscreen integration 3 passed. CI Godot runtime was 4.4.1; production target remains 4.7.2."
     },
     {
       "id": "ANIM-QUEUE-003",
       "priority": 2,
-      "status": "queued",
+      "status": "completed",
       "title": "Audit source inventory, backup, and non-overwriting restore",
       "prerequisites": [
         "Inspect tests/test_inventory.py and tests/test_backup.py"
@@ -52,7 +55,10 @@
         "Backup integrity is verified",
         "Restore never silently overwrites existing files",
         "Failure paths are tested"
-      ]
+      ],
+      "completed_in_run": "2026-11-17-run-005",
+      "last_verified_workflow": "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44056807525",
+      "note": "Added tests for reproducible inventories, hashing failures, tampered inventory aggregates, failed backup copies, tampered backup size metadata, source-change detection, verified copy hashes, backup corruption, and refusal to overwrite existing backup/restore destinations. Latest final PR #22 head e116dff passed workflow #226: Python/media suite 68 passed, 3 skipped; Godot offscreen integration 3 passed. CI Godot runtime was 4.4.1; production target remains 4.7.2."
     },
     {
       "id": "ANIM-BLOCKED-004",
