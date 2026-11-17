@@ -27,3 +27,25 @@ Provide the original DOCX, including comments, tracked changes, and revisions wh
 PR #9 carries the detailed editorial protocol and storyboard materials. PR #12 is intentionally a concise status companion pointing to that protocol. Both pull requests remain open and unmerged pending reconciliation and project-author review. After PR #9 is merged, this page’s pinned link can be changed to a repository-relative link; if the status page is no longer useful, it can instead be retired through a separately reviewed change.
 
 > We are not trying to make our theory right. We are trying to find out what is right. Do not certify what has not been checked.
+
+
+## 2026-11-17 Project Library inspection
+
+A Library metadata search located a file at:
+
+- Path: `/HOLOS/HOLOS_Episode_1_The_Moon_Has_Anger_Issues_Complete_Screenplay.docx`
+- Listed size: 48,709 bytes
+- Library file ID: `file_0000000052e881fd87ba0f4c2b161b77`
+
+This changes the earlier location statement: a DOCX with the expected filename **is present in the Project Library**. However, the readable text extracted from that file does not establish it as the missing authoritative original. Its title page labels it a “CONSOLIDATED SCREENPLAY • APPROVED CONTINUATION INTEGRATED”; page 2 explicitly says it assembles a seven-scene screenplay drafted in conversation, integrates an approved continuation, and that the full 957-line local attachment was unavailable for verbatim comparison. It identifies itself as a consolidated chat-derived screenplay, not a certified recovery of that missing attachment.
+
+The 25-page Library text also matches the provenance description of the 25-page consolidated extraction already in the repository. The storyboard JSON records that same extracted Markdown as its source, with provenance status “consolidated chat-derived text extraction; not certified verbatim against original DOCX.”
+
+A raw-byte materialization request for the Library DOCX was denied. Consequently:
+- the DOCX binary has not been independently hashed or archived;
+- comments, tracked changes, embedded objects and revision history have not been inspected;
+- byte-for-byte or structural comparison with the original 957-line attachment has not been performed.
+
+**Updated conclusion:** the expected-named DOCX is located, but the available document itself explicitly disclaims being a certified recovery of the original attachment. The authoritative screenplay gate therefore remains **BLOCKED**. Do not treat the file's presence, filename, 25-page extraction, or “approved continuation” label as proof that it is the final approved screenplay. The project author must identify the authoritative revision or supply the original 957-line source and confirm any unresolved editorial questions.
+
+The existing 65-shot JSON was independently counted: 8 groups (S01–S07 and PC), 65 total shot IDs. This confirms the structure of the draft breakdown only; it does not verify any panel against the authoritative original.
