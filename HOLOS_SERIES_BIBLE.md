@@ -103,7 +103,7 @@ The Episode 1 materials specify observation regions A, B, and C; individual bina
 
 ### Character artwork and animation direction
 
-The user-confirmed character sheet supplies the current name-to-design mapping. Do not alter their colors, clothing, proportions, or other design specifics without approval. The overall animation medium (2D, 3D, cutout, hand-drawn, or hybrid) and final rendering style have not been locked by the reviewed source materials. The current character rigs are described as working prototypes, with further work anticipated in phoneme-level lip sync, facial polish, articulated body movement, gaze, and expressive acting.
+The user-confirmed character sheet supplies the current name-to-design mapping. Do not alter their colors, clothing, proportions, or other design specifics without approval. The user has also supplied an [Episode 1 key-art reference](production/character_references/episode1_key_art_reference.png); its [manifest](production/character_references/episode1_key_art_reference_manifest.json) records its source and checksum. It depicts Khaled in beige and red-haired Kevin with the Episode 1 title in a lunar/cosmic composition. Treat it as supplied key-art/reference material, not automatically as final approved poster art, the official logo master, or the binding visual standard for the full series. The overall animation medium (2D, 3D, cutout, hand-drawn, or hybrid) and final rendering style have not been locked by the reviewed source materials. The current character rigs are described as working prototypes, with further work anticipated in phoneme-level lip sync, facial polish, articulated body movement, gaze, and expressive acting.
 
 ## 5. Episode 1 — current story source summary
 
@@ -214,7 +214,7 @@ This bible is a summary and index. Where it differs from source files, consult t
 3. Confirm final use and rights/credits for the supplied theme song; decide whether it is an opening theme, recurring motif, or source for edited intro/outro cues.
 4. Select the authoritative full-episode audio and resolve the two review-WAV variants; verify dialogue against the approved full script.
 5. Review/approve the 65-shot breakdown, then determine durations, frame ranges, animatic, and character/environment requirements.
-6. Lock the series animation medium, body visual style, title/logo, palette, format, and character model specifications.
+6. Confirm whether the supplied Episode 1 key art is an approved final cover/logo reference or exploratory art; lock the series animation medium, body visual style, title/logo, palette, format, and character model specifications.
 7. Define season length, runtimes, future episode concepts, and character arcs without resolving mysteries prematurely.
 8. Approve voice casting/performance, final music/sound direction, credits, licenses, and distribution deliverables.
 9. Lock a versioned delivery profile and perform the full offline acceptance test on the target production machine before declaring offline production verified.
