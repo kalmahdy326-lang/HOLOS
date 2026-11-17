@@ -196,7 +196,7 @@ This bible is a summary and index. Where it differs from source files, consult t
 
 - [Project README](README.md) — project philosophy, architecture, milestone overview, and repository split.
 - [Extracted Episode 1 screenplay](docs/source_archive/2026-11-episode-1-the-moon-has-anger-issues-screenplay.extracted.md) — detailed story and dialogue; explicitly a consolidated extraction, not a certified verbatim original DOCX recovery.
-- [Screenplay provenance and editorial gates](docs/episode1-screenplay-provenance-and-editorial-gates.md) — source limitations and approval questions.
+- [Screenplay provenance and editorial gates](docs/episode1-screenplay-provenance-and-editorial-gates.md) — source limitations, blocked 65-panel comparison protocol, discrepancy classifications, and approval questions.
 - [Episode 1 body storyboard draft](docs/episode1-body-storyboard-draft.md), [structured shot breakdown](config/episode1/episode1_storyboard_breakdown_v1.json), and [detailed 65-panel breakdown](docs/episode1-detailed-storyboard-panel-breakdown-v1.md) — text-only proposed panels, not approved boards, an animatic, or a locked edit.
 - [Opening and credits storyboard](storyboard.md) — Alternative B bookend direction and provisional timing/credit requirements.
 - [Character-rig integration contract](docs/character-rig-integration-contract.md) — original rig handoff requirements and evidence boundaries.

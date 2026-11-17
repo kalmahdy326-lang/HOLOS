@@ -34,6 +34,29 @@ The extraction itself explicitly says the consolidated working copy assembles a 
 5. Does the full-episode dialogue recording match this version, including speaker turns and the post-credit Unknown Voice?
 6. Are there any approved revisions after the source extraction date?
 
+## Required 65-panel comparison protocol
+
+**Status: BLOCKED — original source not available.** A check of the current HOLOS worktrees, uploaded files, tracked repository refs, and LFS entries found no `HOLOS_Episode_1_The_Moon_Has_Anger_Issues_Complete_Screenplay.docx`. The consolidated Markdown extraction remains a working source, not a substitute for the original. No comparison of all 65 panels against the original has been completed, and no screenplay-fidelity claim is made.
+
+### Prerequisites
+
+1. Locate or upload the exact original DOCX, preserving comments, tracked changes, and revision history where they are part of the authoritative source.
+2. Establish with the project author which revision is authoritative and how unresolved tracked changes/comments are to be treated. Do not decide this from appearance or recency alone.
+3. Preserve the received DOCX bytes unchanged; record its filename, revision/date if known, size, and SHA-256 before analysis. Work from a read-only copy or extraction.
+
+### Comparison and report requirements
+
+Compare every existing storyboard ID—65 total, from `S01_001` through `PC_003` in the current documented order—against the authoritative screenplay. Keep IDs and order fixed. Do not rewrite the screenplay or silently edit the storyboard; document proposed corrections separately for the project author.
+
+The discrepancy report must contain one entry for each panel, with the panel ID, the authoritative screenplay page/paragraph or other stable source locator, a concise supporting quotation or paraphrase, classification, explanation, and any proposed action. Use these classifications:
+
+- **SUPPORTED:** The panel’s story action and dialogue/sound anchors are supported by the authoritative screenplay; purely visual staging that the screenplay does not specify must remain identified as interpretation.
+- **MISSING_OR_ALTERED:** A required screenplay action, line, sequence, continuity detail, or sound cue is absent or differs in the panel description.
+- **UNSUPPORTED:** The panel adds an event, dialogue, character, prop, cause, or other story detail that the authoritative screenplay does not support.
+- **AMBIGUOUS — AUTHOR DECISION:** The source is unclear, conflicting, revised, or open to more than one interpretation; state the exact decision needed rather than selecting one silently.
+
+Do not mark the comparison verified until the authoritative revision is established, every panel has a classification and source locator, discrepancies are reviewed, proposed changes are explicitly approved, and the report records the reviewed source SHA-256. Until then, all 65 panels remain unverified against the original screenplay.
+
 ## Production gate
 
 Until these questions are resolved, downstream work may prepare a clearly labelled previs breakdown and asset checklist, but must not assign authoritative dialogue timecodes, claim the script is locked, or render a final episode.

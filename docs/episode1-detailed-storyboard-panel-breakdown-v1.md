@@ -5,7 +5,7 @@
 **Scope:** Text-only panel breakdown of the existing 65-shot body breakdown, including the post-credit scene.
 **Source basis:** Existing body storyboard draft, canonical JSON shot inventory, supplied scene panel chunks, extracted screenplay, series bible, and approved visual-reference manifests.
 
-> This is a text-only panel breakdown. It is not image boards, an animatic, a locked edit, or approved timing. No shot durations or frame ranges are established here. This document is based on the unverified extracted screenplay and does not claim canonical screenplay approval. The separate opening/credits bookend design remains outside this document except for the existing S01 title-transition shot.
+> This is a text-only panel breakdown. It is not image boards, an animatic, a locked edit, or approved timing. No shot durations or frame ranges are established here. It is based on an unverified extracted screenplay and does not claim canonical screenplay approval. The original DOCX was not found in the checked uploads, worktrees, tracked repository refs, or LFS entries; comparison of every panel against the original is **blocked**, and no panel is verified against that original. The separate opening/credits bookend design remains outside this document except for the existing S01 title-transition shot.
 
 ## Review and canon key
 
