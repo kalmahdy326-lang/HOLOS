@@ -10,7 +10,11 @@ from typing import Any
 from .preflight import run_preflight
 
 
-def write_preflight_report(project_root: Path, episode: dict[str, Any]) -> Path:
+def write_preflight_report(
+    project_root: Path,
+    episode: dict[str, Any],
+    godot_project: Path = Path("godot"),
+) -> Path:
     report_dir = project_root / "output" / "reports"
     report_dir.mkdir(parents=True, exist_ok=True)
     report_path = report_dir / f"{episode['episode_id']}-preflight.json"
@@ -19,7 +23,7 @@ def write_preflight_report(project_root: Path, episode: dict[str, Any]) -> Path:
         "engine_version": "0.1.0",
         "episode_id": episode["episode_id"],
         "status": "preflight_only",
-        "checks": run_preflight(project_root, episode),
+        "checks": run_preflight(project_root, episode, godot_project),
         "notes": [
             "This report does not indicate that any shots were rendered.",
             "Godot rendering and FFmpeg assembly adapters are not yet implemented.",
