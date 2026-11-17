@@ -62,6 +62,49 @@ class GodotOffscreenIntegrationTests(unittest.TestCase):
                     timeout_seconds=120,
                 )
 
+    def test_cli_blocks_batch_when_scene_file_cannot_load(self):
+        with tempfile.TemporaryDirectory() as temp:
+            project_root = Path(temp) / "project"
+            project_root.mkdir()
+            for folder in ("godot", "holos_engine", "tools", "examples"):
+                shutil.copytree(ROOT / folder, project_root / folder)
+            invalid_scene = project_root / "godot" / "test_scenes" / "broken.tscn"
+            invalid_scene.write_text("not a valid scene resource", encoding="utf-8")
+
+            episode_path = project_root / "examples" / "broken_scene_episode.json"
+            episode_path.write_text(json.dumps({
+                "schema_version": 1,
+                "episode_id": "broken_scene_episode",
+                "title": "Broken Scene Preflight Test",
+                "render": {"width": 320, "height": 180, "fps": 24},
+                "audio": {"dialogue": None, "music": None},
+                "scenes": [{"scene_id": "scene_01", "shots": [{
+                    "shot_id": "BROKEN",
+                    "scene": "res://test_scenes/broken.tscn",
+                    "start_frame": 0,
+                    "end_frame": 2,
+                    "characters": [],
+                    "assets": [],
+                }]}],
+            }), encoding="utf-8")
+
+            env = os.environ.copy()
+            env["PYTHONPATH"] = str(project_root)
+            command = [
+                sys.executable, str(project_root / "tools" / "holos.py"),
+                "--project-root", str(project_root),
+                "render-episode", "--episode", str(episode_path),
+                "--mode", "debug", "--godot-executable", env["HOLOS_GODOT"],
+            ]
+            result = subprocess.run(
+                command, cwd=project_root, env=env, capture_output=True,
+                text=True, timeout=120, check=False,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("PackedScene", result.stderr + result.stdout)
+            self.assertFalse((project_root / "output" / "renders").exists())
+            self.assertFalse((project_root / "output" / "manifests").exists())
+
     def test_minimal_scene_renders_expected_frames(self):
         with tempfile.TemporaryDirectory() as temp:
             temp_root = Path(temp)
