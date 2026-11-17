@@ -26,7 +26,7 @@
     {
       "id": "ANIM-QUEUE-002",
       "priority": 1,
-      "status": "queued",
+      "status": "completed",
       "title": "Strengthen FFprobe-based final media acceptance",
       "prerequisites": [
         "Inspect tests/test_media.py",
@@ -37,7 +37,10 @@
         "Reject missing, truncated, or mismatched duration outputs",
         "Preserve source media",
         "Record exact validation evidence"
-      ]
+      ],
+      "completed_in_run": "2026-11-17-run-004",
+      "last_verified_workflow": "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44054517713",
+      "note": "Added fail-closed validation for video-stream duration independently of container duration; any present audio is checked for alignment even when audio is optional; malformed stream metadata is rejected. CI run #217 passed: Python/media suite 67 passed, 3 skipped; Godot offscreen integration 3 passed; source inventory complete; Godot asset audit found 0 missing references."
     },
     {
       "id": "ANIM-QUEUE-003",
