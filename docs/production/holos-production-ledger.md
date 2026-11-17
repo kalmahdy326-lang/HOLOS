@@ -103,3 +103,22 @@ Append a new entry with:
 - Work explicitly not completed:
 
 **Never claim background or overnight work occurred unless a real execution record proves it.**
+
+
+### Extended continuation — 2026-11-17
+
+- **Working branches inspected:** `automation/ffprobe-stream-acceptance-2026-11-17`, `automation/source-preservation-audit-2026-11-17`, `recovery/rig-source-handoff-2026-11-17`, `docs/episode1-screenplay-source-verification`, and the Episode 1 storyboard branch.
+- **Engineering evidence reviewed:** PR #21 records ANIM-QUEUE-002 complete with successful workflow #44054517713 (67 passed, 3 skipped in Python/media; 3 Godot offscreen integration tests passed). PR #22 records ANIM-QUEUE-003 complete with successful workflow #44054997591 (68 passed, 3 skipped; 3 Godot integration tests passed). The CI Godot runtime was 4.4.1, not target 4.7.2.
+- **Merge boundary:** PR #21 and PR #22 remain open draft PRs. Their completion records are on their feature branches. The default-branch queue still lists those tasks as queued because neither PR has been merged. Do not report the main branch as updated or treat unmerged branch changes as released production code.
+- **Rig recovery:** all 20 currently listed GitHub branches were inspected recursively. No original Khaled/Kevin rig scene, rig script, skeleton resource, 3D model, or two-character interaction scene was found. The Library contains two candidate ZIPs, but raw-byte access remains denied and their contents are unknown. PR #20 records the exact package locations and a non-destructive recovery procedure.
+- **Screenplay source:** the expected-named DOCX was located in the Project Library at `/HOLOS/HOLOS_Episode_1_The_Moon_Has_Anger_Issues_Complete_Screenplay.docx`, listed size 48,709 bytes. Its readable 25-page text explicitly labels itself a consolidated chat-derived screenplay and states that the full 957-line local attachment was unavailable for verbatim comparison. Raw-byte materialization was denied, so comments, tracked changes, embedded objects, revision history and SHA-256 remain uninspected. The file's presence does not unblock authoritative screenplay verification.
+- **Storyboard structure:** the existing JSON draft was independently counted at 65 shot IDs across 8 groups (S01–S07 and PC). This verifies only the structure of the draft, not screenplay fidelity or approval.
+- **Documentation updates:** PR #20's rig reconciliation document was extended with the 20-branch audit and checksum-sidecar evidence. PR #12's screenplay status gate was extended with the Library finding. GitHub issue #11 received a source-inspection comment.
+- **Not done:** no character rigs recovered or rendered; no screenplay binary hash or revision audit; no 65-panel authoritative comparison; no episode shots, animatic, final animation, or episode render; no PRs merged; no creative canon changed.
+
+#### Exact next actions
+
+1. Obtain the original 957-line screenplay attachment or an explicit author decision that the 25-page consolidated chat-derived DOCX is the authoritative production version.
+2. Obtain readable exports of `HOLOS_Model_Initialization_Package.zip` and `HOLOS_Autonomous_Execution_Package.zip`, including the Model Initialization checksum sidecar.
+3. Once source assets are available, verify hashes before opening, inventory and back up the complete Godot projects, then test the real Khaled and Kevin rigs independently.
+4. After the unmerged engineering PRs are reviewed and merged by explicit project-author approval, reconcile the default-branch task queue so completed task statuses are reflected there.
