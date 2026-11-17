@@ -121,3 +121,18 @@ Append a new entry with:
 - **Tests:** Regression tests added but not executed in this session. The commit-associated workflow lookup returned no runs; do not claim CI passed.
 - **Not done:** No Godot resource existence check was run; no Godot runtime scene was created; no artwork, rig, audio, screenplay, or animation was produced.
 - **Next action:** Obtain a CI run for PR #17 and inspect its result. Then build a production preflight that verifies every configured `res://` resource exists in the selected Godot project before starting batch rendering. Keep the starter episode explicitly non-render-ready until real scenes are recovered or authored and approved.
+
+
+### Session continuation — Godot scene-resource preflight
+
+- **Date:** 2026-11-17
+- **Branch:** `production/godot-scene-preflight`
+- **Base:** PR #17 head `48e31ec9894a2fe24ffe262c79b3e5f995866e55`
+- **Work completed:** Added `inspect_episode_scenes` and `require_episode_scenes` to the shared preflight module. They require a valid Godot project root and `project.godot`, resolve every configured shot's `res://` path to a regular file, reject malformed paths, traversal, null bytes, backslashes, and symlink components, and report missing versus unsafe resources separately.
+- **Render integration:** The `preflight` command now reports scene-resource checks. Both `render` and `render-episode` call the blocking check before invoking the renderer/batch controller, so a missing scene is detected before the batch manifest or render output directory is created. The preflight report now states the limitation: path existence is not equivalent to Godot loading the scene.
+- **Tests added:** `tests/test_preflight.py` covers existing scenes, missing scenes, malformed/traversal paths, symlink rejection, and a CLI-level assertion that a missing scene prevents batch startup and leaves render/manifest output absent.
+- **Validation boundary:** Files were fetched back from GitHub for inspection. Python tests have **not** been executed in this GitHub-only session; no CI result or Godot runtime scene-load validation is claimed. No production scenes, character rigs, artwork, audio, or animation were created.
+- **Pull request:** [PR #18 — preflight every configured Godot scene before rendering](https://github.com/kalmahdy326-lang/HOLOS/pull/18) (open, draft, unmerged; stacked on PR #17).
+- **CI:** Workflow run [#210](https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44050705291) **passed** on code head `5f33c8715ee819030d3cedbf63d54f6209525c1b`. Python/media job: 101 tests passed with 3 Godot-dependent Python tests skipped in that job. Godot offscreen job: 3 integration tests passed using Godot 4.4.1. The earlier run failed because an existing assembly-only fixture lacked the newly required `scene` config field; that fixture was corrected without creating a real scene asset.
+- **Validation limit:** CI's Godot runtime is 4.4.1, while the intended production target is 4.7.2. The path preflight does not itself ask Godot to load every configured scene. Do not treat this as 4.7.2 compatibility or production scene acceptance.
+- **Next action:** Implement a Godot-runtime scene-load preflight that loads each configured scene as a `PackedScene` before batch rendering, then run it under the intended Godot 4.7.2 environment. Keep the starter episode non-render-ready until real production scenes are recovered or authored and approved.
