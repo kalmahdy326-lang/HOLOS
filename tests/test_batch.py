@@ -247,5 +247,69 @@ class BatchRenderTests(unittest.TestCase):
             )
 
 
+    def test_hard_interruption_leaves_running_shot_for_safe_resume(self):
+        calls = []
+
+        class SimulatedProcessInterrupt(BaseException):
+            pass
+
+        def interrupt(scene, shot, output_dir):
+            calls.append(shot["shot_id"])
+            output_dir.mkdir(parents=True, exist_ok=True)
+            (output_dir / "partial.tmp").write_text("interrupted", encoding="utf-8")
+            raise SimulatedProcessInterrupt("simulated abrupt process interruption")
+
+        with self.assertRaises(SimulatedProcessInterrupt):
+            render_episode_batch(
+                project_root=self.root, episode=EPISODE, mode="debug",
+                render_one=interrupt,
+            )
+
+        manifest_path = (
+            self.root / "output" / "manifests" / "batch_test-debug-render.json"
+        )
+        interrupted = json.loads(manifest_path.read_text(encoding="utf-8"))
+        self.assertEqual(interrupted["shots"][0]["status"], "running")
+        self.assertEqual(interrupted["shots"][0]["attempts"], 1)
+        self.assertEqual(calls, ["S01_B01"])
+
+        resumed_calls = []
+        resumed = render_episode_batch(
+            project_root=self.root, episode=EPISODE, mode="debug",
+            render_one=self.make_renderer(resumed_calls),
+        )
+        self.assertTrue(resumed["success"])
+        self.assertEqual(resumed["completed_this_run"], ["S01_B01", "S01_B02", "S02_B01"])
+        self.assertEqual(resumed_calls, [
+            ("scene_01", "S01_B01"),
+            ("scene_01", "S01_B02"),
+            ("scene_02", "S02_B01"),
+        ])
+        archived = list((self.root / "output" / "recovery").glob("S01_B01-*"))
+        self.assertEqual(len(archived), 1)
+        self.assertEqual(
+            (archived[0] / "partial.tmp").read_text(encoding="utf-8"),
+            "interrupted",
+        )
+
+    def test_corrupt_manifest_fails_closed_without_rendering_or_replacement(self):
+        manifest_path = (
+            self.root / "output" / "manifests" / "batch_test-debug-render.json"
+        )
+        manifest_path.parent.mkdir(parents=True)
+        corrupt = "{ this is not valid JSON"
+        manifest_path.write_text(corrupt, encoding="utf-8")
+        calls = []
+
+        with self.assertRaisesRegex(BatchRenderError, "Cannot read existing batch manifest"):
+            render_episode_batch(
+                project_root=self.root, episode=EPISODE, mode="debug",
+                render_one=self.make_renderer(calls),
+            )
+
+        self.assertEqual(manifest_path.read_text(encoding="utf-8"), corrupt)
+        self.assertEqual(calls, [])
+
+
 if __name__ == "__main__":
     unittest.main()
