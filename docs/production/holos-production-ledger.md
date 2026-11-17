@@ -141,3 +141,21 @@ The successful CI runs use Godot 4.4.1, not the target Godot 4.7.2 runtime. They
 ### Episode 1 storyboard structure follow-up — 2026-11-17
 
 A read-only comparison of the draft JSON, Markdown breakdown, and schema confirmed 65 unique shot IDs; the 65 Markdown IDs match JSON order exactly; the eight groups contain 9, 9, 8, 10, 8, 9, 9, and 3 shots respectively; each shot has eight fields; and no frame start/end values are assigned. This verifies internal draft consistency only. It does not compare the 65 shots to the authoritative original screenplay, establish dialogue/audio timing, or approve the storyboard. The detailed result is recorded in PR #12's status document.
+
+
+### Continuation update — 2026-11-17: package classification and queue reconciliation
+
+- **Queue reconciliation branch/PR:** Created branch production/reconcile-completed-queue-002-003-2026-11-17 and opened draft PR #23. It changes only automation/continuous-task-queue.json, recording ANIM-QUEUE-002 and ANIM-QUEUE-003 as completed and pointing each last_verified_workflow field to the latest successful final-head run (#225 and #226 respectively). PR #21 and #22 remain open and unmerged; PR #23 is also open and unmerged. The default branch remains unchanged until review/merge.
+- **Important source classification correction:** The Library's HOLOS_Model_Initialization_Package.zip and HOLOS_Autonomous_Execution_Package.zip are not established animation rig exports. Adjacent files in /HOLOS — README.md, MODEL_SPECIFICATION.md, S1_INITIALIZATION_REPORT.md, EXECUTION_STATUS.md, and holos_final_conclusion.md — identify the package family as the separate HOLOS reality-research finite Rep(Z2) / quantum-double stabilizer benchmark. The Model Initialization ZIP is strongly indicated to be a research archive; the Autonomous Execution ZIP likely belongs to the same family, but its internal contents remain uninspected. Raw-byte materialization for both ZIPs and the screenplay remains denied. Do not ask the creator to resend these two research archives as rig files. The actual animation project export must be located in the original animation/Manus workspace or supplied separately.
+- **Checksum:** The Model Initialization sidecar declares SHA-256 48b0a93b9afe2cd316f2ef2a25d62910170a6b0a45ddbb616120e8a9c6a108ba. This is a sidecar value only; it has not been checked against archive bytes and must not be called verified.
+- **Series Bible:** A Library file HOLOS_SERIES_BIBLE_v0.1.md (23,324 bytes; 491 lines) is now available. It labels itself a foundational working draft requiring creator review, not an approved authority. It restates the series title HOLOS, Episode 1 title The Moon Has Anger Issues, Khaled=B, Kevin=A, ORBIT distinct from the Moon, and preserves screenplay/storyboard/audio/rig approval gates. It is a useful continuity reference but must not override explicit creator-approved materials.
+- **Screenplay:** The located 48,709-byte DOCX text remains a consolidated chat-derived 25-page working copy and not verified original. The storyboard Markdown explicitly identifies that extraction as its source. No screenplay fidelity certification has been performed.
+- **Current hard blockers:** No verified original Khaled or Kevin Godot rig project; no confirmed Godot 4.7.2 runtime in the active container; no authoritative screenplay decision; no final approved audio selection; no production scenes/shots or episode render. No animation, source creative changes, or merges were performed in this continuation.
+
+#### Revised next actions
+
+1. Locate the actual animation-source handoff in the original animation/Manus environment; do not confuse it with the reality-research ZIP packages.
+2. If the original screenplay is not available, obtain the creator's explicit decision on whether the consolidated 25-page DOCX is the production authority.
+3. After screenplay authority is resolved, perform the 65-shot comparison and lock only after author decisions.
+4. Recover and validate the real Khaled/Kevin Godot project and dependencies in Godot 4.7.2; then complete the two-character benchmark.
+5. Build a production-quality vertical slice from a real Episode 1 shot before scaling to all 65 storyboard shots.
