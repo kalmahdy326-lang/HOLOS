@@ -2,6 +2,7 @@ extends SceneTree
 ## Loads configured episode scenes as PackedScene resources without instantiating them.
 
 const REPORT_MARKER := "HOLOS_SCENE_PREFLIGHT="
+const RESOURCE_PREFIX := "res" + "://"
 
 
 func _initialize() -> void:
@@ -43,8 +44,8 @@ func _run() -> void:
     for value in parsed["scenes"]:
         var scene_path := str(value)
         var item := {"scene": scene_path, "valid": false, "error": ""}
-        if not scene_path.begins_with("res://") or scene_path.length() <= 6:
-            item["error"] = "not a valid res:// resource path"
+        if not scene_path.begins_with(RESOURCE_PREFIX) or scene_path.length() <= 6:
+            item["error"] = "not a valid Godot resource path"
         elif not ResourceLoader.exists(scene_path):
             item["error"] = "Godot ResourceLoader cannot find the resource"
         else:
