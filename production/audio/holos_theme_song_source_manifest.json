@@ -1,0 +1,24 @@
+{
+  "record_type": "MUSIC_SOURCE_INTAKE",
+  "project": "HOLOS",
+  "source_filename": "HOLOStheme.m4a",
+  "repository_path": "production/audio/holos_theme_song_source.m4a",
+  "user_identified_role": "HOLOS theme song",
+  "intake_status": "SOURCE_RECEIVED; CREATIVE/RIGHTS/FINAL-MIX APPROVAL NOT ASSESSED",
+  "sha256": "aee4733881850f4a3a83be5ae6b69c94cdbbbebc4467916ad3aeec5b3e3bd09e",
+  "size_bytes": 1307950,
+  "container": "M4A (ISO Base Media / MPEG-4 family; FFprobe format_name mov,mp4,m4a,3gp,3g2,mj2)",
+  "audio_stream_observed": {
+    "codec": "AAC",
+    "sample_rate_hz": 48000,
+    "channels": 2,
+    "channel_layout": "stereo",
+    "duration_seconds": 209.0
+  },
+  "tool": "FFprobe local metadata inspection; source bytes preserved without transcoding",
+  "limitations": [
+    "No subjective listening or lyric/content review performed.",
+    "Rights, authorship, credits, and permission for distribution remain to be documented.",
+    "This source has not been approved as a final episode mix or edited intro/outro cue."
+  ]
+}

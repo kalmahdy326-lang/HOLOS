@@ -240,6 +240,8 @@ The production repository's current implementation status and offline acceptance
 
 The Episode 1 source extraction has now been translated into a structured **draft** body storyboard covering all seven scenes and the post-credit scene. This is previsualization planning, not an approved final edit.
 
+- [HOLOS Series Bible](HOLOS_SERIES_BIBLE.md) — a source-linked, status-qualified overview of the series, characters, Episode 1, visual/audio direction, and production workflow. It does not replace or lock any primary source document.
+
 - [Episode 1 body storyboard and production breakdown](docs/episode1-body-storyboard-draft.md) — 65 proposed shots with camera coverage, action, dialogue/sound anchors, continuity and asset requirements.
 - [Machine-readable storyboard breakdown](config/episode1/episode1_storyboard_breakdown_v1.json) — versioned scene/shot structure for future tooling.
 - [Storyboard JSON Schema](config/schemas/holos-storyboard-breakdown-v1.schema.json) — structural contract for the planning data.
