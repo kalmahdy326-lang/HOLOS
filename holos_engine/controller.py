@@ -26,7 +26,7 @@ def write_preflight_report(
         "checks": run_preflight(project_root, episode, godot_project),
         "notes": [
             "This report does not indicate that any shots were rendered.",
-            "Godot rendering and FFmpeg assembly adapters are not yet implemented.",
+            "Scene checks verify file paths only; they do not load scenes in Godot or prove runtime compatibility.",
         ],
     }
     report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
