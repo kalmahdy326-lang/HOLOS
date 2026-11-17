@@ -72,3 +72,32 @@ Provide the two ZIP files as direct attachments in a session that permits readin
 7. Only then prepare a non-destructive integration branch.
 
 Until this handoff is complete, rig recovery remains blocked by source access, not by the generic renderer.
+
+
+## 2026-11-17 extended Library inventory and checksum-sidecar finding
+
+The Library root was enumerated through all pages available in this session (250 items; no continuation cursor). The extension-filtered inventory found no standalone native Godot project/scene/script or common 3D source files anywhere in those 250 entries: no `.tscn`, `.scn`, `.gd`, `.tres`, `.res`, `.blend`, `.glb`, `.gltf`, `.fbx`, or `.obj`. This is a Library metadata inventory, not proof that no external/local project exists.
+
+Exact Library metadata for the two production package candidates:
+
+| File | Library path | File ID | Library file ID | Listed size |
+|---|---|---|---|---:|
+| `HOLOS_Model_Initialization_Package.zip` | `/HOLOS/HOLOS_Model_Initialization_Package.zip` | `file_00000000589c81fd8881be1b40463286` | `libfile_6ea524836424819188448a483fe738af` | 64,530 bytes |
+| `HOLOS_Autonomous_Execution_Package.zip` | `/HOLOS/HOLOS_Autonomous_Execution_Package.zip` | `file_0000000055d481fd9d58ea0c5fec4c66` | `libfile_46a9799a3ec08191b506e953f1b823a8` | 21,652 bytes |
+
+A checksum sidecar exists for the Model Initialization package:
+
+- Sidecar: `/HOLOS/HOLOS_Model_Initialization_Package.zip.sha256`
+- Sidecar listed size: 105 bytes
+- Sidecar declares SHA-256: `48b0a93b9afe2cd316f2ef2a25d62910170a6b0a45ddbb616120e8a9c6a108ba`
+- Sidecar target filename: `HOLOS_Model_Initialization_Package.zip`
+
+**Checksum status:** this is a checksum value read from the sidecar text. It has not been independently verified against the ZIP bytes because raw-byte materialization remains denied. Do not label it a verified archive hash. No checksum sidecar for the Autonomous Execution package was found in the enumerated Library inventory.
+
+The Library also contains separate research ZIPs (including the GfE reconstruction and Technical Investigation 002 packages), but their filenames and location do not establish that they contain animation rigs. They are not being treated as character-source candidates.
+
+Raw-byte materialization was retried using the exact Library file IDs for both animation package candidates and the checksum sidecar, in both raw-file and text representations. The service returned the same authorization denial for all three. No ZIP contents were inspected.
+
+### Updated recovery decision
+
+The previous request to supply the two package files remains valid. If a transfer is possible, include the Model Initialization sidecar too; retain its original name and contents. On receipt, verify the archive against the declared checksum before opening it, then inventory without overwriting. If it does not match, preserve the archive and report the mismatch rather than silently regenerating the checksum.
