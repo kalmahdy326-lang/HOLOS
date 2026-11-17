@@ -69,7 +69,7 @@ class EpisodeScenePreflightTests(unittest.TestCase):
             "res://",
             "res://../outside.tscn",
             "res://scenes/../outside.tscn",
-            "res://scenes\\outside.tscn",
+            r"res://scenes\\outside.tscn",
             "res:///scenes/one.tscn",
         ):
             with self.subTest(value=value):
