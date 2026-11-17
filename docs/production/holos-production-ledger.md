@@ -173,3 +173,8 @@ Two current Library audio assets were materialized as raw bytes and independentl
 A separate open draft PR #6 contains an approved four-turn opening dialogue handoff and two 189-event timelines. Its source MP3 hash is recorded as e4b13c06a6c3fbca9449cffb9135d7259b62e059a3c2d1fa37085afae65b865f; turn boundaries cover 0.191–16.816 seconds. Word boundaries are acoustically aligned, but internal phoneme subdivisions are dictionary-based estimates, not dedicated phoneme alignment. The PR explicitly says no production-scene integration, Godot runtime validation, shared audio clock, rig mapping or visual lip-sync acceptance has occurred. It remains open and unmerged.
 
 The full-episode dialogue MP3 itself was not found in the searched Library results and is not present in the checked-in handoff branch as a media file. The four-turn handoff is only the opening exchange, not complete episode dialogue. Do not mistake the theme or 15-second test WAV for the dialogue master. Final audio integration remains blocked pending the complete source dialogue and verified character rigs.
+
+
+### Queue reconciliation CI result — 2026-11-17
+
+Draft PR #23 commit 23f1afbc1f7f8b15a626f1c5d969fb548afce2c1 passed GitHub Actions workflow #230 (run ID 44057668296). Both python-and-media and godot-offscreen-render jobs completed successfully. The workflow explicitly downloads Godot 4.4.1. This verifies the queue-only PR's repository checks; it does not validate target Godot 4.7.2 or actual character assets. PR #23 remains open and unmerged.
