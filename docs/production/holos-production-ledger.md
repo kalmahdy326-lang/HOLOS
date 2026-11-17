@@ -122,3 +122,17 @@ Append a new entry with:
 2. Obtain readable exports of `HOLOS_Model_Initialization_Package.zip` and `HOLOS_Autonomous_Execution_Package.zip`, including the Model Initialization checksum sidecar.
 3. Once source assets are available, verify hashes before opening, inventory and back up the complete Godot projects, then test the real Khaled and Kevin rigs independently.
 4. After the unmerged engineering PRs are reviewed and merged by explicit project-author approval, reconcile the default-branch task queue so completed task statuses are reflected there.
+
+
+### Verification follow-up — 2026-11-17
+
+The documentation-only evidence corrections on the engineering PR branches were themselves re-tested:
+
+- PR #21 final head `d1650a72943511f5555f5afb93c6a7f56c18fc0d`: workflow [#44056793036](https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44056793036), run #225 — completed successfully; both `python-and-media` and `godot-offscreen-render` passed.
+- PR #22 final head `e116dffc3aad71232cc9594ef26104a27a000a8a`: workflow [#44056807525](https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44056807525), run #226 — completed successfully; both `python-and-media` and `godot-offscreen-render` passed.
+
+Both PR descriptions now distinguish the original implementation-head test evidence from the final PR-head reruns. Both PRs remain draft and unmerged.
+
+**Merge hazard recorded:** PR #21 and PR #22 both change `automation/continuous-task-queue.json` from the same `main` baseline. Each branch marks its own task complete and leaves the other queued. Comments were added to both PRs warning that the queue must be reconciled after the first merge; merging both unchanged can overwrite a completed status. The default branch remains unchanged and still reports those tasks as queued.
+
+The successful CI runs use Godot 4.4.1, not the target Godot 4.7.2 runtime. They do not establish local/offline acceptance or real character-rig integration.
