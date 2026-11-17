@@ -190,7 +190,7 @@ def validate_scenes_with_godot(
             suffix=".json", delete=False,
         ) as stream:
             json.dump(manifest, stream)
-            stream.write("\\n")
+            stream.write("\n")
             manifest_path = Path(stream.name)
         command = [
             godot, "--headless", "--path", str(project),
