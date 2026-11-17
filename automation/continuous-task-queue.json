@@ -7,7 +7,7 @@
     {
       "id": "ANIM-QUEUE-001",
       "priority": 1,
-      "status": "queued",
+      "status": "completed",
       "title": "Audit resumable episode rendering and interruption recovery",
       "prerequisites": [
         "Inspect tools/holos.py and tests/test_batch.py",
@@ -18,11 +18,14 @@
         "Resume skips only verified completed shots",
         "Manifest corruption fails closed",
         "Regression tests cover restart and partial output"
-      ]
+      ],
+      "completed_in_run": "2026-11-16-run-003",
+      "last_verified_workflow": "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44010728405",
+      "note": "The existing batch controller already failed closed on corrupt JSON and left interrupted shots in running state. Added regressions for a BaseException-style hard interruption, recovery archival/retry, and malformed-manifest preservation. Python/media and Godot workflow passed."
     },
     {
       "id": "ANIM-QUEUE-002",
-      "priority": 2,
+      "priority": 1,
       "status": "queued",
       "title": "Strengthen FFprobe-based final media acceptance",
       "prerequisites": [
@@ -38,7 +41,7 @@
     },
     {
       "id": "ANIM-QUEUE-003",
-      "priority": 3,
+      "priority": 2,
       "status": "queued",
       "title": "Audit source inventory, backup, and non-overwriting restore",
       "prerequisites": [
@@ -53,7 +56,7 @@
     },
     {
       "id": "ANIM-BLOCKED-004",
-      "priority": 4,
+      "priority": 3,
       "status": "blocked",
       "title": "Integrate the actual Khaled and Kevin character rigs",
       "prerequisites": [
