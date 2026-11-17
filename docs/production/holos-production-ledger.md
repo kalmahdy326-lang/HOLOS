@@ -136,3 +136,8 @@ Both PR descriptions now distinguish the original implementation-head test evide
 **Merge hazard recorded:** PR #21 and PR #22 both change `automation/continuous-task-queue.json` from the same `main` baseline. Each branch marks its own task complete and leaves the other queued. Comments were added to both PRs warning that the queue must be reconciled after the first merge; merging both unchanged can overwrite a completed status. The default branch remains unchanged and still reports those tasks as queued.
 
 The successful CI runs use Godot 4.4.1, not the target Godot 4.7.2 runtime. They do not establish local/offline acceptance or real character-rig integration.
+
+
+### Episode 1 storyboard structure follow-up — 2026-11-17
+
+A read-only comparison of the draft JSON, Markdown breakdown, and schema confirmed 65 unique shot IDs; the 65 Markdown IDs match JSON order exactly; the eight groups contain 9, 9, 8, 10, 8, 9, 9, and 3 shots respectively; each shot has eight fields; and no frame start/end values are assigned. This verifies internal draft consistency only. It does not compare the 65 shots to the authoritative original screenplay, establish dialogue/audio timing, or approve the storyboard. The detailed result is recorded in PR #12's status document.
