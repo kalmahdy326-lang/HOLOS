@@ -51,14 +51,14 @@ Character roles and personalities below are stated in the extracted screenplay a
 
 **Story role:** Senior relational physicist.
 **Personality/performance:** Brilliant, controlled, observant, skeptical, precise, sarcastic, and dry. He tests competing explanations and resists claiming more than the evidence supports. Under pressure he may act urgently while keeping his language exact. The screenplay says he would rather abandon a favored hypothesis than defend a false one.
-**Visual identity:** **Character B** on the user-supplied sheet: dark/black curly hair; beige/tan scarf and layered brown/beige clothing. This mapping was explicitly confirmed by the user. See the [character reference image](https://github.com/kalmahdy326-lang/HOLOS/blob/feat/episode1-production-integration-scaffold/production/character_references/episode1_character_design.png) and [provenance manifest](https://github.com/kalmahdy326-lang/HOLOS/blob/feat/episode1-production-integration-scaffold/production/character_references/episode1_character_design_manifest.json).
+**Visual identity:** **Character B** on the user-supplied sheet: thick dark wavy/curly hair, blue-green eyes, a beige/tan scarf, and warm layered brown/beige clothing. This mapping was explicitly confirmed by the user. See the [character reference image](https://github.com/kalmahdy326-lang/HOLOS/blob/feat/episode1-production-integration-scaffold/production/character_references/episode1_character_design.png) and [provenance manifest](https://github.com/kalmahdy326-lang/HOLOS/blob/feat/episode1-production-integration-scaffold/production/character_references/episode1_character_design_manifest.json).
 **Rig status:** A functional prototype and Milestone 3 completion are described by project materials. The original rig scene/dependencies are not present on the PR #8 source branch reviewed for this bible; integration against the production rig remains unverified.
 
 ### Kevin
 
 **Story role:** Junior systems investigator.
 **Personality/performance:** Intelligent, curious, impulsive, funny, insecure at times, and willing to experiment. His actions can have serious consequences; the Scene 4 bypass must read as a consequential mistake rather than arbitrary stupidity.
-**Visual identity:** **Character A** on the user-supplied sheet: red hair and dark clothing. This mapping was explicitly confirmed by the user. See the character-reference link above.
+**Visual identity:** **Character A** on the user-supplied sheet: red hair, freckles, blue eyes, and a dark tactical outfit. This mapping was explicitly confirmed by the user. See the character-reference link above.
 **Rig status:** A functional prototype and Milestone 4 completion are described by project materials. The original rig scene/dependencies are not present on the PR #8 source branch reviewed for this bible; integration against the production rig remains unverified.
 
 ### ORBIT
@@ -77,6 +77,8 @@ Character roles and personalities below are stated in the extracted screenplay a
 
 **Story role:** Distinct low, distorted voice carried by the fourth signal at the Episode 1 ending and in the post-credit scene.
 **Nature:** Unknown and unresolved. Keep it distinct from ORBIT and from The Moon unless the project author later establishes a connection. No performer, final voice treatment, or identity is locked in this document.
+
+**Owner-provided cast boundary:** The five established Episode 1 identities are Khaled, Kevin, ORBIT, The Moon, and the Unknown Voice. The external male mid-low singer/narrator described for theme material is outside the in-universe cast and must not be inserted into scene coverage. An unidentified “God” mentioned in a separate audio draft is not confirmed as Episode 1 screenplay cast; keep it separate unless the project author explicitly assigns it to the story.
 
 ### Character relationships
 
@@ -195,14 +197,14 @@ This bible is a summary and index. Where it differs from source files, consult t
 - [Project README](README.md) — project philosophy, architecture, milestone overview, and repository split.
 - [Extracted Episode 1 screenplay](docs/source_archive/2026-11-episode-1-the-moon-has-anger-issues-screenplay.extracted.md) — detailed story and dialogue; explicitly a consolidated extraction, not a certified verbatim original DOCX recovery.
 - [Screenplay provenance and editorial gates](docs/episode1-screenplay-provenance-and-editorial-gates.md) — source limitations and approval questions.
-- [Episode 1 body storyboard draft](docs/episode1-body-storyboard-draft.md) and [structured shot breakdown](config/episode1/episode1_storyboard_breakdown_v1.json) — 65 proposed shots, not a locked edit.
+- [Episode 1 body storyboard draft](docs/episode1-body-storyboard-draft.md), [structured shot breakdown](config/episode1/episode1_storyboard_breakdown_v1.json), and [detailed 65-panel breakdown](docs/episode1-detailed-storyboard-panel-breakdown-v1.md) — text-only proposed panels, not approved boards, an animatic, or a locked edit.
 - [Opening and credits storyboard](storyboard.md) — Alternative B bookend direction and provisional timing/credit requirements.
 - [Character-rig integration contract](docs/character-rig-integration-contract.md) — original rig handoff requirements and evidence boundaries.
 - [Milestone 6 local production engine](docs/milestone-6-local-production-engine.md) — technical implementation claims and acceptance gates.
 - [Episode 1 production asset intake](docs/episode1-production-asset-intake.md) — remaining source and approval requirements.
 - [Theme-song source manifest](production/audio/holos_theme_song_source_manifest.json) — metadata and byte-level provenance for the supplied M4A.
 - [Milestone 5.1 discrepancy report](docs/source_archive/HOLOS_Milestone_5.1_audio_discrepancy_analysis.user-supplied.md) and [15-second test-WAV manifest](production/audio/milestone_5_1_animation_test_audio_15s_manifest.json) — supplied review evidence and independently measured bytes; exact report-to-WAV identity remains unverified.
-- [Expression Sheet 1.1](production/character_references/holos_expression_sheet_1_1.webp) and its [review manifest](production/character_references/holos_expression_sheet_1_1_manifest.json) — supplied expression concepts with one apparent character-label mismatch awaiting confirmation.
+- [Expression Sheet 1.1](production/character_references/holos_expression_sheet_1_1.webp) and its [review manifest](production/character_references/holos_expression_sheet_1_1_manifest.json) — supplied expressions; the user confirmed the “Surprised” portraits placed under Kevin depict Khaled.
 
 ### Status vocabulary used in this bible
 
