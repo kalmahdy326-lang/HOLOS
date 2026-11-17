@@ -4,7 +4,7 @@
   "source_filename": "file_000000001ef881fda97787a3b3f9ff5c.webp",
   "repository_path": "production/character_references/holos_expression_sheet_1_1.webp",
   "user_supplied_title": "Expression Sheet 1.1",
-  "intake_status": "SOURCE_RECEIVED; EXPRESSION_TO_CHARACTER_ASSIGNMENTS_PENDING_REVIEW",
+  "intake_status": "USER_CONFIRMED_PLACEMENT_ERROR; SURPRISED_PANELS_BELONG_TO_KHALED",
   "sha256": "245ae91beaede1e2fdc42c299c08ecea477d0fdeb97333aed4ccfc1d257d08ad",
   "size_bytes": 182186,
   "attachment_dimensions_px": {
@@ -24,6 +24,11 @@
     "Surprised",
     "Intense Anger"
   ],
-  "review_note": "The panels labeled SURPRISED under Kevin (A) appear to depict the dark-haired, beige-scarf Khaled (B) design rather than the established red-haired Kevin (A) design. Do not assign those panels to Kevin in production until the project author confirms or corrects the sheet.",
-  "approval_boundary": "Supplemental expression reference only. Does not supersede the user-approved series-wide key-art style guide or the established character design mapping; no rig controls or animation timing are approved by this image."
+  "user_confirmation": {
+    "confirmation_source": "Explicit user clarification in this conversation",
+    "confirmation_date": "2026-11-16",
+    "confirmed_mapping": "The two portraits in the SURPRISED panels placed under Kevin (A) are Khaled (B)."
+  },
+  "review_note": "The user confirmed that the two portraits in the SURPRISED panels under Kevin (A) depict Khaled (B), despite their placement beneath Kevin's heading in the supplied image. Map them to Khaled, not Kevin. Keep the source image unchanged; relabel or reposition the panels under Khaled in any animation-ready derivative.",
+  "approval_boundary": "Supplemental expression reference only. The user confirms the character identity of the two SURPRISED portraits, not rig controls, visemes, animation timing, performance, or a modified version of the source image. The sheet does not supersede the user-approved series-wide key-art style guide or established character design mapping."
 }
