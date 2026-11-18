@@ -143,6 +143,45 @@ class MediaTests(unittest.TestCase):
         self.assertTrue(any("duration differs from video" in item
                             for item in result["errors"]))
 
+    def test_rejects_truncated_video_even_when_container_duration_matches(self):
+        metadata = {
+            "streams": [
+                {"codec_type": "video", "width": 1280, "height": 720,
+                 "avg_frame_rate": "24/1", "start_time": "0.000",
+                 "duration": "8.000"},
+                {"codec_type": "audio", "start_time": "0.000",
+                 "duration": "8.000"},
+            ],
+            # A longer container/audio edit-list duration must not hide a
+            # truncated video stream.
+            "format": {"duration": "10.000"},
+        }
+        result = validate_media(
+            metadata, width=1280, height=720, fps=24,
+            expected_duration=10.0, require_audio=True,
+        )
+        self.assertFalse(result["valid"])
+        self.assertTrue(any("Video stream duration mismatch" in item
+                            for item in result["errors"]))
+
+    def test_rejects_missing_video_stream_duration(self):
+        metadata = {
+            "streams": [
+                {"codec_type": "video", "width": 1280, "height": 720,
+                 "avg_frame_rate": "24/1", "start_time": "0.000"},
+                {"codec_type": "audio", "start_time": "0.000",
+                 "duration": "10.000"},
+            ],
+            "format": {"duration": "10.000"},
+        }
+        result = validate_media(
+            metadata, width=1280, height=720, fps=24,
+            expected_duration=10.0, require_audio=True,
+        )
+        self.assertFalse(result["valid"])
+        self.assertTrue(any("Video stream duration is missing" in item
+                            for item in result["errors"]))
+
     def test_uses_duration_timestamp_when_direct_stream_duration_is_absent(self):
         metadata = {
             "streams": [
