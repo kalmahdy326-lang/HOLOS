@@ -254,16 +254,26 @@ def validate_media(
         errors.append("Could not read media duration.")
 
     sync_checks: list[dict[str, Any]] = []
+    video_stream_duration = (
+        _stream_time_seconds(video, "duration") if video is not None else None
+    )
+    if video is not None:
+        if video_stream_duration is None:
+            errors.append("Video stream duration is missing.")
+        elif abs(video_stream_duration - expected_duration) > duration_tolerance_seconds:
+            errors.append(
+                f"Video stream duration mismatch: expected {expected_duration:.3f}s, "
+                f"got {video_stream_duration:.3f}s."
+            )
+
     if require_audio and not audio:
         errors.append("Audio stream is required but missing.")
 
     if require_audio and video is not None and audio:
         video_start = _stream_time_seconds(video, "start_time")
-        video_duration = _stream_time_seconds(video, "duration")
+        video_duration = video_stream_duration
         if video_start is None:
             errors.append("Video stream start time is missing; A/V sync cannot be verified.")
-        if video_duration is None:
-            errors.append("Video stream duration is missing; A/V sync cannot be verified.")
 
         for index, stream in enumerate(audio):
             audio_start = _stream_time_seconds(stream, "start_time")
