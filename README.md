@@ -234,3 +234,8 @@ The separation keeps scientific dependencies and evidentiary claims independent 
 The research programme's governing rule is: “We are not trying to make our theory right. We are trying to find out what is right.” No finite-dimensional quantum-information result is to be presented as a derivation of gravity or spacetime without a separate, independently reviewed bridge.
 
 The production repository's current implementation status and offline acceptance requirements remain in [Milestone 6 — Local Production Engine](docs/milestone-6-local-production-engine.md). The actual Khaled/Kevin source rigs and disconnected-network acceptance test remain unverified in this repository.
+
+
+## AI Council governance
+
+The dual-track Council Constitution, specialist role mandates, task-routing matrix and Milestone 5.1–6 acceptance gates are recorded in [docs/AI_COUNCIL.md](docs/AI_COUNCIL.md). The same shared constitution is maintained in the holos-reality repository, with a research-specific scope note. AI Council roles are review assignments, not autonomous approvals; Khaled retains authority over source acceptance and merges to main.
