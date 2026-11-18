@@ -48,7 +48,7 @@ jobs:
           retention-days: 30
 
   godot:
-    name: Godot import and offscreen integration (phase 2 of 2)
+    name: Godot 4.7.2 import and offscreen integration (phase 2 of 2)
     needs: foundation
     if: always()
     runs-on: ubuntu-latest
@@ -62,20 +62,20 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Godot runtime and display dependencies
+      - name: Install Godot 4.7.2 and display dependencies
         run: |
           sudo apt-get update
           sudo apt-get install --yes ffmpeg xvfb libgl1-mesa-dri unzip
           curl --fail --location --retry 10 --retry-all-errors --retry-delay 2 --retry-max-time 180 \
-            https://github.com/godotengine/godot-builds/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.x86_64.zip \
+            https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip \
             --output "$RUNNER_TEMP/godot.zip"
-          echo "d6e382fb531019f85630c1f485a561a0d20c4a2344b6c3847735cfee7da812aa  $RUNNER_TEMP/godot.zip" | sha256sum --check
+          echo "cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4  $RUNNER_TEMP/godot.zip" | sha256sum --check
           unzip "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot-bin"
-          chmod +x "$RUNNER_TEMP/godot-bin/Godot_v4.4.1-stable_linux.x86_64"
+          chmod +x "$RUNNER_TEMP/godot-bin/Godot_v4.7.2-stable_linux.x86_64"
 
       - name: Run Godot validation shift
         env:
-          HOLOS_GODOT: ${{ runner.temp }}/godot-bin/Godot_v4.4.1-stable_linux.x86_64
+          HOLOS_GODOT: ${{ runner.temp }}/godot-bin/Godot_v4.7.2-stable_linux.x86_64
         run: python tools/holos_shift.py --phase godot --max-minutes 120
 
       - name: Upload Godot evidence
