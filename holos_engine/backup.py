@@ -365,6 +365,30 @@ def restore_source_backup(
     if total_size != manifest.get("total_size_bytes"):
         raise BackupError("Backup total size does not match its records.")
 
+    source_inventory_hash = manifest.get("source_inventory_sha256")
+    if (
+        not isinstance(source_inventory_hash, str)
+        or len(source_inventory_hash) != 64
+        or any(character not in "0123456789abcdef" for character in source_inventory_hash)
+    ):
+        raise BackupError("Backup manifest has an invalid source inventory SHA-256.")
+
+    # Reconstruct the inventory's canonical path/hash digest. This catches
+    # record edits that also update a copied file's checksum and byte count,
+    # which per-file checks and the total-size check alone cannot detect.
+    aggregate = hashlib.sha256()
+    for record, _, relative in sorted(
+        validated, key=lambda item: item[2].as_posix()
+    ):
+        aggregate.update(relative.as_posix().encode("utf-8"))
+        aggregate.update(b"\\0")
+        aggregate.update(record["sha256"].encode("ascii"))
+        aggregate.update(b"\\n")
+    if aggregate.hexdigest() != source_inventory_hash:
+        raise BackupError(
+            "Backup file records do not match the source inventory aggregate hash."
+        )
+
     restores_root.mkdir(parents=True, exist_ok=True)
     if destination is None:
         final_dir = restores_root / f"restored-source-{_stamp()}"
