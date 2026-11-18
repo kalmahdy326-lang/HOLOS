@@ -198,6 +198,37 @@ class SourceBackupTests(unittest.TestCase):
         )
         self.assertTrue((backup_path / "backup-manifest.json").is_file())
 
+    def test_rejects_backup_file_and_manifest_record_changed_together(self):
+        inventory_path = self.inventory()
+        backup_path, _ = create_source_backup(
+            project_root=self.root,
+            inventory_path=inventory_path,
+            destination=Path("output/backups/record-tamper-test"),
+        )
+        manifest_path = backup_path / "backup-manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        record = next(item for item in manifest["files"]
+                      if item["source_path"] == "README.md")
+        changed = b"replacement payload with a different length"
+        backup_file = backup_path / record["backup_path"]
+        backup_file.write_bytes(changed)
+        # Simulate an accidental or partial manifest rewrite that makes the
+        # per-file hash and total-size checks agree with the changed payload.
+        record["sha256"] = hashlib.sha256(changed).hexdigest()
+        record["size_bytes"] = len(changed)
+        manifest["total_size_bytes"] = sum(
+            item["size_bytes"] for item in manifest["files"]
+        )
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            BackupError, "source inventory aggregate hash"
+        ):
+            restore_source_backup(
+                project_root=self.root,
+                backup_path=backup_path,
+            )
+
     def test_refuses_restore_when_backup_file_is_corrupted(self):
         inventory_path = self.inventory()
         backup_path, _ = create_source_backup(
