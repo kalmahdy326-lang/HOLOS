@@ -1,6 +1,9 @@
 name: HOLOS bounded eight-hour production shift
 
 on:
+  push:
+    branches:
+      - automation/eight-hour-production-shift-2026-11-18
   workflow_dispatch:
 
 permissions:
