@@ -73,6 +73,25 @@
         "Real character render and audio synchronization acceptance evidence is captured"
       ],
       "blocker": "Original rig source assets are not present in this GitHub repository"
+    },
+    {
+      "id": "ANIM-QUEUE-005",
+      "priority": 4,
+      "status": "in_review",
+      "title": "Align CI headless Godot validation with production target 4.7.2",
+      "prerequisites": [
+        "Confirm official stable release and binary SHA-256",
+        "Run the generic repository Godot test project under the pinned runtime"
+      ],
+      "acceptance": [
+        "Both pull-request and scheduled workflows use the same pinned Godot 4.7.2 stable Linux x86_64 binary",
+        "Download SHA-256 is verified before extraction",
+        "Headless editor import/script parsing passes",
+        "Offscreen renderer integration tests pass"
+      ],
+      "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/25",
+      "active_branch": "production/godot-4-7-2-ci-2026-11-17",
+      "note": "PR #25 updates both workflows to the official 4.7.2 stable asset with SHA-256 cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4. CI is pending. Scope is the checked-in generic fixture only; actual Khaled/Kevin rigs and the local production project remain unavailable."
     }
   ]
 }
