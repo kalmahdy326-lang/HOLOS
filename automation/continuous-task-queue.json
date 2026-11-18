@@ -91,7 +91,8 @@
       ],
       "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/25",
       "active_branch": "production/godot-4-7-2-ci-2026-11-17",
-      "note": "PR #25 updates both workflows to the official 4.7.2 stable asset with SHA-256 cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4. CI is pending. Scope is the checked-in generic fixture only; actual Khaled/Kevin rigs and the local production project remain unavailable."
+      "note": "PR #25 pins the official Godot 4.7.2 stable Linux x86_64 asset and verifies SHA-256 cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4. PR workflow #44236422886 passed: 63 Python/media tests, 3 skipped; Godot 4.7.2 headless import/script parse and 3 offscreen integration tests passed. The scheduled workflow was updated identically but has not run on main because PR #25 is unmerged. Scope remains the generic checked-in test project only.",
+      "last_verified_workflow": "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44236422886"
     }
   ]
 }
