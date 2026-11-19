@@ -381,9 +381,9 @@ def restore_source_backup(
         validated, key=lambda item: item[2].as_posix()
     ):
         aggregate.update(relative.as_posix().encode("utf-8"))
-        aggregate.update(b"\\0")
+        aggregate.update(b"\0")
         aggregate.update(record["sha256"].encode("ascii"))
-        aggregate.update(b"\\n")
+        aggregate.update(b"\n")
     if aggregate.hexdigest() != source_inventory_hash:
         raise BackupError(
             "Backup file records do not match the source inventory aggregate hash."
