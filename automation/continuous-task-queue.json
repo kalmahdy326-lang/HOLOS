@@ -93,6 +93,28 @@
       "active_branch": "production/godot-4-7-2-ci-2026-11-17",
       "note": "PR #25 pins the official Godot 4.7.2 stable Linux x86_64 asset and verifies SHA-256 cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4. PR workflow #44236422886 passed: 63 Python/media tests, 3 skipped; Godot 4.7.2 headless import/script parse and 3 offscreen integration tests passed. The scheduled workflow was updated identically but has not run on main because PR #25 is unmerged. Scope remains the generic checked-in test project only.",
       "last_verified_workflow": "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44236422886"
+    },
+    {
+      "id": "ANIM-QUEUE-006",
+      "priority": 3,
+      "status": "in_review",
+      "title": "Bind backup restore manifest to the original source inventory digest",
+      "prerequisites": [
+        "Reconstruct the inventory's canonical sorted path/hash digest during restore",
+        "Use exactly the same byte delimiters as inventory generation",
+        "Retain the original source files and backup payload"
+      ],
+      "acceptance": [
+        "Restore recomputes the canonical aggregate from manifest paths and hashes",
+        "Tampering with a copied file and updating its per-file hash/size still fails",
+        "Unmodified backup restores successfully",
+        "Existing restore destinations remain non-overwritable",
+        "Python/media and Godot validation pass"
+      ],
+      "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
+      "active_branch": "production/backup-manifest-integrity-2026-11-18",
+      "last_verified_workflow": "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44454126984",
+      "note": "Initial PR run #44264547861 failed three restore tests because restore_source_backup hashed literal backslash-zero/backslash-n bytes while inventory generation hashes actual NUL/newline delimiters. Corrected the restore aggregate to b\"\\0\" and b\"\\n\". Latest PR head d64f985 passed: Python/media 64 passed, 3 skipped; Godot offscreen 3 passed. The check is an integrity-consistency check, not a cryptographic signature."
     }
   ]
 }
