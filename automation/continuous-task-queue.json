@@ -67,6 +67,45 @@
         "Real character render and audio synchronization acceptance evidence is captured"
       ],
       "blocker": "Original rig source assets are not present in this GitHub repository"
+    },
+    {
+      "id": "ANIM-QUEUE-007",
+      "priority": 3,
+      "status": "completed",
+      "title": "Preserve interrupted restore staging and support safe retry",
+      "prerequisites": [
+        "Inspect restore_source_backup exception path",
+        "Keep the original backup immutable and restore only to a new destination"
+      ],
+      "acceptance": [
+        "A simulated hard interruption after one verified copy preserves an INTERRUPTED staging directory",
+        "An interruption manifest records verified files and explicit recovery guidance",
+        "KeyboardInterrupt/SystemExit semantics are preserved after evidence is written",
+        "A retry from the original verified backup into a new destination succeeds",
+        "The interrupted stage and original backup are not overwritten or silently deleted"
+      ],
+      "completed_in_run": "2026-11-19-run-008",
+      "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
+      "last_verified_workflow": "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44665879726",
+      "note": "restore_source_backup now catches BaseException only to preserve staging evidence, writes restore-interruption.json and atomically renames the stage to INTERRUPTED-*, then re-raises KeyboardInterrupt/SystemExit unchanged. Ordinary exceptions retain FAILED-* plus BackupError behavior. Test simulates KeyboardInterrupt after one copied file, verifies metadata and preserved stage, then retries from the original backup into a new destination. This does not catch SIGKILL or power loss; those require durable orphan-stage detection/lease design."
+    },
+    {
+      "id": "ANIM-QUEUE-008",
+      "priority": 4,
+      "status": "queued",
+      "title": "Design safe orphan staging detection after uncatchable process termination",
+      "prerequisites": [
+        "Inspect current backup/restore staging names and manifests",
+        "Define a concurrency-safe lock or lease so an active restore is not misclassified"
+      ],
+      "acceptance": [
+        "SIGKILL/power-loss orphan stages can be distinguished from active work",
+        "Recovery never promotes an incomplete stage to a complete restore",
+        "Recovery never overwrites or deletes an existing backup or restore",
+        "Orphan stages remain inspectable with actionable metadata",
+        "Tests cover active lease, expired lease, malformed marker, and retry"
+      ],
+      "note": "Python cannot catch SIGKILL or power loss. Do not add a naive startup scan that might rename another live restore's staging directory."
     }
   ]
 }
