@@ -475,7 +475,7 @@ def restore_source_backup(
             )
             with (stage / report_name).open("x", encoding="utf-8") as stream:
                 json.dump(failure, stream, indent=2)
-                stream.write("\\n")
+                stream.write("\n")
                 stream.flush()
                 os.fsync(stream.fileno())
             os.replace(stage, failed_dir)
