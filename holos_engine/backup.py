@@ -444,29 +444,49 @@ def restore_source_backup(
         os.replace(stage, final_dir)
         return final_dir, restore_manifest
 
-    except Exception as exc:
-        if stage.exists():
-            failed_dir = restores_root / f"FAILED-{_stamp()}"
-            suffix = 1
-            while failed_dir.exists():
-                failed_dir = restores_root / f"FAILED-{_stamp()}-{suffix}"
-                suffix += 1
-            try:
-                failure = {
-                    "schema_version": 1,
-                    "created_at_utc": _timestamp(),
-                    "status": "incomplete",
-                    "error": f"{type(exc).__name__}: {exc}",
-                    "verified_files_before_failure": restored_records,
-                }
-                with (stage / "restore-failure.json").open("w", encoding="utf-8") as stream:
-                    json.dump(failure, stream, indent=2)
-                    stream.write("\n")
-                os.replace(stage, failed_dir)
-            except OSError:
-                pass
-            raise BackupError(
-                f"Restore failed; partial staging was preserved at "
-                f"{failed_dir if failed_dir.exists() else stage}: {exc}"
-            ) from exc
-        raise
+    except BaseException as exc:
+        if not stage.exists():
+            raise
+
+        interrupted = not isinstance(exc, Exception)
+        prefix = "INTERRUPTED" if interrupted else "FAILED"
+        status = "interrupted" if interrupted else "incomplete"
+        failed_dir = restores_root / f"{prefix}-{_stamp()}"
+        suffix = 1
+        while failed_dir.exists():
+            failed_dir = restores_root / f"{prefix}-{_stamp()}-{suffix}"
+            suffix += 1
+        try:
+            failure = {
+                "schema_version": 1,
+                "created_at_utc": _timestamp(),
+                "status": status,
+                "error": f"{type(exc).__name__}: {exc}",
+                "verified_files_before_failure": restored_records,
+                "recovery_guidance": (
+                    "The staging directory is diagnostic evidence, not a resumable "
+                    "restore. Retry from the verified backup into a new, unused "
+                    "output/restores destination. The incomplete staging directory "
+                    "is preserved and is never promoted or overwritten automatically."
+                ),
+            }
+            report_name = (
+                "restore-interruption.json" if interrupted else "restore-failure.json"
+            )
+            with (stage / report_name).open("x", encoding="utf-8") as stream:
+                json.dump(failure, stream, indent=2)
+                stream.write("\\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(stage, failed_dir)
+        except OSError:
+            # Keep the original exception and leave any surviving stage in place.
+            pass
+
+        if interrupted:
+            # Preserve KeyboardInterrupt/SystemExit semantics after recording evidence.
+            raise
+        raise BackupError(
+            f"Restore failed; partial staging was preserved at "
+            f"{failed_dir if failed_dir.exists() else stage}: {exc}"
+        ) from exc
