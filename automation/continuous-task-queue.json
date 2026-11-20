@@ -70,7 +70,7 @@
     },
     {
       "id": "ANIM-QUEUE-007",
-      "priority": 3,
+      "priority": 2,
       "status": "completed",
       "title": "Preserve interrupted restore staging and support safe retry",
       "prerequisites": [
