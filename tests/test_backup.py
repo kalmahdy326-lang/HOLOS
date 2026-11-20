@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from holos_engine.backup import (
     BackupError,
@@ -239,6 +240,57 @@ class SourceBackupTests(unittest.TestCase):
         (backup_path / "files" / "README.md").write_text("corrupt", encoding="utf-8")
         with self.assertRaisesRegex(BackupError, "failed integrity verification"):
             restore_source_backup(project_root=self.root, backup_path=backup_path)
+
+    def test_interrupted_restore_preserves_partial_stage_and_allows_safe_retry(self):
+        inventory_path = self.inventory()
+        backup_path, _ = create_source_backup(
+            project_root=self.root,
+            inventory_path=inventory_path,
+            destination=Path("output/backups/interrupted-restore-test"),
+        )
+
+        real_copy2 = shutil.copy2
+        copied_destinations = []
+
+        def interrupt_after_one_copy(source, destination, *args, **kwargs):
+            if len(copied_destinations) == 1:
+                raise KeyboardInterrupt("simulated interruption during restore")
+            result = real_copy2(source, destination, *args, **kwargs)
+            copied_destinations.append(Path(destination))
+            return result
+
+        with patch("holos_engine.backup.shutil.copy2", side_effect=interrupt_after_one_copy):
+            with self.assertRaisesRegex(KeyboardInterrupt, "simulated interruption"):
+                restore_source_backup(
+                    project_root=self.root,
+                    backup_path=backup_path,
+                    destination=Path("output/restores/interrupted-target"),
+                )
+
+        self.assertEqual(len(copied_destinations), 1)
+        restores_root = self.root / "output" / "restores"
+        interrupted_dirs = sorted(restores_root.glob("INTERRUPTED-*"))
+        self.assertEqual(len(interrupted_dirs), 1)
+        interrupted_dir = interrupted_dirs[0]
+        interruption = json.loads(
+            (interrupted_dir / "restore-interruption.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(interruption["status"], "interrupted")
+        self.assertEqual(len(interruption["verified_files_before_failure"]), 1)
+        self.assertIn("new, unused", interruption["recovery_guidance"])
+        self.assertTrue(any(interrupted_dir.rglob("*") ))
+
+        restored, manifest = restore_source_backup(
+            project_root=self.root,
+            backup_path=backup_path,
+            destination=Path("output/restores/retry-after-interruption"),
+        )
+        self.assertEqual(manifest["status"], "complete")
+        self.assertEqual(manifest["file_count"], 2)
+        self.assertTrue((restored / "README.md").is_file())
+        self.assertTrue((restored / "holos_engine" / "module.py").is_file())
+        self.assertTrue(interrupted_dir.is_dir())
+        self.assertTrue((backup_path / "backup-manifest.json").is_file())
 
     def test_refuses_existing_restore_directory(self):
         inventory_path = self.inventory()
