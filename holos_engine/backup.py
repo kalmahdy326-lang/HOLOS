@@ -7,6 +7,9 @@ import hashlib
 import json
 import fnmatch
 import os
+import math
+import socket
+import time
 from pathlib import Path, PurePosixPath
 import shutil
 
@@ -256,6 +259,183 @@ def create_source_backup(
 
 
 
+
+RESTORE_LEASE_FILENAME = ".restore-lease.json"
+RESTORE_LEASE_TTL_SECONDS = 24 * 60 * 60
+
+
+def _process_start_token(pid: int) -> str | None:
+    """Return Linux /proc start-time ticks to distinguish PID reuse when available."""
+    stat_path = Path(f"/proc/{pid}/stat")
+    try:
+        stat_text = stat_path.read_text(encoding="utf-8")
+        closing = stat_text.rfind(")")
+        if closing < 0:
+            return None
+        fields = stat_text[closing + 1:].strip().split()
+        return fields[19] if len(fields) > 19 else None
+    except (OSError, UnicodeError):
+        return None
+
+
+def _write_restore_lease(stage: Path) -> None:
+    """Atomically refresh a long-lived lease for one active restore staging directory."""
+    now = time.time()
+    payload = {
+        "schema_version": 1,
+        "stage_name": stage.name,
+        "pid": os.getpid(),
+        "hostname": socket.gethostname(),
+        "process_start_token": _process_start_token(os.getpid()),
+        "heartbeat_at_epoch": now,
+        "heartbeat_at_utc": _timestamp(),
+        "lease_expires_at_epoch": now + RESTORE_LEASE_TTL_SECONDS,
+        "lease_ttl_seconds": RESTORE_LEASE_TTL_SECONDS,
+    }
+    temporary_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            prefix=".restore-lease-",
+            suffix=".tmp",
+            dir=stage,
+            delete=False,
+        ) as stream:
+            temporary_path = Path(stream.name)
+            json.dump(payload, stream, indent=2)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary_path, stage / RESTORE_LEASE_FILENAME)
+        temporary_path = None
+        try:
+            directory_fd = os.open(stage, os.O_RDONLY)
+            try:
+                os.fsync(directory_fd)
+            finally:
+                os.close(directory_fd)
+        except OSError:
+            # Directory fsync is not supported by every platform/filesystem.
+            pass
+    finally:
+        if temporary_path is not None:
+            try:
+                temporary_path.unlink()
+            except OSError:
+                pass
+
+
+def inspect_restore_staging(
+    *,
+    project_root: Path,
+    now_epoch: float | None = None,
+) -> list[dict[str, Any]]:
+    """Read-only inventory of hidden restore stages and their lease state.
+
+    An expired lease is only a manual-review candidate, never proof that a
+    process is dead. This function never renames, deletes, resumes, or promotes
+    a staging directory.
+    """
+    root = project_root.resolve()
+    output_lexical = root / "output"
+    restores_lexical = output_lexical / "restores"
+    if output_lexical.is_symlink() or restores_lexical.is_symlink():
+        raise BackupError("Restore staging inspection does not follow symbolic links.")
+    if not restores_lexical.exists():
+        return []
+    restores_root = restores_lexical.resolve()
+    if not _inside(root, restores_root) or not restores_root.is_dir():
+        raise BackupError("Restore staging directory must remain inside project root.")
+    if now_epoch is None:
+        now = time.time()
+    else:
+        if (
+            isinstance(now_epoch, bool)
+            or not isinstance(now_epoch, (int, float))
+            or not math.isfinite(now_epoch)
+        ):
+            raise ValueError("Inspection time must be a finite numeric epoch.")
+        now = float(now_epoch)
+
+    results: list[dict[str, Any]] = []
+    for stage in sorted(restores_root.iterdir(), key=lambda item: item.name):
+        if not stage.name.startswith(".restore-staging-"):
+            continue
+        result: dict[str, Any] = {
+            "stage_name": stage.name,
+            "status": "unknown",
+            "reason": "Lease evidence is missing or cannot be trusted.",
+        }
+        if stage.is_symlink() or not stage.is_dir():
+            result.update(status="unsafe", reason="Staging entry is not a real directory.")
+            results.append(result)
+            continue
+        lease_path = stage / RESTORE_LEASE_FILENAME
+        if lease_path.is_symlink() or not lease_path.is_file():
+            results.append(result)
+            continue
+        try:
+            lease = json.loads(lease_path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError):
+            results.append(result)
+            continue
+        if not isinstance(lease, dict):
+            results.append(result)
+            continue
+        pid = lease.get("pid")
+        hostname = lease.get("hostname")
+        process_token = lease.get("process_start_token")
+        heartbeat = lease.get("heartbeat_at_epoch")
+        expires = lease.get("lease_expires_at_epoch")
+        if (
+            lease.get("schema_version") != 1
+            or lease.get("stage_name") != stage.name
+            or isinstance(pid, bool) or not isinstance(pid, int) or pid < 1
+            or not isinstance(hostname, str) or not hostname
+            or (process_token is not None and not isinstance(process_token, str))
+            or isinstance(heartbeat, bool) or not isinstance(heartbeat, (int, float))
+            or not math.isfinite(heartbeat)
+            or isinstance(expires, bool) or not isinstance(expires, (int, float))
+            or not math.isfinite(expires)
+            or expires <= heartbeat
+        ):
+            results.append(result)
+            continue
+
+        current_token = (
+            _process_start_token(pid)
+            if hostname == socket.gethostname() and process_token is not None
+            else None
+        )
+        if current_token is not None and current_token == process_token:
+            status = "active_process"
+            reason = "The recorded process identity is still present on this host."
+        elif current_token is not None and current_token != process_token:
+            status = "expired_candidate" if now >= expires else "owner_identity_mismatch"
+            reason = (
+                "The recorded PID now belongs to a different process; manual review is required."
+            )
+        elif now < expires:
+            status = "active_lease"
+            reason = "The lease has not expired; the stage must be treated as active."
+        else:
+            status = "expired_candidate"
+            reason = (
+                "The lease expired; this is only a manual-review candidate, not an "
+                "automatic cleanup or recovery instruction."
+            )
+        result.update({
+            "status": status,
+            "reason": reason,
+            "pid": pid,
+            "hostname": hostname,
+            "heartbeat_at_epoch": heartbeat,
+            "lease_expires_at_epoch": expires,
+        })
+        results.append(result)
+    return results
+
 def restore_source_backup(
     *,
     project_root: Path,
@@ -403,7 +583,9 @@ def restore_source_backup(
     stage = Path(tempfile.mkdtemp(prefix=".restore-staging-", dir=restores_root))
     restored_records: list[dict[str, Any]] = []
     try:
+        _write_restore_lease(stage)
         for record, source, relative in validated:
+            _write_restore_lease(stage)
             target = stage.joinpath(*relative.parts)
             if not _inside(stage, target):
                 raise BackupError(f"Restore path escapes staging directory: {relative}")
@@ -418,6 +600,7 @@ def restore_source_backup(
                 "size_bytes": restored_size,
                 "sha256": restored_hash,
             })
+            _write_restore_lease(stage)
 
         restore_manifest = {
             "schema_version": 1,
@@ -441,7 +624,13 @@ def restore_source_backup(
 
         if final_dir.exists():
             raise BackupError(f"Refusing to overwrite existing restore directory: {final_dir}")
+        _write_restore_lease(stage)
         os.replace(stage, final_dir)
+        try:
+            (final_dir / RESTORE_LEASE_FILENAME).unlink()
+        except OSError:
+            # A completed restore is no longer scanned as a staging directory.
+            pass
         return final_dir, restore_manifest
 
     except BaseException as exc:

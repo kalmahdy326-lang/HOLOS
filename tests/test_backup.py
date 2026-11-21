@@ -14,6 +14,7 @@ from holos_engine.backup import (
     BackupError,
     create_source_backup,
     restore_source_backup,
+    inspect_restore_staging,
 )
 from holos_engine.inventory import write_inventory_report
 
@@ -291,6 +292,61 @@ class SourceBackupTests(unittest.TestCase):
         self.assertTrue((restored / "holos_engine" / "module.py").is_file())
         self.assertTrue(interrupted_dir.is_dir())
         self.assertTrue((backup_path / "backup-manifest.json").is_file())
+
+
+    def test_restore_staging_inspection_is_read_only_and_classifies_lease_states(self):
+        restores_root = self.root / "output" / "restores"
+        restores_root.mkdir(parents=True)
+        active = restores_root / ".restore-staging-active"
+        expired = restores_root / ".restore-staging-expired"
+        malformed = restores_root / ".restore-staging-malformed"
+        missing = restores_root / ".restore-staging-missing"
+        for directory in (active, expired, malformed, missing):
+            directory.mkdir()
+
+        def lease_for(stage, expires, heartbeat):
+            return {
+                "schema_version": 1,
+                "stage_name": stage.name,
+                "pid": 987654,
+                "hostname": "another-host",
+                "process_start_token": None,
+                "heartbeat_at_epoch": heartbeat,
+                "heartbeat_at_utc": "1970-01-01T00:00:00Z",
+                "lease_expires_at_epoch": expires,
+                "lease_ttl_seconds": 86400,
+            }
+
+        active_marker = active / ".restore-lease.json"
+        expired_marker = expired / ".restore-lease.json"
+        malformed_marker = malformed / ".restore-lease.json"
+        active_marker.write_text(json.dumps(lease_for(active, 1100, 900)), encoding="utf-8")
+        expired_marker.write_text(json.dumps(lease_for(expired, 900, 800)), encoding="utf-8")
+        malformed_marker.write_text("{not-json", encoding="utf-8")
+        before = {
+            path.name: tuple(sorted(item.name for item in path.iterdir()))
+            for path in (active, expired, malformed, missing)
+        }
+
+        findings = inspect_restore_staging(project_root=self.root, now_epoch=1000)
+        by_name = {item["stage_name"]: item for item in findings}
+
+        self.assertEqual(by_name[active.name]["status"], "active_lease")
+        self.assertEqual(by_name[expired.name]["status"], "expired_candidate")
+        self.assertEqual(by_name[malformed.name]["status"], "unknown")
+        self.assertEqual(by_name[missing.name]["status"], "unknown")
+        self.assertIn("manual-review", by_name[expired.name]["reason"])
+        after = {
+            path.name: tuple(sorted(item.name for item in path.iterdir()))
+            for path in (active, expired, malformed, missing)
+        }
+        self.assertEqual(after, before)
+        self.assertTrue(all(path.is_dir() for path in (active, expired, malformed, missing)))
+        self.assertFalse(any(path.name.startswith(("FAILED-", "INTERRUPTED-")) for path in restores_root.iterdir()))
+
+    def test_restore_staging_inspection_rejects_invalid_inspection_time(self):
+        with self.assertRaisesRegex(ValueError, "finite numeric epoch"):
+            inspect_restore_staging(project_root=self.root, now_epoch=float("nan"))
 
     def test_refuses_existing_restore_directory(self):
         inventory_path = self.inventory()
