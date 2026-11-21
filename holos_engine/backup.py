@@ -342,11 +342,6 @@ def inspect_restore_staging(
     restores_lexical = output_lexical / "restores"
     if output_lexical.is_symlink() or restores_lexical.is_symlink():
         raise BackupError("Restore staging inspection does not follow symbolic links.")
-    if not restores_lexical.exists():
-        return []
-    restores_root = restores_lexical.resolve()
-    if not _inside(root, restores_root) or not restores_root.is_dir():
-        raise BackupError("Restore staging directory must remain inside project root.")
     if now_epoch is None:
         now = time.time()
     else:
@@ -357,6 +352,11 @@ def inspect_restore_staging(
         ):
             raise ValueError("Inspection time must be a finite numeric epoch.")
         now = float(now_epoch)
+    if not restores_lexical.exists():
+        return []
+    restores_root = restores_lexical.resolve()
+    if not _inside(root, restores_root) or not restores_root.is_dir():
+        raise BackupError("Restore staging directory must remain inside project root.")
 
     results: list[dict[str, Any]] = []
     for stage in sorted(restores_root.iterdir(), key=lambda item: item.name):
