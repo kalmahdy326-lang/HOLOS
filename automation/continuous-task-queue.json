@@ -92,7 +92,7 @@
     {
       "id": "ANIM-QUEUE-008",
       "priority": 4,
-      "status": "queued",
+      "status": "in_review",
       "title": "Design safe orphan staging detection after uncatchable process termination",
       "prerequisites": [
         "Inspect current backup/restore staging names and manifests",
@@ -105,7 +105,14 @@
         "Orphan stages remain inspectable with actionable metadata",
         "Tests cover active lease, expired lease, malformed marker, and retry"
       ],
-      "note": "Python cannot catch SIGKILL or power loss. Do not add a naive startup scan that might rename another live restore's staging directory."
+      "note": "Python cannot catch SIGKILL or power loss. Do not add a naive startup scan that might rename another live restore's staging directory. Implementation and regression coverage were added in cumulative run 009. The resulting Actions jobs failed before any step summaries were exposed (steps=null, logs_url=null); log retrieval returned 404 BlobNotFound. Tests are not counted as run or passed. Keep this task in review until a normal CI attempt provides step-level evidence.",
+      "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
+      "active_branch": "production/backup-manifest-integrity-2026-11-18",
+      "last_attempt_commit": "915cfead4740d85743127dbf1be52b6e365651d5",
+      "last_attempt_workflows": [
+        "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44863692093",
+        "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44864013505"
+      ]
     }
   ]
 }
