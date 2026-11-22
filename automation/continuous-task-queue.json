@@ -131,18 +131,28 @@
       ],
       "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
       "active_branch": "production/backup-manifest-integrity-2026-11-18",
-      "last_attempt_commit": "17b52d28c4ff11d9ded4948d6b4a324650431879",
-      "note": "Implementation and regression added in run 010. Repository tests are not verified because Actions jobs did not expose a runner or steps. Do not mark complete until focused backup tests and the full Python/Godot validation pass."
+      "last_attempt_commit": "89a15ab9203abcad8294e7a43f233e2fd86fc3f3",
+      "note": "Implementation and regression added in run 010. Repository tests are not verified because Actions jobs did not expose a runner or steps. Do not mark complete until focused backup tests and the full Python/Godot validation pass.",
+      "last_attempt_workflows": [
+        "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44980307475",
+        "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44980238191",
+        "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44980400520",
+        "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44980424221"
+      ]
     }
   ],
   "last_operational_blocker": {
     "date": "2026-11-21",
     "summary": "Recent scheduled and PR jobs terminate in 2–3 seconds with runner_name empty and steps empty; job logs return 404 BlobNotFound.",
     "evidence": [
-      "44969077150",
-      "44864252387"
+      "44980307475",
+      "44980238191",
+      "44980400520",
+      "44980424221"
     ],
     "status": "unresolved",
-    "note": "The connector does not expose the check annotation; do not infer a billing or permissions cause."
+    "note": "The connector does not expose the check annotation; do not infer a billing or permissions cause.",
+    "latest_branch_commit": "89a15ab9203abcad8294e7a43f233e2fd86fc3f3",
+    "latest_run": "44980424221"
   }
 }
