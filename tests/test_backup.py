@@ -364,5 +364,61 @@ class SourceBackupTests(unittest.TestCase):
             )
 
 
+    def test_cli_inspect_restores_reports_expired_stage_without_mutation(self):
+        source_root = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            shutil.copytree(
+                source_root / "holos_engine",
+                root / "holos_engine",
+                ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+            )
+            (root / "tools").mkdir()
+            shutil.copy2(source_root / "tools" / "holos.py", root / "tools" / "holos.py")
+
+            stage = root / "output" / "restores" / ".restore-staging-expired"
+            stage.mkdir(parents=True)
+            marker_path = stage / ".restore-lease.json"
+            marker_path.write_text(json.dumps({
+                "schema_version": 1,
+                "stage_name": stage.name,
+                "pid": 987654,
+                "hostname": "another-host",
+                "process_start_token": None,
+                "heartbeat_at_epoch": 1,
+                "heartbeat_at_utc": "1970-01-01T00:00:01Z",
+                "lease_expires_at_epoch": 2,
+                "lease_ttl_seconds": 86400,
+            }), encoding="utf-8")
+            before = {
+                path.name: path.read_bytes()
+                for path in stage.iterdir()
+            }
+
+            result = subprocess.run(
+                [
+                    sys.executable, str(root / "tools" / "holos.py"),
+                    "--project-root", str(root), "inspect-restores",
+                ],
+                cwd=root, capture_output=True, text=True, timeout=30, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+            report = json.loads(result.stdout)
+            self.assertTrue(report["read_only"])
+            self.assertEqual(report["stage_count"], 1)
+            self.assertEqual(report["status_counts"], {"expired_candidate": 1})
+            self.assertEqual(
+                report["stages"][0]["stage_name"], ".restore-staging-expired"
+            )
+            self.assertEqual(report["stages"][0]["status"], "expired_candidate")
+            after = {path.name: path.read_bytes() for path in stage.iterdir()}
+            self.assertEqual(after, before)
+            self.assertTrue(stage.is_dir())
+            self.assertFalse(any(
+                path.name.startswith(("FAILED-", "INTERRUPTED-"))
+                for path in stage.parent.iterdir()
+            ))
+
+
 if __name__ == "__main__":
     unittest.main()
