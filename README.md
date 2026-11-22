@@ -109,6 +109,12 @@ python tools/holos.py backup --inventory output/reports/source-inventory-YYYYMMD
 
 python tools/holos.py restore --backup output/backups/source-backup-YYYYMMDDTHHMMSSffffffZ
 
+python tools/holos.py inspect-restores
+
+`inspect-restores` emits a JSON inventory of hidden restore staging directories and
+their lease states. It is strictly read-only: an expired lease is a manual-review
+candidate, never an automatic cleanup or recovery instruction.
+
 The CLI implements `render` for one shot, `render-episode` for an ordered,
 resumable batch, and `assemble-episode` for final FFmpeg/FFprobe-validated
 assembly from the verified manifest. The engine still requires validation
