@@ -299,12 +299,14 @@ class SourceBackupTests(unittest.TestCase):
         restores_root.mkdir(parents=True)
         active = restores_root / ".restore-staging-active"
         expired = restores_root / ".restore-staging-expired"
+        extended = restores_root / ".restore-staging-extended"
+        wrong_ttl = restores_root / ".restore-staging-wrong-ttl"
         malformed = restores_root / ".restore-staging-malformed"
         missing = restores_root / ".restore-staging-missing"
-        for directory in (active, expired, malformed, missing):
+        for directory in (active, expired, extended, wrong_ttl, malformed, missing):
             directory.mkdir()
 
-        def lease_for(stage, expires, heartbeat):
+        def lease_for(stage, expires, heartbeat, ttl=86400):
             return {
                 "schema_version": 1,
                 "stage_name": stage.name,
@@ -314,18 +316,22 @@ class SourceBackupTests(unittest.TestCase):
                 "heartbeat_at_epoch": heartbeat,
                 "heartbeat_at_utc": "1970-01-01T00:00:00Z",
                 "lease_expires_at_epoch": expires,
-                "lease_ttl_seconds": 86400,
+                "lease_ttl_seconds": ttl,
             }
 
         active_marker = active / ".restore-lease.json"
         expired_marker = expired / ".restore-lease.json"
+        extended_marker = extended / ".restore-lease.json"
+        wrong_ttl_marker = wrong_ttl / ".restore-lease.json"
         malformed_marker = malformed / ".restore-lease.json"
-        active_marker.write_text(json.dumps(lease_for(active, 1100, 900)), encoding="utf-8")
-        expired_marker.write_text(json.dumps(lease_for(expired, 900, 800)), encoding="utf-8")
+        active_marker.write_text(json.dumps(lease_for(active, 87300, 900)), encoding="utf-8")
+        expired_marker.write_text(json.dumps(lease_for(expired, 950, -85450)), encoding="utf-8")
+        extended_marker.write_text(json.dumps(lease_for(extended, 200000, 800)), encoding="utf-8")
+        wrong_ttl_marker.write_text(json.dumps(lease_for(wrong_ttl, 900, 800, ttl=172800)), encoding="utf-8")
         malformed_marker.write_text("{not-json", encoding="utf-8")
         before = {
             path.name: tuple(sorted(item.name for item in path.iterdir()))
-            for path in (active, expired, malformed, missing)
+            for path in (active, expired, extended, wrong_ttl, malformed, missing)
         }
 
         findings = inspect_restore_staging(project_root=self.root, now_epoch=1000)
@@ -333,16 +339,44 @@ class SourceBackupTests(unittest.TestCase):
 
         self.assertEqual(by_name[active.name]["status"], "active_lease")
         self.assertEqual(by_name[expired.name]["status"], "expired_candidate")
+        self.assertEqual(by_name[extended.name]["status"], "unknown")
+        self.assertEqual(by_name[wrong_ttl.name]["status"], "unknown")
         self.assertEqual(by_name[malformed.name]["status"], "unknown")
         self.assertEqual(by_name[missing.name]["status"], "unknown")
         self.assertIn("manual-review", by_name[expired.name]["reason"])
         after = {
             path.name: tuple(sorted(item.name for item in path.iterdir()))
-            for path in (active, expired, malformed, missing)
+            for path in (active, expired, extended, wrong_ttl, malformed, missing)
         }
         self.assertEqual(after, before)
-        self.assertTrue(all(path.is_dir() for path in (active, expired, malformed, missing)))
+        self.assertTrue(all(path.is_dir() for path in (active, expired, extended, wrong_ttl, malformed, missing)))
         self.assertFalse(any(path.name.startswith(("FAILED-", "INTERRUPTED-")) for path in restores_root.iterdir()))
+
+    def test_restore_staging_inspection_checks_process_start_identity(self):
+        restores_root = self.root / "output" / "restores"
+        stage = restores_root / ".restore-staging-owner"
+        stage.mkdir(parents=True)
+        (stage / ".restore-lease.json").write_text(json.dumps({
+            "schema_version": 1,
+            "stage_name": stage.name,
+            "pid": 12345,
+            "hostname": "local-host",
+            "process_start_token": "recorded-start",
+            "heartbeat_at_epoch": 900,
+            "heartbeat_at_utc": "1970-01-01T00:15:00Z",
+            "lease_expires_at_epoch": 87300,
+            "lease_ttl_seconds": 86400,
+        }), encoding="utf-8")
+
+        with patch("holos_engine.backup.socket.gethostname", return_value="local-host"):
+            with patch("holos_engine.backup._process_start_token", return_value="recorded-start"):
+                active = inspect_restore_staging(project_root=self.root, now_epoch=1000)
+            with patch("holos_engine.backup._process_start_token", return_value="reused-pid-start"):
+                mismatch = inspect_restore_staging(project_root=self.root, now_epoch=1000)
+
+        self.assertEqual(active[0]["status"], "active_process")
+        self.assertEqual(mismatch[0]["status"], "owner_identity_mismatch")
+        self.assertIn("manual review", mismatch[0]["reason"])
 
     def test_restore_staging_inspection_rejects_invalid_inspection_time(self):
         with self.assertRaisesRegex(ValueError, "finite numeric epoch"):
@@ -385,7 +419,7 @@ class SourceBackupTests(unittest.TestCase):
                 "pid": 987654,
                 "hostname": "another-host",
                 "process_start_token": None,
-                "heartbeat_at_epoch": 1,
+                "heartbeat_at_epoch": -86398,
                 "heartbeat_at_utc": "1970-01-01T00:00:01Z",
                 "lease_expires_at_epoch": 2,
                 "lease_ttl_seconds": 86400,
