@@ -105,13 +105,13 @@
         "Orphan stages remain inspectable with actionable metadata",
         "Tests cover active lease, expired lease, malformed marker, and retry"
       ],
-      "note": "Python cannot catch SIGKILL or power loss. Do not add a naive startup scan that might rename another live restore's staging directory. Implementation and regression coverage were added in cumulative run 009. The resulting Actions jobs failed before any step summaries were exposed (steps=null, logs_url=null); log retrieval returned 404 BlobNotFound. Tests are not counted as run or passed. Keep this task in review until a normal CI attempt provides step-level evidence. Run 010: added a read-only `holos inspect-restores` CLI and a subprocess regression that verifies an expired candidate is reported without changing marker bytes. Implementation commits 2338955fc2cbd309a941bf9136bea99663701ac6, 3b0ef21899df150eb7f79d182b3c0a925b67158d, and README commit 17b52d28c4ff11d9ded4948d6b4a324650431879. The new test is not verified: scheduled run #44969077150 and PR run #44864252387 ended in 2–3 seconds with runner_name empty and steps empty; log retrieval returned 404 BlobNotFound. Keep lease classification read-only; no automatic orphan recovery.",
+      "note": "Python cannot catch SIGKILL or power loss. Do not add a naive startup scan that might rename another live restore's staging directory. Implementation and regression coverage were added in cumulative run 009. The resulting Actions jobs failed before any step summaries were exposed (steps=null, logs_url=null); log retrieval returned 404 BlobNotFound. Tests are not counted as run or passed. Keep this task in review until a normal CI attempt provides step-level evidence. Run 010: added a read-only `holos inspect-restores` CLI and a subprocess regression that verifies an expired candidate is reported without changing marker bytes. Implementation commits 2338955fc2cbd309a941bf9136bea99663701ac6, 3b0ef21899df150eb7f79d182b3c0a925b67158d, and README commit 17b52d28c4ff11d9ded4948d6b4a324650431879. The new test is not verified: scheduled run #44969077150 and PR run #44864252387 ended in 2–3 seconds with runner_name empty and steps empty; log retrieval returned 404 BlobNotFound. Keep lease classification read-only; no automatic orphan recovery.\n\nRun 011: the inspector now rejects a lease whose declared TTL differs from the configured 24-hour policy or whose expiry-heartbeat interval differs from that TTL by more than one second. Regressions cover extended expiry, mismatched TTL, active process identity and PID reuse. Repository tests remain unverified because PR workflows #45107869172 and #45107932133 exposed zero steps and logs returned 404 BlobNotFound.",
       "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
       "active_branch": "production/backup-manifest-integrity-2026-11-18",
-      "last_attempt_commit": "915cfead4740d85743127dbf1be52b6e365651d5",
+      "last_attempt_commit": "0293dcc99662e413af16becd0299c35cd22c0dc8",
       "last_attempt_workflows": [
-        "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44969077150",
-        "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44864252387"
+        "45107869172",
+        "45107932133"
       ]
     },
     {
@@ -131,8 +131,8 @@
       ],
       "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
       "active_branch": "production/backup-manifest-integrity-2026-11-18",
-      "last_attempt_commit": "89a15ab9203abcad8294e7a43f233e2fd86fc3f3",
-      "note": "Implementation and regression added in run 010. Repository tests are not verified because Actions jobs did not expose a runner or steps. Do not mark complete until focused backup tests and the full Python/Godot validation pass.",
+      "last_attempt_commit": "0293dcc99662e413af16becd0299c35cd22c0dc8",
+      "note": "Implementation and regression added in run 010. Repository tests are not verified because Actions jobs did not expose a runner or steps. Do not mark complete until focused backup tests and the full Python/Godot validation pass.\n\nRun 011 adds malformed-lease classification regressions; no automatic cleanup or recovery was introduced. Awaiting repository test execution.",
       "last_attempt_workflows": [
         "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44980307475",
         "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44980238191",
@@ -142,17 +142,15 @@
     }
   ],
   "last_operational_blocker": {
-    "date": "2026-11-21",
-    "summary": "Recent scheduled and PR jobs terminate in 2–3 seconds with runner_name empty and steps empty; job logs return 404 BlobNotFound.",
+    "date": "2026-11-22",
+    "summary": "Animation PR jobs #45107869172 and #45107932133 completed with failure, zero exposed steps, and job-log downloads returning 404 BlobNotFound.",
     "evidence": [
-      "44980307475",
-      "44980238191",
-      "44980400520",
-      "44980424221"
+      "45107869172",
+      "45107932133"
     ],
     "status": "unresolved",
-    "note": "The connector does not expose the check annotation; do not infer a billing or permissions cause.",
-    "latest_branch_commit": "89a15ab9203abcad8294e7a43f233e2fd86fc3f3",
-    "latest_run": "44980424221"
+    "note": "No code-level failure or pass can be inferred. Exact Actions runner/service cause remains unknown.",
+    "latest_code_commit": "0293dcc99662e413af16becd0299c35cd22c0dc8",
+    "latest_run": "45107932133"
   }
 }
