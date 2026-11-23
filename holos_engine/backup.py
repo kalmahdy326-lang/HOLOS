@@ -388,6 +388,7 @@ def inspect_restore_staging(
         process_token = lease.get("process_start_token")
         heartbeat = lease.get("heartbeat_at_epoch")
         expires = lease.get("lease_expires_at_epoch")
+        ttl = lease.get("lease_ttl_seconds")
         if (
             lease.get("schema_version") != 1
             or lease.get("stage_name") != stage.name
@@ -398,7 +399,11 @@ def inspect_restore_staging(
             or not math.isfinite(heartbeat)
             or isinstance(expires, bool) or not isinstance(expires, (int, float))
             or not math.isfinite(expires)
+            or isinstance(ttl, bool) or not isinstance(ttl, (int, float))
+            or not math.isfinite(ttl)
+            or ttl != RESTORE_LEASE_TTL_SECONDS
             or expires <= heartbeat
+            or abs((expires - heartbeat) - ttl) > 1.0
         ):
             results.append(result)
             continue
