@@ -55,7 +55,7 @@
       ],
       "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
       "active_branch": "production/backup-manifest-integrity-2026-11-18",
-      "last_attempt_commit": "538aa5f160e8a6e1cd187badc0299c35cd22c0dc8",
+      "last_attempt_commit": "538aa5f160e8a6e1cd187bad89b86f3d80420f65",
       "note": " Run 012: both complete-backup and complete-restore directory promotion now use atomic no-replace semantics; Linux renameat2(RENAME_NOREPLACE), Windows os.rename, unsupported POSIX fails closed. Added concurrent race and empty-destination regressions. Isolated Python race checks passed; repository suite remains unverified because PR run #45323414848 failed without exposed steps and logs returned 404 BlobNotFound."
     },
     {
@@ -154,7 +154,7 @@
     ],
     "status": "unresolved",
     "note": "No repository test failure or pass is inferred. The precise Actions runner/service cause remains unknown.",
-    "latest_code_commit": "538aa5f160e8a6e1cd187badc0299c35cd22c0dc8",
+    "latest_code_commit": "538aa5f160e8a6e1cd187bad89b86f3d80420f65",
     "latest_run": "45323414848"
   }
 }
