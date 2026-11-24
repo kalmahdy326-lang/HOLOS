@@ -55,8 +55,12 @@
       ],
       "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
       "active_branch": "production/backup-manifest-integrity-2026-11-18",
-      "last_attempt_commit": "538aa5f160e8a6e1cd187bad89b86f3d80420f65",
-      "note": " Run 012: both complete-backup and complete-restore directory promotion now use atomic no-replace semantics; Linux renameat2(RENAME_NOREPLACE), Windows os.rename, unsupported POSIX fails closed. Added concurrent race and empty-destination regressions. Isolated Python race checks passed; repository suite remains unverified because PR run #45323414848 failed without exposed steps and logs returned 404 BlobNotFound."
+      "last_attempt_commit": "d317b6ef5b0cb904e6229b8ab1bb306fcdf1147d",
+      "note": " Run 012: both complete-backup and complete-restore directory promotion now use atomic no-replace semantics; Linux renameat2(RENAME_NOREPLACE), Windows os.rename, unsupported POSIX fails closed. Added concurrent race and empty-destination regressions. Isolated Python race checks passed; repository suite remains unverified because PR run #45323414848 failed without exposed steps and logs returned 404 BlobNotFound.\n\nRun 013: backup and restore failure-stage archival now uses atomic no-replace promotion. Archival collisions preserve the original incomplete stage and original exception, and the error reports the surviving stage path. Added two race regressions for a competing empty FAILED destination. Static source audit 6/6; repository tests remain unverified because workflows #45324856366/#45324876919 exposed steps=null and logs returned 404 BlobNotFound.",
+      "last_attempt_workflows": [
+        "45324856366",
+        "45324876919"
+      ]
     },
     {
       "id": "ANIM-BLOCKED-004",
@@ -147,14 +151,14 @@
   ],
   "last_operational_blocker": {
     "date": "2026-11-23",
-    "summary": "Animation PR workflows #45322124625 and #45323414848 failed; the latest exposed two failed jobs with zero steps and log downloads returning 404 BlobNotFound.",
+    "summary": "PR workflow #45324876919 failed; both Python/media and Godot jobs exposed no steps and job-log downloads returned 404 BlobNotFound.",
     "evidence": [
-      "45322124625",
-      "45323414848"
+      "45324856366",
+      "45324876919"
     ],
     "status": "unresolved",
     "note": "No repository test failure or pass is inferred. The precise Actions runner/service cause remains unknown.",
-    "latest_code_commit": "538aa5f160e8a6e1cd187bad89b86f3d80420f65",
-    "latest_run": "45323414848"
+    "latest_code_commit": "d317b6ef5b0cb904e6229b8ab1bb306fcdf1147d",
+    "latest_run": "45324876919"
   }
 }
