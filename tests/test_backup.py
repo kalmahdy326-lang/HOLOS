@@ -456,6 +456,77 @@ class SourceBackupTests(unittest.TestCase):
             ))
 
 
+    def test_failed_backup_archival_preserves_stage_on_destination_race(self):
+        inventory_path = self.inventory()
+        raced = []
+
+        def create_competing_destination(source, destination):
+            raced.append((source, destination))
+            destination.mkdir()
+            raise BackupError("Refusing to overwrite existing destination")
+
+        with patch(
+            "holos_engine.backup.shutil.copy2",
+            side_effect=OSError("simulated backup copy failure"),
+        ):
+            with patch(
+                "holos_engine.backup._rename_directory_noreplace",
+                side_effect=create_competing_destination,
+            ):
+                with self.assertRaises(BackupError) as caught:
+                    create_source_backup(
+                        project_root=self.root,
+                        inventory_path=inventory_path,
+                        destination=Path("output/backups/backup-archive-race"),
+                    )
+
+        self.assertEqual(len(raced), 1)
+        stage, competing_destination = raced[0]
+        self.assertTrue(stage.is_dir())
+        self.assertTrue((stage / "backup-failure.json").is_file())
+        self.assertTrue(competing_destination.is_dir())
+        self.assertEqual(list(competing_destination.iterdir()), [])
+        self.assertIn(str(stage), str(caught.exception))
+        self.assertNotIn(str(competing_destination), str(caught.exception))
+
+    def test_failed_restore_archival_preserves_stage_on_destination_race(self):
+        inventory_path = self.inventory()
+        backup_path, _ = create_source_backup(
+            project_root=self.root,
+            inventory_path=inventory_path,
+            destination=Path("output/backups/restore-archive-race"),
+        )
+        raced = []
+
+        def create_competing_destination(source, destination):
+            raced.append((source, destination))
+            destination.mkdir()
+            raise BackupError("Refusing to overwrite existing destination")
+
+        with patch(
+            "holos_engine.backup.shutil.copy2",
+            side_effect=OSError("simulated restore copy failure"),
+        ):
+            with patch(
+                "holos_engine.backup._rename_directory_noreplace",
+                side_effect=create_competing_destination,
+            ):
+                with self.assertRaises(BackupError) as caught:
+                    restore_source_backup(
+                        project_root=self.root,
+                        backup_path=backup_path,
+                        destination=Path("output/restores/restore-archive-target"),
+                    )
+
+        self.assertEqual(len(raced), 1)
+        stage, competing_destination = raced[0]
+        self.assertTrue(stage.is_dir())
+        self.assertTrue((stage / "restore-failure.json").is_file())
+        self.assertTrue(competing_destination.is_dir())
+        self.assertEqual(list(competing_destination.iterdir()), [])
+        self.assertIn(str(stage), str(caught.exception))
+        self.assertNotIn(str(competing_destination), str(caught.exception))
+
     def test_concurrent_directory_promotion_never_replaces_destination(self):
         if not sys.platform.startswith("linux"):
             self.skipTest("The atomic renameat2 race test requires Linux.")
