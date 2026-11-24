@@ -295,13 +295,13 @@ def create_source_backup(
                 with (stage / "backup-failure.json").open("w", encoding="utf-8") as stream:
                     json.dump(failure, stream, indent=2)
                     stream.write("\n")
-                os.replace(stage, failed_dir)
-            except OSError:
-                # Leave the staging directory in place if preservation itself fails.
+                _rename_directory_noreplace(stage, failed_dir)
+            except (OSError, BackupError):
+                # A competing destination must never replace the stage or mask the original failure.
                 pass
             raise BackupError(
                 f"Backup failed; partial staging was preserved at "
-                f"{failed_dir if failed_dir.exists() else stage}: {exc}"
+                f"{stage if stage.exists() else failed_dir}: {exc}"
             ) from exc
         raise
 
@@ -720,8 +720,8 @@ def restore_source_backup(
                 stream.write("\n")
                 stream.flush()
                 os.fsync(stream.fileno())
-            os.replace(stage, failed_dir)
-        except OSError:
+            _rename_directory_noreplace(stage, failed_dir)
+        except (OSError, BackupError):
             # Keep the original exception and leave any surviving stage in place.
             pass
 
@@ -730,5 +730,5 @@ def restore_source_backup(
             raise
         raise BackupError(
             f"Restore failed; partial staging was preserved at "
-            f"{failed_dir if failed_dir.exists() else stage}: {exc}"
+            f"{stage if stage.exists() else failed_dir}: {exc}"
         ) from exc
