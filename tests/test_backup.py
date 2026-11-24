@@ -511,5 +511,31 @@ class SourceBackupTests(unittest.TestCase):
         )
 
 
+    def test_directory_promotion_refuses_existing_empty_destination(self):
+        if not (
+            sys.platform.startswith("linux") or sys.platform == "win32"
+        ):
+            self.skipTest("Atomic no-replace directory promotion is unsupported here.")
+        parent = self.root / "output" / "restores"
+        parent.mkdir(parents=True)
+        source = parent / ".stage-source"
+        destination = parent / "empty-destination"
+        source.mkdir()
+        destination.mkdir()
+        (source / "payload.txt").write_text("preserve", encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            BackupError, "Refusing to overwrite existing destination"
+        ):
+            _rename_directory_noreplace(source, destination)
+
+        self.assertTrue(source.is_dir())
+        self.assertEqual(
+            (source / "payload.txt").read_text(encoding="utf-8"), "preserve"
+        )
+        self.assertTrue(destination.is_dir())
+        self.assertEqual(list(destination.iterdir()), [])
+
+
 if __name__ == "__main__":
     unittest.main()
