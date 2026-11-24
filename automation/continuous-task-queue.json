@@ -42,7 +42,7 @@
     {
       "id": "ANIM-QUEUE-003",
       "priority": 2,
-      "status": "queued",
+      "status": "in_review",
       "title": "Audit source inventory, backup, and non-overwriting restore",
       "prerequisites": [
         "Inspect tests/test_inventory.py and tests/test_backup.py"
@@ -52,7 +52,11 @@
         "Backup integrity is verified",
         "Restore never silently overwrites existing files",
         "Failure paths are tested"
-      ]
+      ],
+      "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
+      "active_branch": "production/backup-manifest-integrity-2026-11-18",
+      "last_attempt_commit": "538aa5f160e8a6e1cd187badc0299c35cd22c0dc8",
+      "note": " Run 012: both complete-backup and complete-restore directory promotion now use atomic no-replace semantics; Linux renameat2(RENAME_NOREPLACE), Windows os.rename, unsupported POSIX fails closed. Added concurrent race and empty-destination regressions. Isolated Python race checks passed; repository suite remains unverified because PR run #45323414848 failed without exposed steps and logs returned 404 BlobNotFound."
     },
     {
       "id": "ANIM-BLOCKED-004",
@@ -142,15 +146,15 @@
     }
   ],
   "last_operational_blocker": {
-    "date": "2026-11-22",
-    "summary": "Animation PR jobs #45107869172 and #45107932133 completed with failure, zero exposed steps, and job-log downloads returning 404 BlobNotFound.",
+    "date": "2026-11-23",
+    "summary": "Animation PR workflows #45322124625 and #45323414848 failed; the latest exposed two failed jobs with zero steps and log downloads returning 404 BlobNotFound.",
     "evidence": [
-      "45107869172",
-      "45107932133"
+      "45322124625",
+      "45323414848"
     ],
     "status": "unresolved",
-    "note": "No code-level failure or pass can be inferred. Exact Actions runner/service cause remains unknown.",
-    "latest_code_commit": "0293dcc99662e413af16becd0299c35cd22c0dc8",
-    "latest_run": "45107932133"
+    "note": "No repository test failure or pass is inferred. The precise Actions runner/service cause remains unknown.",
+    "latest_code_commit": "538aa5f160e8a6e1cd187badc0299c35cd22c0dc8",
+    "latest_run": "45323414848"
   }
 }
