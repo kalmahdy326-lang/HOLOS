@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
+import ctypes
 from datetime import datetime, timezone
+import errno
 import hashlib
 import json
 import fnmatch
 import os
 import math
 import socket
+import sys
 import time
 from pathlib import Path, PurePosixPath
 import shutil
@@ -20,6 +23,51 @@ from typing import Any
 
 class BackupError(RuntimeError):
     """Raised when a source backup cannot be completed safely."""
+
+
+def _rename_directory_noreplace(source: Path, destination: Path) -> None:
+    """Atomically publish a staging directory without replacing any destination.
+
+    Linux uses renameat2(RENAME_NOREPLACE). Windows os.rename already refuses
+    an existing destination. Other platforms fail closed rather than falling
+    back to POSIX rename semantics, which can replace an empty directory.
+    """
+    if os.name == "nt":
+        try:
+            os.rename(source, destination)
+        except FileExistsError as exc:
+            raise BackupError(
+                f"Refusing to overwrite existing destination: {destination}"
+            ) from exc
+        return
+
+    if not sys.platform.startswith("linux"):
+        raise BackupError(
+            "Atomic no-replace directory promotion is unavailable on this platform."
+        )
+
+    libc = ctypes.CDLL(None, use_errno=True)
+    renameat2 = getattr(libc, "renameat2", None)
+    if renameat2 is None:
+        raise BackupError(
+            "libc renameat2 is unavailable; refusing a non-atomic directory promotion."
+        )
+    renameat2.argtypes = [
+        ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint
+    ]
+    renameat2.restype = ctypes.c_int
+    result = renameat2(
+        -100, os.fsencode(source), -100, os.fsencode(destination), 1
+    )
+    if result == 0:
+        return
+
+    error = ctypes.get_errno()
+    if error in (errno.EEXIST, errno.ENOTEMPTY):
+        raise BackupError(
+            f"Refusing to overwrite existing destination: {destination}"
+        )
+    raise OSError(error, os.strerror(error), str(destination))
 
 
 def _inside(root: Path, path: Path) -> bool:
@@ -226,7 +274,7 @@ def create_source_backup(
 
         if final_dir.exists():
             raise BackupError(f"Refusing to overwrite existing backup: {final_dir}")
-        os.replace(stage, final_dir)
+        _rename_directory_noreplace(stage, final_dir)
         return final_dir, backup_manifest
 
     except Exception as exc:
@@ -630,7 +678,7 @@ def restore_source_backup(
         if final_dir.exists():
             raise BackupError(f"Refusing to overwrite existing restore directory: {final_dir}")
         _write_restore_lease(stage)
-        os.replace(stage, final_dir)
+        _rename_directory_noreplace(stage, final_dir)
         try:
             (final_dir / RESTORE_LEASE_FILENAME).unlink()
         except OSError:
