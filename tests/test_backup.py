@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
 from unittest.mock import patch
 
@@ -15,6 +16,7 @@ from holos_engine.backup import (
     create_source_backup,
     restore_source_backup,
     inspect_restore_staging,
+    _rename_directory_noreplace,
 )
 from holos_engine.inventory import write_inventory_report
 
@@ -452,6 +454,61 @@ class SourceBackupTests(unittest.TestCase):
                 path.name.startswith(("FAILED-", "INTERRUPTED-"))
                 for path in stage.parent.iterdir()
             ))
+
+
+    def test_concurrent_directory_promotion_never_replaces_destination(self):
+        if not sys.platform.startswith("linux"):
+            self.skipTest("The atomic renameat2 race test requires Linux.")
+        parent = self.root / "output" / "restores"
+        parent.mkdir(parents=True)
+        destination = parent / "race-target"
+        stages = [parent / ".race-stage-a", parent / ".race-stage-b"]
+        for stage, payload in zip(stages, ("A", "B")):
+            stage.mkdir()
+            (stage / "payload.txt").write_text(payload, encoding="utf-8")
+
+        barrier = threading.Barrier(2)
+        results = []
+        results_lock = threading.Lock()
+
+        def promote(stage):
+            barrier.wait(timeout=5)
+            try:
+                _rename_directory_noreplace(stage, destination)
+                outcome = "moved"
+            except BackupError as exc:
+                outcome = (
+                    "refused" if "Refusing to overwrite existing destination" in str(exc)
+                    else f"unexpected:{exc}"
+                )
+            with results_lock:
+                results.append((outcome, stage))
+
+        workers = [
+            threading.Thread(target=promote, args=(stage,))
+            for stage in stages
+        ]
+        for worker in workers:
+            worker.start()
+        for worker in workers:
+            worker.join(timeout=10)
+        self.assertTrue(all(not worker.is_alive() for worker in workers))
+        self.assertCountEqual([outcome for outcome, _ in results], ["moved", "refused"])
+
+        winner = next(stage for outcome, stage in results if outcome == "moved")
+        loser = next(stage for outcome, stage in results if outcome == "refused")
+        self.assertTrue(destination.is_dir())
+        self.assertFalse(winner.exists())
+        self.assertTrue(loser.is_dir())
+        self.assertTrue((loser / "payload.txt").is_file())
+        self.assertEqual(
+            (destination / "payload.txt").read_text(encoding="utf-8"),
+            "A" if winner.name.endswith("a") else "B",
+        )
+        self.assertEqual(
+            (loser / "payload.txt").read_text(encoding="utf-8"),
+            "B" if loser.name.endswith("b") else "A",
+        )
 
 
 if __name__ == "__main__":
