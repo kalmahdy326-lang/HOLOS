@@ -55,11 +55,11 @@
       ],
       "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
       "active_branch": "production/backup-manifest-integrity-2026-11-18",
-      "last_attempt_commit": "d317b6ef5b0cb904e6229b8ab1bb306fcdf1147d",
-      "note": " Run 012: both complete-backup and complete-restore directory promotion now use atomic no-replace semantics; Linux renameat2(RENAME_NOREPLACE), Windows os.rename, unsupported POSIX fails closed. Added concurrent race and empty-destination regressions. Isolated Python race checks passed; repository suite remains unverified because PR run #45323414848 failed without exposed steps and logs returned 404 BlobNotFound.\n\nRun 013: backup and restore failure-stage archival now uses atomic no-replace promotion. Archival collisions preserve the original incomplete stage and original exception, and the error reports the surviving stage path. Added two race regressions for a competing empty FAILED destination. Static source audit 6/6; repository tests remain unverified because workflows #45324856366/#45324876919 exposed steps=null and logs returned 404 BlobNotFound.",
+      "last_attempt_commit": "071aba42481d0369feeaec11e38eba191e74e837",
+      "note": " Run 012: both complete-backup and complete-restore directory promotion now use atomic no-replace semantics; Linux renameat2(RENAME_NOREPLACE), Windows os.rename, unsupported POSIX fails closed. Added concurrent race and empty-destination regressions. Isolated Python race checks passed; repository suite remains unverified because PR run #45323414848 failed without exposed steps and logs returned 404 BlobNotFound.\n\nRun 013: backup and restore failure-stage archival now uses atomic no-replace promotion. Archival collisions preserve the original incomplete stage and original exception, and the error reports the surviving stage path. Added two race regressions for a competing empty FAILED destination. Static source audit 6/6; repository tests remain unverified because workflows #45324856366/#45324876919 exposed steps=null and logs returned 404 BlobNotFound.\n\nRun 014 (2026-11-24): added cross-platform fail-closed regressions for unsupported POSIX platforms and a Linux libc without renameat2. Both assert the staging payload remains unchanged and no destination is published. GitHub-source static audit 6/6. Focused backup/full Python tests remain unverified: PR workflow #45539921611 exposed empty steps and logs returned 404 BlobNotFound; scheduled validation #45523545347 had the same no-step/log condition. Do not mark complete until repository tests execute.",
       "last_attempt_workflows": [
-        "45324856366",
-        "45324876919"
+        "45539921611",
+        "45523545347"
       ]
     },
     {
@@ -150,15 +150,16 @@
     }
   ],
   "last_operational_blocker": {
-    "date": "2026-11-23",
-    "summary": "PR workflow #45324876919 failed; both Python/media and Godot jobs exposed no steps and job-log downloads returned 404 BlobNotFound.",
+    "date": "2026-11-24",
+    "summary": "Latest animation PR run #45539921611 and scheduled run #45523545347 failed without executable step summaries; job-step lookup returned an empty list and job-log retrieval returned 404 BlobNotFound.",
     "evidence": [
-      "45324856366",
-      "45324876919"
+      "45539921611",
+      "45523545347",
+      "45325241288"
     ],
     "status": "unresolved",
-    "note": "No repository test failure or pass is inferred. The precise Actions runner/service cause remains unknown.",
-    "latest_code_commit": "d317b6ef5b0cb904e6229b8ab1bb306fcdf1147d",
-    "latest_run": "45324876919"
+    "note": "No repository test failure or pass is inferred. The precise GitHub Actions runner/service cause remains unknown.",
+    "latest_code_commit": "071aba42481d0369feeaec11e38eba191e74e837",
+    "latest_run": "45539921611"
   }
 }
