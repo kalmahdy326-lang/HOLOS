@@ -608,5 +608,41 @@ class SourceBackupTests(unittest.TestCase):
         self.assertEqual(list(destination.iterdir()), [])
 
 
+    def test_noreplace_promotion_fails_closed_on_unsupported_posix(self):
+        source = self.root / "staging"
+        destination = self.root / "published"
+        source.mkdir()
+        (source / "payload.txt").write_text("preserve", encoding="utf-8")
+
+        with patch("holos_engine.backup.os.name", "posix"):
+            with patch("holos_engine.backup.sys.platform", "darwin"):
+                with patch("holos_engine.backup.os.rename") as rename:
+                    with self.assertRaisesRegex(
+                        BackupError, "unavailable on this platform"
+                    ):
+                        _rename_directory_noreplace(source, destination)
+
+        rename.assert_not_called()
+        self.assertEqual((source / "payload.txt").read_text(encoding="utf-8"), "preserve")
+        self.assertFalse(destination.exists())
+
+    def test_noreplace_promotion_fails_closed_when_linux_syscall_is_missing(self):
+        source = self.root / "staging"
+        destination = self.root / "published"
+        source.mkdir()
+        (source / "payload.txt").write_text("preserve", encoding="utf-8")
+
+        with patch("holos_engine.backup.os.name", "posix"):
+            with patch("holos_engine.backup.sys.platform", "linux"):
+                with patch("holos_engine.backup.ctypes.CDLL", return_value=object()):
+                    with self.assertRaisesRegex(
+                        BackupError, "libc renameat2 is unavailable"
+                    ):
+                        _rename_directory_noreplace(source, destination)
+
+        self.assertEqual((source / "payload.txt").read_text(encoding="utf-8"), "preserve")
+        self.assertFalse(destination.exists())
+
+
 if __name__ == "__main__":
     unittest.main()
