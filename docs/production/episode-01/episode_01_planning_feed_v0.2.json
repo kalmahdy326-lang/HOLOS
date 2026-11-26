@@ -1945,8 +1945,8 @@
     "Timestamped Episode 1 transcript is creator-confirmed to exist but has not yet been located in the connected Library/repository; exact path and version required.",
     "Episode 1 sound-design cue sheet is creator-confirmed to exist but has not yet been located in the connected Library/repository; exact path and version required.",
     "Per-panel in/out timecodes and frame ranges remain unallocated; phase assignment alone does not establish panel duration.",
-    "Dr. Elmahdi is a transcript/analysis-referenced absence with unresolved identity; do not map to Character A/B or create a speaking role.",
-    "Scott is a creator-confirmed approved character asset; Episode 1 placement is pending and no speaking role is established."
+    "Scott is a creator-confirmed approved character asset; Episode 1 placement is pending and no speaking role is established.",
+    "Dr. AL-MAHDY is strongly indicated by Scene 4 context to refer to Khaled (Character B); creator confirmation of formal title/spelling treatment remains open. Do not create a third character."
   ],
   "timing_layer": {
     "authority": "Episode 1 Pacing Analysis",
@@ -3010,12 +3010,31 @@
     "canonical_storyboard_total_panels": 68,
     "main_story_panels": 62,
     "post_credit_panels": 6,
-    "note": "The canonical storyboard panel IDs are preserved. This map assigns panels to dramatic phases only; it does not assert a one-to-one relationship with the 65 newly proposed production shot IDs. Map panel-to-shot relationships only after content-level comparison and creator review."
+    "note": "The canonical storyboard contains 62 main-story panels and 3 post-credit panels. This feed also contains 65 proposed production-shot IDs in the main program. The counts are distinct sets and have not been mapped one-to-one or many-to-one. Some storyboard panels may be expanded into multiple production shots, but that must be justified and reviewed. Do not infer equivalence from equal totals.",
+    "production_shot_plan_count": 65,
+    "production_shot_plan_scope": "All 65 proposed EP01_P... shot entries are provisionally assigned to the 15:14.84 main-program schedule. They are a new production-shot breakdown, not the canonical storyboard panel IDs.",
+    "production_shot_to_panel_mapping_status": "not_reconciled"
   },
   "dialogue_audio_binding": {
     "transcript_source": "creator-confirmed timestamped transcript; exact file path pending",
     "sound_design_cue_sheet": "creator-confirmed cue sheet; exact file path pending",
     "per_shot_audio_reference_binding": "blocked pending source files and timecode reconciliation",
     "text_extraction_policy": "Commit searchable text/CSV derivatives alongside the screenplay extraction with original filename, source location, version/date, SHA-256 of source where available, extraction method, and an explicit statement that the original media/document remains unchanged."
+  },
+  "cast_reconciliation": {
+    "Scott": {
+      "status": "creator-confirmed approved character asset",
+      "episode_01_role": "no speaking role established",
+      "placement": "pending",
+      "restriction": "Do not place in episode scenes/shots or create dialogue until creator assigns placement."
+    },
+    "Dr. AL-MAHDY / Dr. Elmahdi": {
+      "leading_interpretation": "likely Khaled, Character B",
+      "evidence": "In Scene 4 of the consolidated screenplay extraction, Kevin asks ORBIT where Khaled is; ORBIT replies that Dr. AL-MAHDY is conducting an independent calibration.",
+      "evidence_source": "docs/source_archive/2026-11-episode-1-the-moon-has-anger-issues-screenplay.extracted.md, Scene 4",
+      "confidence_status": "strong contextual inference; creator confirmation pending",
+      "production_handling": "Use Khaled / Character B for scene, cast, rig and model labels; do not create a third character; preserve exact screenplay dialogue wording.",
+      "unresolved": "Whether Dr. is a formal in-story title and whether the secondary spelling Elmahdi should be retired."
+    }
   }
 }
