@@ -4,7 +4,7 @@
   "project": "HOLOS — The Fundamental Structure of Reality",
   "episode_id": "episode_01",
   "title": "The Moon Has Anger Issues",
-  "creator": "Khaled al mahdy",
+  "creator": "Khaled Al Mahdy",
   "status": "planning_only_not_renderable",
   "source_authority": {
     "pacing_analysis": "Episode 1 Pacing Analysis — creator-confirmed governing timing source; exact Library/repository file path and checksum are pending source-location reconciliation.",
@@ -3027,13 +3027,13 @@
       "placement": "pending",
       "restriction": "Do not place in episode scenes/shots or create dialogue until creator assigns placement."
     },
-    "Dr. al mahdy": {
+    "Dr. Al Mahdy": {
       "status": "creator-confirmed identity: Khaled (Character B)",
       "evidence": "The Scene 4 source quotation is retained verbatim in the cast reconciliation register. The creator has explicitly confirmed that the reference is to Khaled (Character B), not a separate researcher.",
       "evidence_source": "docs/source_archive/2026-11-episode-1-the-moon-has-anger-issues-screenplay.extracted.md, Scene 4",
-      "spelling": "al mahdy (two words, no hyphen; creator-confirmed)",
+      "spelling": "Al Mahdy (two words, no hyphen; creator-confirmed)",
       "secondary_source_error": "Elmahdi is a transcription/reference error, not an alternate spelling or separate identity.",
-      "source_preservation": "Do not alter original screenplay/transcript files or verbatim source quotations. Use the normalized spelling al mahdy in derivative records and new production metadata.",
+      "source_preservation": "Do not alter original screenplay/transcript files or verbatim source quotations. Use the normalized spelling Al Mahdy in derivative records and new production metadata.",
       "production_handling": "Use Khaled / Character B for scene, cast, rig and model labels; do not create a third character.",
       "remaining_note": "Keep the in-story title Dr. only where it appears in the source screenplay; do not infer additional biography or credentials."
     }
