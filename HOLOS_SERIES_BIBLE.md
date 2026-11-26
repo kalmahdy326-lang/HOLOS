@@ -1,7 +1,7 @@
 # HOLOS — Series Bible
 
 **Project:** HOLOS — *The Fundamental Structure of Reality*
-**Creator and project author:** Khaled AL-MAHDY
+**Creator and project author:** Khaled al mahdy
 **Document:** `HOLOS_SERIES_BIBLE.md`
 **Version:** 0.1 — source-consolidation draft
 **Prepared:** 2026-11-16
@@ -17,7 +17,7 @@ This bible gathers existing HOLOS material in one navigable place. It distinguis
 **Episode 1 title in the current screenplay extraction:** “The Moon Has Anger Issues”
 **Format and audience:** The extracted Episode 1 title page describes HOLOS as an adult animated science-fiction series and labels the material 18+ for strong language, dark humour, disturbing imagery, science-fiction violence, and mature themes. This is the content positioning stated by that screenplay extraction; final rating and distribution classification have not been independently set here.
 **Genre and tone:** Science-fiction mystery and investigation, suspense, philosophical questions, and dark humour.
-**Series author/creator credit:** Khaled AL-MAHDY.
+**Series author/creator credit:** Khaled al mahdy.
 
 ### Series premise
 
