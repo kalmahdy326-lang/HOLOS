@@ -64,6 +64,3 @@ panel_id,scene_id,scene_title,phase_id,phase_start_timecode,phase_end_timecode,p
 "PC_001","PC","Post-Credit Scene","","","","","","","","","post_credit_timing_pending","Post-credit sequence is outside the 15:14.84 main-program timing table; do not allocate frames without a separate approved range."
 "PC_002","PC","Post-Credit Scene","","","","","","","","","post_credit_timing_pending","Post-credit sequence is outside the 15:14.84 main-program timing table; do not allocate frames without a separate approved range."
 "PC_003","PC","Post-Credit Scene","","","","","","","","","post_credit_timing_pending","Post-credit sequence is outside the 15:14.84 main-program timing table; do not allocate frames without a separate approved range."
-"PC_001","PC","Post-Credit Scene","","","","","","","","","post_credit_timing_pending","Separate post-credit material; no approved time range in the nine-phase master."
-"PC_002","PC","Post-Credit Scene","","","","","","","","","post_credit_timing_pending","Separate post-credit material; no approved time range in the nine-phase master."
-"PC_003","PC","Post-Credit Scene","","","","","","","","","post_credit_timing_pending","Separate post-credit material; no approved time range in the nine-phase master."
