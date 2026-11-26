@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from fractions import Fraction
 import json
+import math
 import shutil
 import subprocess
 from pathlib import Path
@@ -191,8 +192,10 @@ def _stream_time_seconds(stream: dict[str, Any], field: str) -> float | None:
     value = stream.get(field)
     if value not in (None, "", "N/A"):
         try:
-            return float(value)
-        except (TypeError, ValueError):
+            parsed = float(value)
+            if math.isfinite(parsed):
+                return parsed
+        except (TypeError, ValueError, OverflowError):
             pass
 
     if field == "duration":
@@ -200,8 +203,10 @@ def _stream_time_seconds(stream: dict[str, Any], field: str) -> float | None:
         time_base = stream.get("time_base")
         try:
             if duration_ts not in (None, "", "N/A") and time_base:
-                return float(int(duration_ts) * Fraction(str(time_base)))
-        except (TypeError, ValueError, ZeroDivisionError):
+                parsed = float(int(duration_ts) * Fraction(str(time_base)))
+                if math.isfinite(parsed):
+                    return parsed
+        except (TypeError, ValueError, ZeroDivisionError, OverflowError):
             pass
     return None
 
@@ -218,20 +223,73 @@ def validate_media(
     sync_tolerance_seconds: float = 0.08,
 ) -> dict[str, Any]:
     """Validate video properties and audio/video stream timeline alignment."""
-    if duration_tolerance_seconds < 0 or sync_tolerance_seconds < 0:
-        raise MediaError("Media validation tolerances must be non-negative.")
+    if not isinstance(metadata, dict):
+        raise MediaError("FFprobe metadata must be a JSON object.")
 
-    streams = metadata.get("streams", [])
+    try:
+        fps_value = float(fps)
+        expected_duration_value = float(expected_duration)
+        duration_tolerance_value = float(duration_tolerance_seconds)
+        sync_tolerance_value = float(sync_tolerance_seconds)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise MediaError("Media validation parameters must be numeric.") from exc
+
+    if (
+        isinstance(width, bool) or not isinstance(width, int) or width <= 0
+        or isinstance(height, bool) or not isinstance(height, int) or height <= 0
+    ):
+        raise MediaError("Expected video width and height must be positive integers.")
+    if (
+        isinstance(fps, bool) or not math.isfinite(fps_value) or fps_value <= 0
+        or isinstance(expected_duration, bool)
+        or not math.isfinite(expected_duration_value) or expected_duration_value <= 0
+    ):
+        raise MediaError("Expected frame rate and duration must be finite and positive.")
+    if (
+        isinstance(duration_tolerance_seconds, bool)
+        or not math.isfinite(duration_tolerance_value) or duration_tolerance_value < 0
+        or isinstance(sync_tolerance_seconds, bool)
+        or not math.isfinite(sync_tolerance_value) or sync_tolerance_value < 0
+    ):
+        raise MediaError("Media validation tolerances must be finite and non-negative.")
+
+    fps = fps_value
+    expected_duration = expected_duration_value
+    duration_tolerance_seconds = duration_tolerance_value
+    sync_tolerance_seconds = sync_tolerance_value
+
+    errors: list[str] = []
+    raw_streams = metadata.get("streams")
+    if not isinstance(raw_streams, list):
+        errors.append("FFprobe streams field is missing or not an array.")
+        raw_streams = []
+    malformed_streams = [
+        index for index, stream in enumerate(raw_streams)
+        if not isinstance(stream, dict)
+    ]
+    if malformed_streams:
+        errors.append(
+            "FFprobe stream entries must be objects; invalid indices: "
+            f"{malformed_streams}."
+        )
+    streams = [stream for stream in raw_streams if isinstance(stream, dict)]
     video = next((s for s in streams if s.get("codec_type") == "video"), None)
     audio = [s for s in streams if s.get("codec_type") == "audio"]
-    errors: list[str] = []
 
     if video is None:
         errors.append("No video stream found.")
     else:
-        if int(video.get("width", -1)) != width:
+        try:
+            actual_width = int(video.get("width", -1))
+        except (TypeError, ValueError, OverflowError):
+            actual_width = None
+        try:
+            actual_height = int(video.get("height", -1))
+        except (TypeError, ValueError, OverflowError):
+            actual_height = None
+        if actual_width != width:
             errors.append(f"Width mismatch: expected {width}, got {video.get('width')}.")
-        if int(video.get("height", -1)) != height:
+        if actual_height != height:
             errors.append(f"Height mismatch: expected {height}, got {video.get('height')}.")
         rate = video.get("avg_frame_rate") or video.get("r_frame_rate")
         try:
@@ -241,9 +299,14 @@ def validate_media(
         except (ValueError, ZeroDivisionError, TypeError):
             errors.append(f"Could not interpret video frame rate: {rate!r}.")
 
-    duration_value = metadata.get("format", {}).get("duration")
+    format_data = metadata.get("format")
+    duration_value = (
+        format_data.get("duration") if isinstance(format_data, dict) else None
+    )
     try:
         actual_duration = float(duration_value)
+        if not math.isfinite(actual_duration):
+            raise ValueError("duration is not finite")
         if abs(actual_duration - expected_duration) > duration_tolerance_seconds:
             errors.append(
                 f"Duration mismatch: expected {expected_duration:.3f}s, "
