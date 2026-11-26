@@ -3004,51 +3004,6 @@
       "proposed_production_shot_id": null,
       "assignment_status": "post_credit_timing_pending",
       "note": "Post-credit sequence is outside the 15:14.84 main-program timing table; do not allocate frames without a separate approved range."
-    },
-    {
-      "panel_id": "PC_001",
-      "scene_id": "PC",
-      "scene_title": "Post-Credit Scene",
-      "phase_id": null,
-      "phase_start_timecode": null,
-      "phase_end_timecode": null,
-      "panel_start_timecode": null,
-      "panel_end_timecode": null,
-      "start_frame_24fps_estimate": null,
-      "end_frame_24fps_estimate": null,
-      "proposed_production_shot_id": null,
-      "assignment_status": "post_credit_timing_pending",
-      "note": "Separate post-credit material; no approved time range in the nine-phase master."
-    },
-    {
-      "panel_id": "PC_002",
-      "scene_id": "PC",
-      "scene_title": "Post-Credit Scene",
-      "phase_id": null,
-      "phase_start_timecode": null,
-      "phase_end_timecode": null,
-      "panel_start_timecode": null,
-      "panel_end_timecode": null,
-      "start_frame_24fps_estimate": null,
-      "end_frame_24fps_estimate": null,
-      "proposed_production_shot_id": null,
-      "assignment_status": "post_credit_timing_pending",
-      "note": "Separate post-credit material; no approved time range in the nine-phase master."
-    },
-    {
-      "panel_id": "PC_003",
-      "scene_id": "PC",
-      "scene_title": "Post-Credit Scene",
-      "phase_id": null,
-      "phase_start_timecode": null,
-      "phase_end_timecode": null,
-      "panel_start_timecode": null,
-      "panel_end_timecode": null,
-      "start_frame_24fps_estimate": null,
-      "end_frame_24fps_estimate": null,
-      "proposed_production_shot_id": null,
-      "assignment_status": "post_credit_timing_pending",
-      "note": "Separate post-credit material; no approved time range in the nine-phase master."
     }
   ],
   "panel_shot_mapping_policy": {
