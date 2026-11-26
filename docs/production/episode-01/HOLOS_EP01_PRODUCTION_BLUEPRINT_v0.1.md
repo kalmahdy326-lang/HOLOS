@@ -2,7 +2,7 @@
 
 **Series:** HOLOS — The Fundamental Structure of Reality  
 **Episode:** 01 — *The Moon Has Anger Issues*  
-**Creator / project author:** Khaled AL-MAHDY  
+**Creator / project author:** Khaled al mahdy  
 **Blueprint:** v0.1 · 26 November 2026  
 **Status:** Detailed production plan; source, asset and rig gates remain open  
 **Timing authority:** Creator-designated Narrative Pacing & Dramatic Structure Analysis, with 15:14.84 runtime and nine phase timings supplied on 2026-11-26  
