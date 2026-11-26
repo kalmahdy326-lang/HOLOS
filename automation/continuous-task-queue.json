@@ -42,9 +42,9 @@
       "active_branch": "production/ffprobe-stream-acceptance-2026-11-18",
       "last_attempt_commit": "452884061e08df41dc4c8ffab326bdd29f903ae4",
       "last_attempt_workflows": [
-        "pending"
+        "45751169627"
       ],
-      "note": "\n\nRun 015 (2026-11-25): PR #27 now rejects non-finite container/video/audio timing values and validates expected dimensions, frame rate, duration, and tolerances before comparisons. Malformed stream arrays/entries and non-numeric dimensions return explicit validation errors instead of escaping as exceptions. Added regressions for infinite container duration, NaN video duration when audio is optional, NaN audio start time, malformed stream entries/dimensions, and non-finite expected duration. Commit 452884061e08df41dc4c8ffab326bdd29f903ae4. Repository tests remain unverified: latest PR workflow #45540642162 jobs had runner_id=0, runner_name empty, and zero steps; job logs returned 404 BlobNotFound. Do not mark complete until focused media and full Python/Godot checks execute."
+      "note": "\n\nRun 015 (2026-11-25): PR #27 now rejects non-finite container/video/audio timing values and validates expected dimensions, frame rate, duration, and tolerances before comparisons. Malformed stream arrays/entries and non-numeric dimensions return explicit validation errors instead of escaping as exceptions. Added regressions for infinite container duration, NaN video duration when audio is optional, NaN audio start time, malformed stream entries/dimensions, and non-finite expected duration. Commit 452884061e08df41dc4c8ffab326bdd29f903ae4. Repository tests remain unverified: latest PR workflow #45540642162 jobs had runner_id=0, runner_name empty, and zero steps; job logs returned 404 BlobNotFound. Do not mark complete until focused media and full Python/Godot checks execute.\n\nPost-change workflow verification: PR #27 run #45751169627 (jobs #139679028156 and #139679028440) and PR #28 ledger/queue run #45751240227 (jobs #139679258597 and #139679259001) all had runner_id=0, empty runner_name, zero steps, and two-to-three-second completion. Step lookup returned empty arrays; logs returned 404 BlobNotFound. No media/Python/Godot tests ran."
     },
     {
       "id": "ANIM-QUEUE-003",
@@ -158,13 +158,14 @@
   ],
   "last_operational_blocker": {
     "date": "2026-11-25",
-    "summary": "Latest animation jobs were created but never assigned a runner: runner_id=0, runner_name empty, zero steps, and completion within two seconds; log downloads returned 404 BlobNotFound.",
+    "summary": "Latest animation PR jobs #45751169627 and #45751240227 were created but never assigned a runner: runner_id=0, empty runner_name, zero steps, and two-to-three-second completion; logs returned 404 BlobNotFound.",
     "evidence": [
+      "45751169627",
+      "45751240227",
       "45742961551",
-      "45540642162",
-      "45539921611"
+      "45540642162"
     ],
     "status": "unresolved",
-    "note": "The job records establish that no runner executed the jobs. They do not identify the cause (for example, repository/account billing, Actions service, or runner provisioning). No repository test pass or code-level failure is inferred."
+    "note": "The job records establish that no runner executed these jobs. They do not identify the account, service, or provisioning cause. No repository test pass or code-level failure is inferred."
   }
 }
