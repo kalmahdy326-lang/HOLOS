@@ -3007,10 +3007,10 @@
     }
   ],
   "panel_shot_mapping_policy": {
-    "canonical_storyboard_total_panels": 68,
+    "canonical_storyboard_total_panels": 65,
     "main_story_panels": 62,
-    "post_credit_panels": 6,
-    "note": "The canonical storyboard contains 62 main-story panels and 3 post-credit panels. This feed also contains 65 proposed production-shot IDs in the main program. The counts are distinct sets and have not been mapped one-to-one or many-to-one. Some storyboard panels may be expanded into multiple production shots, but that must be justified and reviewed. Do not infer equivalence from equal totals.",
+    "post_credit_panels": 3,
+    "note": "The canonical storyboard contains 62 main-story panels and 3 post-credit panels (65 unique panel IDs). This feed also contains 65 proposed production-shot IDs in the main program. The counts refer to distinct sets and have not been mapped one-to-one or many-to-one. Some storyboard panels may be expanded into multiple production shots, but that must be justified and reviewed. Do not infer equivalence from equal totals.",
     "production_shot_plan_count": 65,
     "production_shot_plan_scope": "All 65 proposed EP01_P... shot entries are provisionally assigned to the 15:14.84 main-program schedule. They are a new production-shot breakdown, not the canonical storyboard panel IDs.",
     "production_shot_to_panel_mapping_status": "not_reconciled"
