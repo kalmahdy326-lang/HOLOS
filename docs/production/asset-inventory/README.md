@@ -78,13 +78,13 @@ The following concept images were found and visually inspected:
 | Asset | Size | Visible subject | Continuity / use note |
 |---|---:|---|---|
 | `Orbit Research Control Room.png` | 2,199,216 bytes | ORBIT control room with Region A/B/C panels and temporal alignment | Useful station/interface design reference; screen data remains placeholder-like |
-| `HOLOS: Lunar Mystery Concept Board.png` | 2,900,359 bytes | Lunar research station, Khaled, Kevin, Scott, ORBIT and a face-like Moon concept | Exploratory only: shows Scott the Wizard, Kevin age 25, a physical ORBIT orb and a personified Moon; several details conflict with current working bible/reference sheets |
+| `HOLOS: Lunar Mystery Concept Board.png` | 2,900,359 bytes | Lunar research station, Khaled, Kevin, Scott, ORBIT and a face-like Moon concept | Exploratory: the spherical ORBIT design aligns with the opening; Scott, Kevin age 25 and personified-Moon elements still require review |
 | `Holos: The Lunar Interface.png` | 2,800,327 bytes | Poster-style lunar key art with Khaled and Kevin | Key-art concept, not a model sheet or approved shot reference |
 | `HOLOS: The Moon Has Anger Issues.png` | 2,656,633 bytes | Episode-title poster with Khaled, Kevin and Moon imagery | Key-art concept; not evidence of an approved opening frame |
 | `HOLOS Futuristic City Reference Board.png` | 2,321,661 bytes | City, transit, vehicles, buildings and branding | Wider-world concept; the located Episode 1 screenplay is set at the lunar research station, so city use in Episode 1 needs script support |
 | `Khaled’s Cozy Futuristic Apartment.png` | 2,219,876 bytes | Warm apartment interior with city view | Optional environment concept; no located screenplay evidence makes it an Episode 1 set |
 | `Cosmic HOLOS Ensemble Poster.png` | 2,731,947 bytes | Space/lunar ensemble poster with a face-like Moon and orb-like AI imagery | Exploratory poster; not canonical character/interface authority |
-| `HOLOS: Orbital Echoes.png` | 3,313,896 bytes | Khaled/Kevin expression collage, orb-like ORBIT and face-like Moon | Potential character-expression reference, but it conflicts with the non-humanoid ORBIT interface rule; use only after reconciliation |
+| `HOLOS: Orbital Echoes.png` | 3,313,896 bytes | Khaled/Kevin expression collage, orb-like ORBIT and face-like Moon | Spherical ORBIT depiction aligns with the opening; face-like Moon imagery remains exploratory |
 | `HOLOS: Cosmic Reality Unveiled.png` | 2,872,208 bytes | Cosmic poster artwork | General key art; not episode continuity evidence |
 
 The visual material suggests a cinematic science-fiction world with dark lunar environments, blue/cyan interface lighting and stylized, expressive character artwork. The final animation medium, rendering method, material treatment, linework and color tokens are **not yet locked by this inventory**.
@@ -92,7 +92,7 @@ The visual material suggests a cinematic science-fiction world with dark lunar e
 ### Continuity conflicts to resolve
 
 - Some concept art labels Kevin as age 25, while the paired character sheets label him as age 23.
-- Some concept boards depict ORBIT as a physical floating orb; the working series bible describes ORBIT as a non-humanoid station AI/system voice.
+- The opening establishes ORBIT visually as a small white spherical robot with blue glowing eyes and a smile. The earlier series-bible description of ORBIT as a station AI/system voice should be reconciled as its system role, not treated as a prohibition on the visible robotic embodiment.
 - Some concept boards depict the Moon as a face or humanoid presence; the working series bible preserves the Moon's identity and origin as unresolved.
 - Scott the Wizard appears in one concept board but is not established as a principal character in the current working bible.
 - Poster clothing and styling vary from the paired turnaround sheets.
@@ -227,3 +227,22 @@ The project owner confirms that the local production workspace already contains 
 - `HOLOS Cartoon/`, containing copies of the core sheets, concept boards, screenplay and supporting research packages
 
 This owner-supplied correction supersedes any earlier wording in this inventory that said the opening MP4 or `HOLOS Cartoon/` was missing. The separate Library search did not find these local-workspace paths; that is a scope limitation, not evidence that the assets do not exist. No local originals have been moved or altered. Exact local file enumeration, metadata and checksums remain to be imported into the manifest.
+
+
+## Creator direction incorporated — opening-based visual identity (2026-11-26)
+
+The creator has clarified that the existing 12-second opening is present in the local project workspace and is the primary visual authority for this creative baseline. The opening establishes:
+
+- Khaled as a young-looking man with dark curly hair and freckles, wearing a scarf and earth-toned clothing.
+- Kevin as a red-haired companion in dark tactical/science-fiction clothing.
+- ORBIT as a small white spherical robot with glowing blue eyes and a smile.
+- The Moon as a cracked, dual-toned lunar image.
+- A cinematic, high-production science-fiction tone with a serious yet adventurous feeling.
+
+This corrects the earlier inventory interpretation that treated ORBIT's spherical form as inconsistent with the project. ORBIT remains the station AI/assistant in story function; the opening gives that character a visible spherical robotic embodiment. Station interfaces may coexist with that embodiment.
+
+The Moon's cracked dual-tone appearance is an opening visual motif. Personified or face-like interpretations elsewhere remain exploratory unless separately approved.
+
+The exact local opening file is owner-reported as `HOLOS_EP1_Opening_Final.mp4` at approximately 18 MB. Its local checksum, FFprobe metadata and shot-by-shot content still require direct local verification. No claim is made here that the MP4 has been independently opened in this session.
+
+The opening-aligned creative brief is now recorded separately as [HOLOS_CREATIVE_BRIEF_v0.2.md](../creative-brief/HOLOS_CREATIVE_BRIEF_v0.2.md).
