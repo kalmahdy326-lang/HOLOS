@@ -1,0 +1,19 @@
+{
+  "record_type": "AUDIO_TEST_SOURCE_INTAKE",
+  "project": "HOLOS",
+  "source_filename": "holos_animation_test_audio_15s.wav",
+  "repository_path": "production/audio/milestone_5_1_animation_test_audio_15s.wav",
+  "user_identified_role": "15-second animation/test audio; not identified as the full episode master",
+  "intake_status": "SOURCE_RECEIVED; CONTENT/TRANSCRIPT/APPROVAL NOT INDEPENDENTLY VERIFIED",
+  "sha256": "1c352af5c428e01fb6205071127c27b85e0f259bc6506d181cd47a864095e1da",
+  "size_bytes": 2880078,
+  "audio_stream_observed": {
+    "codec": "PCM signed 16-bit little-endian",
+    "sample_rate_hz": 48000,
+    "channels": 2,
+    "duration_seconds": 15.0
+  },
+  "metadata_tool": "FFprobe local inspection; source bytes preserved without transcoding",
+  "related_user_supplied_report": "docs/source_archive/HOLOS_Milestone_5.1_audio_discrepancy_analysis.user-supplied.md",
+  "provenance_limit": "The report references /home/ubuntu/output/holos_animation_test_audio_15s.wav, which is not present in this environment. Matching filename/format/duration do not establish that the report analyzed these exact bytes."
+}

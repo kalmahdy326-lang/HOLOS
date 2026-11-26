@@ -1,0 +1,22 @@
+{
+  "record_type": "VISUAL_REFERENCE_INTAKE",
+  "project": "HOLOS",
+  "source_filename": "file_00000000dabc8212b089b7db617eb558.png",
+  "repository_path": "production/character_references/episode1_key_art_reference.png",
+  "user_identified_role": "Official HOLOS series-wide visual style guide; Episode 1 key-art image",
+  "intake_status": "USER_APPROVED_AS_OFFICIAL_SERIES_WIDE_VISUAL_STYLE_GUIDE",
+  "approval_record": {
+    "approval_source": "Explicit user instruction in this conversation",
+    "approval_date": "2026-11-16",
+    "approval_scope": "Official series-wide visual style guide"
+  },
+  "sha256": "ea065d17db8e3e16bb6dc07615641865ce8508e1b94cc7ecb4bc6c05daf31ab8",
+  "size_bytes": 2654633,
+  "attachment_dimensions_px": {
+    "width": 1086,
+    "height": 1448
+  },
+  "visual_content_as_shown": "HOLOS Episode 1 title with Khaled in beige on the left and red-haired Kevin on the right, in a lunar/cosmic setting.",
+  "handling": "Copied byte-for-byte; no transform, render, or pixel reinspection performed.",
+  "approval_boundary": "Approval establishes this image as the official series-wide visual style guide. It does not by itself approve a final release poster/cover, editable official-logo master, title-card master, or distribution/rights use of the image."
+}

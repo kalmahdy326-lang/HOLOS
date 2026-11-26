@@ -1,7 +1,7 @@
 # HOLOS Episode 1 — Production Asset Intake
 
 **Owner / project author:** Khaled AL-MAHDY  
-**Status:** Intake specification — source assets have not yet been received or validated.  
+**Status:** Intake specification — selected source assets have been received; the complete production package has not been validated.
 **Rule:** Preserve originals. Do not create substitute character rigs, voice tracks, screenplay pages, environments, or approval records.
 
 This checklist separates verified repository materials from the source package required to produce the episode.
@@ -13,7 +13,11 @@ This checklist separates verified repository materials from the source package r
 - [x] Approved four-turn transcript is embedded in the timeline documents.
 - [x] Source MP3 SHA-256 is recorded as `e4b13c06a6c3fbca9449cffb9135d7259b62e059a3c2d1fa37085afae65b865f`.
 - [x] Reusable title/credits bookend scene and generic renderer infrastructure exist.
-- [ ] Production WAV bytes and one authoritative review-WAV variant are not present in the repository.
+- [x] User-supplied theme-song source is present at [`production/audio/holos_theme_song_source.m4a`](../production/audio/holos_theme_song_source.m4a); its local metadata and SHA-256 are recorded in the companion manifest. Creative approval, rights/credits, and final placement/mix remain unverified.
+- [x] User-supplied 15-second animation-test WAV and Milestone 5.1 discrepancy report are present at [`production/audio/milestone_5_1_animation_test_audio_15s.wav`](../production/audio/milestone_5_1_animation_test_audio_15s.wav) and [`docs/source_archive/HOLOS_Milestone_5.1_audio_discrepancy_analysis.user-supplied.md`](source_archive/HOLOS_Milestone_5.1_audio_discrepancy_analysis.user-supplied.md). The report describes an extra opening “But” and a truncated fourth turn, but its cited original file path is unavailable, so byte identity to the uploaded WAV is not established.
+- [x] User-supplied Episode 1 key art is explicitly approved as the official series-wide visual style guide; the image is at [`production/character_references/episode1_key_art_reference.png`](../production/character_references/episode1_key_art_reference.png), with provenance and approval recorded in the companion manifest. Separate final-poster, editable-logo-master, title-card, and distribution/rights approval remain unspecified.
+- [x] User-supplied [Expression Sheet 1.1](../production/character_references/holos_expression_sheet_1_1.webp) and its review manifest are preserved. The user confirmed that the two “Surprised” portraits under Kevin (A) depict Khaled (B); map them to Khaled. Keep the supplied image unchanged, and relabel/reposition the portraits in any animation-ready derivative.
+- [ ] Full production dialogue-master WAV bytes and one authoritative review-WAV variant are not present in the repository.
 - [ ] Original Khaled and Kevin production rigs/scenes and dependencies are not present in the inspected repository tree.
 - [x] A 25-page consolidated screenplay text extraction and a 65-shot draft body breakdown are present on PR #8; the extraction explicitly says it has not been compared verbatim with the original DOCX.
 - [ ] Canonical screenplay approval, original-DOCX reconciliation, and a locked shot list with authoritative timing remain outstanding.
@@ -39,6 +43,8 @@ This checklist separates verified repository materials from the source package r
 - [ ] Selected four-turn review WAV with full SHA-256 and extraction command.
 - [ ] Confirmation whether the Manus WAV (`4b8c1d78ac6ca233f9ae2ba3f31566baaa75a83802eac8257ba7cba48cd76730`) or Codex WAV (`e9d8a3a88f310b1558a884fcec87f8cf16741019ddbcede2a2db2cc2db74194f`) is authoritative, or supply a new canonical export.
 - [ ] Separate music, ambience, and effects stems if they exist; identify approved versions and rights.
+
+The received 15-second WAV is test material, not a verified complete four-turn source or the full-episode production master. Its metadata/hash are recorded separately; the discrepancy report’s content observations have not been independently re-established against these exact bytes.
 
 **Acceptance:** one named source audio file is selected by the project owner; its exact bytes are hashed and the timeline timebase/offset is tied to that same file. The two known review WAV variants must remain distinct until this is resolved.
 
