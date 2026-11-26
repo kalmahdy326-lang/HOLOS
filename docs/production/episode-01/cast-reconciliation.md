@@ -1,11 +1,11 @@
 # HOLOS Episode 1 — Cast Reconciliation Register
 
-**Version:** 0.1  
+**Version:** 0.2  
 **Date:** 2026-11-26  
-**Authority:** Creator-confirmed project record  
-**Status:** Working continuity control; not a screenplay revision.
+**Authority:** Creator-confirmed project record plus screenplay-extraction evidence  
+**Status:** Working continuity control; not a screenplay revision. One identity interpretation is strongly supported but remains subject to explicit creator confirmation.
 
-| Name | Current status | Episode 1 speaking role | Placement | Required control |
+| Name / reference | Current status | Episode 1 speaking role | Placement | Required control |
 |---|---|---|---|---|
 | Khaled | Established identity; Character B | Yes | Defined by screenplay/storyboard | Preserve approved visual mapping and dialogue provenance. |
 | Kevin | Established identity; Character A | Yes | Defined by screenplay/storyboard | Preserve approved visual mapping and dialogue provenance. |
@@ -13,11 +13,28 @@
 | The Moon | Unidentified speaking presence | Yes | Episode 1 mystery | Do not assign origin, consciousness or humanoid form as fact. |
 | Unknown Voice | Distinct, unresolved voice | Yes | Fourth-signal ending/post-credit | Keep distinct from ORBIT and The Moon unless author decides otherwise. |
 | Scott | **Approved canon character asset** | **No Episode 1 speaking role established** | **Placement pending** | Preserve approved reference; do not assign scene, shot, Character A/B mapping, dialogue or cameo until creator assigns placement. |
-| Dr. Elmahdi | **Reference-only mention; identity unresolved** | **None established** | **Referenced absence only** | Do not create a character profile, map to Khaled/Character A/B, add dialogue or visual design until creator confirms identity and final name. |
+| Dr. AL-MAHDY / “Dr. Elmahdi” | **Likely reference to Khaled (Character B); identity interpretation pending creator confirmation** | No separate role established | Off-screen absence/reference in Scene 4 | Do not create a third character, new design or extra speaking role. Preserve the exact screenplay dialogue spelling “Dr. AL-MAHDY”; treat “Dr. Elmahdi” as a secondary-source variant pending creator decision. |
+
+## Evidence and interpretation: Dr. AL-MAHDY
+
+The consolidated screenplay extraction's Scene 4 exchange provides direct contextual evidence:
+
+> KEVIN: “Orbit, where is Khaled?”  
+> ORBIT: “Dr. AL-MAHDY is conducting an independent calibration.”
+
+Source: `docs/source_archive/2026-11-episode-1-the-moon-has-anger-issues-screenplay.extracted.md`, Scene 4, repository extraction around lines 616–620 (page 11–12 of the 25-page extraction).
+
+Because ORBIT's answer immediately responds to Kevin asking where Khaled is, the leading interpretation is that “Dr. AL-MAHDY” is Khaled, Character B, referred to by title and surname while off-screen. The screenplay cover and creator credit also spell the project author's name “Khaled AL-MAHDY.” The secondary form “Dr. Elmahdi” is not the spelling used in this Scene 4 screenplay exchange.
+
+**Confidence/status:** Strong contextual inference, not yet an explicit creator-approved canon lock. This evidence does not by itself decide whether “Dr.” is Khaled's formal in-story title, whether “Elmahdi” is an intentional spelling variant, or which public-facing capitalization/hyphenation should be used.
 
 ## Reconciliation rules
 
-1. Scott's approved asset status does not place Scott in Episode 1. This is an asset-continuity fact, not a cast expansion.
-2. The five established Episode 1 speaking/story identities remain Khaled, Kevin, ORBIT, The Moon and the Unknown Voice.
-3. Dr. Elmahdi is not promoted to a character based solely on an absent-person reference. The spelling is retained exactly as supplied pending confirmation.
-4. Any later decision must be recorded as a creator-approved change, with downstream shot, dialogue, design and asset effects documented.
+1. **Working assumption:** For planning and continuity purposes only, interpret the Scene 4 reference “Dr. AL-MAHDY” as Khaled (Character B). Do not create a third researcher.
+2. Keep the screenplay line verbatim in any screenplay-derived dialogue extraction unless the authoritative screenplay revision and creator-approved edit expressly change it.
+3. Use **Khaled / Character B** for character, rig, model, scene-cast and shot-cast labels. Do not create a separate “Dr. Elmahdi” rig, asset folder or speaker ID.
+4. Keep “Dr. Elmahdi” recorded as a secondary-source spelling/reference variant; do not silently rewrite it into the screenplay text.
+5. The creator decision remains open only for the formal in-story title/name treatment and whether the secondary spelling “Elmahdi” should be retired from all secondary notes.
+6. Scott's approved asset status does not place Scott in Episode 1. No Episode 1 speaking role is established.
+7. The five established Episode 1 speaking/story identities remain Khaled, Kevin, ORBIT, The Moon and the Unknown Voice.
+8. Any final naming decision must be recorded as a creator-approved change, with downstream script, subtitle, UI and metadata effects documented.
