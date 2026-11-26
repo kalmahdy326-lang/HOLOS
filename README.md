@@ -234,3 +234,12 @@ The separation keeps scientific dependencies and evidentiary claims independent 
 The research programme's governing rule is: “We are not trying to make our theory right. We are trying to find out what is right.” No finite-dimensional quantum-information result is to be presented as a derivation of gravity or spacetime without a separate, independently reviewed bridge.
 
 The production repository's current implementation status and offline acceptance requirements remain in [Milestone 6 — Local Production Engine](docs/milestone-6-local-production-engine.md). The actual Khaled/Kevin source rigs and disconnected-network acceptance test remain unverified in this repository.
+
+
+12. Optional Mistral Project Chat
+
+The repository includes an optional local chat application at `apps/mistral-chat`. It uses the official Mistral TypeScript SDK with `mistral-small-latest`.
+
+This is a development assistant only. It is not required by the local animation/rendering pipeline and does not change the project's local-first production requirement.
+
+See [apps/mistral-chat/README.md](apps/mistral-chat/README.md) for installation, local API-key setup, security notes, and run commands. The API key remains server-side in the app's ignored `.env` file.
