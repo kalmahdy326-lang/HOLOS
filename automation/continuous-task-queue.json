@@ -26,7 +26,7 @@
     {
       "id": "ANIM-QUEUE-002",
       "priority": 1,
-      "status": "queued",
+      "status": "in_review",
       "title": "Strengthen FFprobe-based final media acceptance",
       "prerequisites": [
         "Inspect tests/test_media.py",
@@ -37,7 +37,14 @@
         "Reject missing, truncated, or mismatched duration outputs",
         "Preserve source media",
         "Record exact validation evidence"
-      ]
+      ],
+      "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/27",
+      "active_branch": "production/ffprobe-stream-acceptance-2026-11-18",
+      "last_attempt_commit": "452884061e08df41dc4c8ffab326bdd29f903ae4",
+      "last_attempt_workflows": [
+        "pending"
+      ],
+      "note": "\n\nRun 015 (2026-11-25): PR #27 now rejects non-finite container/video/audio timing values and validates expected dimensions, frame rate, duration, and tolerances before comparisons. Malformed stream arrays/entries and non-numeric dimensions return explicit validation errors instead of escaping as exceptions. Added regressions for infinite container duration, NaN video duration when audio is optional, NaN audio start time, malformed stream entries/dimensions, and non-finite expected duration. Commit 452884061e08df41dc4c8ffab326bdd29f903ae4. Repository tests remain unverified: latest PR workflow #45540642162 jobs had runner_id=0, runner_name empty, and zero steps; job logs returned 404 BlobNotFound. Do not mark complete until focused media and full Python/Godot checks execute."
     },
     {
       "id": "ANIM-QUEUE-003",
@@ -150,16 +157,14 @@
     }
   ],
   "last_operational_blocker": {
-    "date": "2026-11-24",
-    "summary": "Latest animation PR run #45539921611 and scheduled run #45523545347 failed without executable step summaries; job-step lookup returned an empty list and job-log retrieval returned 404 BlobNotFound.",
+    "date": "2026-11-25",
+    "summary": "Latest animation jobs were created but never assigned a runner: runner_id=0, runner_name empty, zero steps, and completion within two seconds; log downloads returned 404 BlobNotFound.",
     "evidence": [
-      "45539921611",
-      "45523545347",
-      "45325241288"
+      "45742961551",
+      "45540642162",
+      "45539921611"
     ],
     "status": "unresolved",
-    "note": "No repository test failure or pass is inferred. The precise GitHub Actions runner/service cause remains unknown.",
-    "latest_code_commit": "071aba42481d0369feeaec11e38eba191e74e837",
-    "latest_run": "45539921611"
+    "note": "The job records establish that no runner executed the jobs. They do not identify the cause (for example, repository/account billing, Actions service, or runner provisioning). No repository test pass or code-level failure is inferred."
   }
 }
