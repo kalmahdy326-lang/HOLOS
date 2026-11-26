@@ -1946,7 +1946,7 @@
     "Episode 1 sound-design cue sheet is creator-confirmed to exist but has not yet been located in the connected Library/repository; exact path and version required.",
     "Per-panel in/out timecodes and frame ranges remain unallocated; phase assignment alone does not establish panel duration.",
     "Scott is a creator-confirmed approved character asset; Episode 1 placement is pending and no speaking role is established.",
-    "Dr. AL-MAHDY is strongly indicated by Scene 4 context to refer to Khaled (Character B); creator confirmation of formal title/spelling treatment remains open. Do not create a third character."
+    "Dr. AL-MAHDY is the creator-corrected spelling. Scene 4 context strongly identifies the reference as Khaled (Character B); do not create a third character. Preserve the screenplay's title wording."
   ],
   "timing_layer": {
     "authority": "Episode 1 Pacing Analysis",
@@ -3028,13 +3028,14 @@
       "placement": "pending",
       "restriction": "Do not place in episode scenes/shots or create dialogue until creator assigns placement."
     },
-    "Dr. AL-MAHDY / Dr. Elmahdi": {
-      "leading_interpretation": "likely Khaled, Character B",
+    "Dr. AL-MAHDY": {
+      "leading_interpretation": "Khaled, Character B",
       "evidence": "In Scene 4 of the consolidated screenplay extraction, Kevin asks ORBIT where Khaled is; ORBIT replies that Dr. AL-MAHDY is conducting an independent calibration.",
       "evidence_source": "docs/source_archive/2026-11-episode-1-the-moon-has-anger-issues-screenplay.extracted.md, Scene 4",
-      "confidence_status": "strong contextual inference; creator confirmation pending",
-      "production_handling": "Use Khaled / Character B for scene, cast, rig and model labels; do not create a third character; preserve exact screenplay dialogue wording.",
-      "unresolved": "Whether Dr. is a formal in-story title and whether the secondary spelling Elmahdi should be retired."
+      "spelling": "AL-MAHDY (creator-corrected and confirmed)",
+      "secondary_source_error": "Elmahdi is a spelling error, not an alternate spelling or separate identity.",
+      "production_handling": "Use Khaled / Character B for scene, cast, rig and model labels; preserve the exact screenplay dialogue wording; do not create a third character.",
+      "remaining_note": "The screenplay uses the title Dr.; do not infer additional biography or credentials."
     }
   }
 }
