@@ -4,12 +4,12 @@
 **Episode focus:** Episode 1 — *The Moon Has Anger Issues*  
 **Project author:** Khaled AL-MAHDY  
 **Inventory date:** 2026-11-26  
-**Record version:** 0.1  
-**Status:** Read-only discovery pass; proposed organization only
+**Record version:** 0.2  
+**Status:** Owner-corrected inventory; local additions confirmed by project owner on 2026-11-26
 
 ## Purpose and scope
 
-This record identifies HOLOS animation materials located in the accessible ChatGPT Project Library and the connected `kalmahdy326-lang/HOLOS` GitHub repository on 2026-11-26. It is an initial inventory, not a statement that every external drive, local workstation, cloud folder, or older conversation attachment has been exhaustively recovered.
+This record combines materials located in the accessible Project Library and connected `kalmahdy326-lang/HOLOS` repository with a corrective inventory supplied by the project owner for the separate local project workspace. Local additions are owner-confirmed; their exact byte sizes, local SHA-256 values and video stream metadata have not been independently queried from that workstation in this session.
 
 **No original assets were moved, renamed, overwritten, deleted, or copied into this repository during this pass.** The source artwork, screenplay DOCX and audio masters remain in their existing Library locations. Large binary assets are referenced by source name/path and metadata; they are not committed to Git by this inventory.
 
@@ -25,8 +25,8 @@ The folder `/HOLOS` was visible in the Library root, and several assets were fou
 | HOLOS theme | Two M4A files are byte-identical | Duplicate source copies verified |
 | Theme text | A short lyric-like text file exists | Relationship to final audio unverified |
 | Test audio | 15-second test WAV found | Test only; not approved final |
-| Episode 1 opening MP4 | Not located in the accessible Library video listing | Missing / request source |
-| “HOLOS Cartoon” folder | No separately named folder found in the accessible root listing | Location unresolved |
+| Episode 1 opening MP4 | `HOLOS_EP1_Opening_Final.mp4` (~18 MB) confirmed in local workspace | Present locally; metadata and visual inspection pending |
+| `HOLOS Cartoon/` folder | Owner confirms local folder containing core sheets, concept boards, screenplay and supporting research packages | Present locally; enumerate exact files and hashes |
 | Storyboard | 65-panel storyboard is referenced by project records and GitHub Issue #11 | Actual panel source not inventoried here |
 | Original Godot character rigs | Current production repository does not contain Khaled/Kevin source rig scenes | Recovery / integration blocked |
 | Production engine | Python/Godot/FFmpeg pipeline code and documentation are in GitHub | Available; actual character-rig acceptance remains open |
@@ -38,7 +38,7 @@ The folder `/HOLOS` was visible in the Library root, and several assets were fou
 - **Library source:** `/HOLOS/HOLOS_Episode_1_The_Moon_Has_Anger_Issues_Complete_Screenplay.docx`
 - **Library metadata:** DOCX, 48,709 bytes, located in the Library on 2026-11-06.
 - **GitHub text record:** [Consolidated screenplay extraction](https://github.com/kalmahdy326-lang/HOLOS/blob/main/docs/source_archive/2026-11-episode-1-the-moon-has-anger-issues-screenplay.extracted.md).
-- **Important provenance limitation:** The extraction itself says that the full 957-line local attachment was not available for verbatim comparison and labels the result a consolidated chat-derived screenplay, not a certified recovery of the original DOCX. The original DOCX is present in Library metadata, but raw-byte materialization was not authorized in this pass; its comments, tracked changes, exact revision state and binary checksum have not been inspected here.
+- **Important provenance limitation:** The extraction itself says that the full 957-line local attachment was not available for verbatim comparison and labels the result a consolidated chat-derived screenplay, not a certified recovery of the original DOCX. The full original DOCX is also owner-confirmed present in the local workspace. The Library metadata records a 48,709-byte copy. Local comments, tracked changes, revision state and checksum still need direct inspection.
 - **Action:** Preserve the original DOCX unchanged. Establish the authoritative revision and compare it against the GitHub extraction before declaring the text extraction canonical.
 
 ### Series bible
@@ -59,7 +59,7 @@ Two generated documents created on 2026-11-26 are also in the Library:
 
 ## 2. Character reference artwork
 
-Three paired Khaled/Kevin model-sheet variants were found under the Library `/HOLOS` folder and visually inspected:
+Three paired Khaled/Kevin model-sheet variants were found in the Library and visually inspected; the owner additionally confirms local copies in `HOLOS Cartoon/`. A fourth reference/profile image, `Three-Part Character Profiles.png`, is also present locally:
 
 | Asset | Size | Visible content | Initial assessment |
 |---|---:|---|---|
@@ -108,11 +108,11 @@ Two Library files were located:
 - `HOLOS theme.m4a` — 1,307,950 bytes
 - `HOLOS theme(1).m4a` — 1,307,950 bytes
 
-Both were materialized for read-only inspection and found to have the same SHA-256:
+Both Library copies were materialized for read-only inspection and found to have the same SHA-256:
 
 `aee4733881850f4a3a83be5ae6b69c94cdbbbebc4467916ad3aeec5b3e3bd09e`
 
-FFprobe reports a 209-second AAC audio stream, 48 kHz, stereo, in an M4A/MP4-family container. The files are byte-for-byte identical. This is a duplicate-copy relationship, not evidence of two alternate mixes.
+FFprobe reports a 209-second AAC audio stream, 48 kHz, stereo, in an M4A/MP4-family container. The two Library files are byte-for-byte identical. The owner also confirms a local `HOLOS theme.m4a` with its SHA-256 verified; compare the local digest to the recorded value before declaring it the same binary.
 
 **Action:** Keep both Library originals untouched. In the production manifest, designate one logical canonical source and mark the other as a duplicate alias only after creator confirmation of the preferred filename.
 
@@ -131,7 +131,7 @@ The accessible Library video listing returned only:
 - `sample-render-synthetic-test.mp4` — 433,000 bytes, created 2026-10-31.
 - `demo_render.mp4` — 815,023 bytes, created 2026-10-31.
 
-Their names identify them as generic synthetic/demo renders, not the HOLOS Episode 1 opening. **The actual 12-second Episode 1 opening MP4 was not found in the accessible Library video listing.**
+The two listed files are generic synthetic/demo renders, not the HOLOS Episode 1 opening. The owner confirms the opening is present separately in the local workspace as `HOLOS_EP1_Opening_Final.mp4`; it was not in the Library video listing and was not directly probed in this session.
 
 The supplied technical target for the opening remains:
 
@@ -177,11 +177,11 @@ Separate HOLOS research repository: [kalmahdy326-lang/holos-reality](https://git
 
 ## 7. Folder-name and location findings
 
-The Library root listing exposed `/HOLOS`, `/How the World Works`, `/Red Lion` and `/Space`. No separately named `HOLOS Cartoon` folder was visible in the accessible listing or returned by targeted Library search.
+The Library root listing exposed `/HOLOS`, `/How the World Works`, `/Red Lion` and `/Space`. No separately named `HOLOS Cartoon` folder was visible in that Library listing, but the owner confirms a separate local `HOLOS Cartoon/` folder. Its internal tree has not been independently listed here.
 
 The `/HOLOS` Library folder contains the three paired character sheets and the original screenplay DOCX among other material. Some files in that folder (for example, research initialization documents) belong to the separate HOLOS scientific research programme and should not be mixed into the animation asset tree.
 
-**Action:** Ask for the exact drive/path or folder link for the “HOLOS Cartoon” folder if it is stored outside the accessible Project Library. Do not create a replacement folder or move similarly named material as a guess.
+**Action:** Use the existing local `HOLOS Cartoon/` folder as a confirmed source location. Enumerate its exact contents, compare duplicates by checksum, and preserve it unchanged. Do not create a replacement folder or move/rename source files.
 
 ## 8. Recommended disposition
 
@@ -197,13 +197,13 @@ The `/HOLOS` Library folder contains the three paired character sheets and the o
 | Generic MP4 demos | Keep outside the Episode 1 opening deliverable |
 | Generated speculative dossiers | Archive as non-authoritative proposals; do not use as canon |
 | Uninspected ZIP packages | Preserve and inspect only after raw access/transfer is available |
-| Missing opening MP4 | Recover from creator's source location; do not reconstruct and call it original |
+| Opening MP4 `HOLOS_EP1_Opening_Final.mp4` | Owner-confirmed local master/review candidate; verify stream metadata, checksum and visual contents before alteration |
 
 ## 9. Next actions for the inventory stage
 
-1. Locate and inspect the real 12-second opening MP4; record SHA-256, FFprobe metadata and exact shot/timecode observations.
-2. Obtain the precise `HOLOS Cartoon` folder path or share link and enumerate its contents.
-3. Confirm which of the three paired character sheets is the master design reference.
+1. Probe `HOLOS_EP1_Opening_Final.mp4` locally; record SHA-256, FFprobe metadata and shot/timecode observations.
+2. Enumerate `HOLOS Cartoon/` recursively and add exact filenames, paths, sizes and hashes to the manifest.
+3. Confirm which paired character sheet is the master and reconcile `Three-Part Character Profiles.png`.
 4. Recover the actual Godot rigs and their dependencies from the original project or archives.
 5. Reconcile the screenplay DOCX with its GitHub extraction and the 65-panel storyboard.
 6. Confirm the canonical theme filename and the relationship (if any) of `HOLOS theme.txt` to the original M4A.
@@ -212,3 +212,18 @@ The `/HOLOS` Library folder contains the three paired character sheets and the o
 ---
 
 **Inventory boundary:** This document records what was found and inspected. It does not certify asset ownership/licensing, screenplay fidelity, character-rig functionality, storyboard approval, or completion of the opening/full episode.
+
+
+## Owner correction — local workspace (2026-11-26)
+
+The project owner confirms that the local production workspace already contains the following assets that were not visible in the Project Library listing used for the initial pass:
+
+- `HOLOS_Episode_1_The_Moon_Has_Anger_Issues_Complete_Screenplay.docx`
+- `HOLOS_EP1_Opening_Final.mp4` (approximately 18 MB)
+- `HOLOS theme.m4a` (owner reports SHA-256 verified)
+- Three paired character-sheet variants, including the local underscore-named copies
+- `Three-Part Character Profiles.png`
+- Lunar Mystery, Futuristic City, ORBIT Research Control Room, Cosmic Reality Unveiled, The Moon Has Anger Issues, Orbital Echoes and Khaled apartment concept boards
+- `HOLOS Cartoon/`, containing copies of the core sheets, concept boards, screenplay and supporting research packages
+
+This owner-supplied correction supersedes any earlier wording in this inventory that said the opening MP4 or `HOLOS Cartoon/` was missing. The separate Library search did not find these local-workspace paths; that is a scope limitation, not evidence that the assets do not exist. No local originals have been moved or altered. Exact local file enumeration, metadata and checksums remain to be imported into the manifest.
