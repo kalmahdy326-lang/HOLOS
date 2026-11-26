@@ -68,8 +68,12 @@ These are phase-level assignments based on the described panel content and seque
 ## 5. Cast and identity reconciliation
 
 - **Scott:** Creator-confirmed approved canon character asset. Episode 1 scene/shot placement is pending. No Episode 1 speaking role or dialogue is established. Keep Scott out of Episode 1 scene-cast lists and do not invent a cameo or lines. The Series Bible update is recorded on PR #9's `docs/holos-series-bible` branch.
-- **Dr. Elmahdi:** Mentioned as an absent person in the new transcript/analysis record. Identity, final spelling, and relation (if any) to Character A/B remain unresolved. Treat this as a reference-only discrepancy, not an established cast member. Do not map the name to Khaled or Kevin, create a new character profile, add dialogue, or generate a design before creator clarification.
+- **Dr. AL-MAHDY / “Dr. Elmahdi”:** The consolidated screenplay extraction's Scene 4 has Kevin ask ORBIT, “where is Khaled?” and ORBIT reply, “Dr. AL-MAHDY is conducting an independent calibration.” This is strong contextual evidence that the off-screen reference is Khaled (Character B), not a third character. The secondary spelling “Dr. Elmahdi” is not the form used in that screenplay exchange. Use Khaled/Character B for all model, rig and cast labels; preserve the exact screenplay dialogue; do not create a new character or design. Formal title/name treatment and retirement of the secondary spelling remain pending explicit creator confirmation. See `cast-reconciliation.md` v0.2.
 - The five established Episode 1 speaking/story identities remain Khaled, Kevin, ORBIT, The Moon and the Unknown Voice. Scott is an approved asset, not an additional Episode 1 speaking identity.
+
+### Panel IDs versus proposed production-shot IDs
+
+The canonical storyboard contains 62 main-story panels and three post-credit panels (65 unique panel IDs total). The proposed shot list in Blueprint v0.1 contains 65 *new production-shot IDs*, all provisionally assigned within the 15:14.84 main-program timeline. These two sets are not interchangeable. No validated panel-to-shot mapping currently demonstrates how the 62 main-story panels expand into the 65 proposed production shots. The 65-shot schedule remains a planning allocation, not a claim that all 65 canonical storyboard panels are in the main program. Keep the three post-credit panel IDs separate and untimed until approved.
 
 ## 6. Transcript and cue-sheet intake
 
