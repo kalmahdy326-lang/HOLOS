@@ -2,7 +2,7 @@
 
 **Version:** 0.1  
 **Date:** 2026-11-26  
-**Project author:** Khaled AL-MAHDY  
+**Project author:** Khaled al mahdy  
 **Status:** Production-control addendum; phase timing is accepted as the governing timing spine. Per-panel timing and audio binding remain pending.
 
 ## 1. Timing authority
@@ -68,7 +68,7 @@ These are phase-level assignments based on the described panel content and seque
 ## 5. Cast and identity reconciliation
 
 - **Scott:** Creator-confirmed approved canon character asset. Episode 1 scene/shot placement is pending. No Episode 1 speaking role or dialogue is established. Keep Scott out of Episode 1 scene-cast lists and do not invent a cameo or lines. The Series Bible update is recorded on PR #9's `docs/holos-series-bible` branch.
-- **Dr. AL-MAHDY:** The consolidated screenplay extraction's Scene 4 has Kevin ask ORBIT, “where is Khaled?” and ORBIT reply, “Dr. AL-MAHDY is conducting an independent calibration.” The creator has confirmed **AL-MAHDY** as the correct spelling and corrected “Elmahdi” as an error in secondary notes. The question-and-answer strongly indicates this is Khaled (Character B), not a third character. Use Khaled/Character B for all model, rig and cast labels; preserve the exact screenplay dialogue; do not create a new character or design. Keep the screenplay's “Dr.” title without inferring further biography. See `cast-reconciliation.md` v0.2.
+- **Dr. al mahdy:** The creator has confirmed that this reference is Khaled (Character B), not a separate researcher or third character. “Elmahdi” in transcript/secondary reference material is an error. The canonical spelling for new and corrected production records is **al mahdy** (two words, no hyphen). The existing screenplay quotation in the source evidence is retained verbatim and is not the normalized form; preserve source files unchanged. Use Khaled/Character B for all model, rig and cast labels. Keep the screenplay's “Dr.” wording where it appears, without inferring further biography. See the cast reconciliation register v0.3.
 - The five established Episode 1 speaking/story identities remain Khaled, Kevin, ORBIT, The Moon and the Unknown Voice. Scott is an approved asset, not an additional Episode 1 speaking identity.
 
 ### Panel IDs versus proposed production-shot IDs
@@ -90,8 +90,8 @@ Do not infer per-shot timing from phase boundaries alone.
 
 ## 7. Status
 
-**Accepted:** 15:14.84 main-program timing spine; nine phase boundaries; protected listening/headroom requirements; Scott asset status.
+**Accepted:** 15:14.84 main-program timing spine; nine phase boundaries; protected listening/headroom requirements; Scott asset status; creator-confirmed Dr. al mahdy / Khaled (Character B) identity and surname spelling.
 
 **Provisional:** panel-to-phase assignments; 24 fps full-episode frame estimates; panel-to-production-shot correspondence.
 
-**Pending:** exact location/hash of the pacing-analysis source file; transcript and cue-sheet source files; formal in-story title treatment for Dr. AL-MAHDY (Khaled, Character B); per-panel/per-shot in/out timecodes; full-master FFprobe metadata; post-credit duration; final shot/audio binding.
+**Pending:** exact location/hash of the pacing-analysis source file; transcript and cue-sheet source files; per-panel/per-shot in/out timecodes; full-master FFprobe metadata; post-credit duration; final shot/audio binding.
