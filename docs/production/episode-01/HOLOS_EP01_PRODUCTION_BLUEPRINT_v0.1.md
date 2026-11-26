@@ -100,6 +100,9 @@ The companion shot-list CSV contains 65 proposed shots, each with a unique produ
 
 The 65 IDs are not assumed to equal the existing 65 storyboard panel IDs. After the storyboard source is loaded, map original panel IDs/order to these production shots without silently rewriting the original board.
 
+**Panel/shot count clarification (2026-11-26):** The 65 `EP01_P...` entries in this proposed production shot list are *not* the original storyboard panel IDs. The canonical storyboard contains 62 main-story panels plus three separate post-credit panels. The proposed 65-shot schedule currently assigns all 65 production-shot entries to the 15:14.84 main program; it has not yet been mapped one-to-one or many-to-one against the 62 main-story panel IDs. This is not a validated equivalence and must not be described as “65 storyboard panels in the main cut.” Some original panels may require multiple production shots, but that must be demonstrated by the panel-to-shot map and approved animatic, not assumed. The separate three post-credit panel IDs remain outside this main-program schedule. The shot durations in this draft are therefore proposed editorial allocations, not frame-accurate accepted panel durations.
+
+
 ### P01 — Cold open / ordinary world (00:00–00:47)
 1. **EP01_P01_001 (00:00–00:12):** Existing opening master, preserved as one source segment until the MP4 is reviewed.
 2. **EP01_P01_002 (00:12–00:21):** Establish Mare Umbrae lunar colony and station geography.
