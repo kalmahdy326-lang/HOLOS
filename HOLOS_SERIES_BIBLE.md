@@ -80,6 +80,14 @@ Character roles and personalities below are stated in the extracted screenplay a
 
 **Owner-provided cast boundary:** The five established Episode 1 identities are Khaled, Kevin, ORBIT, The Moon, and the Unknown Voice. The external male mid-low singer/narrator described for theme material is outside the in-universe cast and must not be inserted into scene coverage. An unidentified “God” mentioned in a separate audio draft is not confirmed as Episode 1 screenplay cast; keep it separate unless the project author explicitly assigns it to the story.
 
+### Scott — approved character asset; Episode 1 placement pending
+
+**Asset status:** Canon character asset; the creator has confirmed the character asset/reference as approved.
+
+**Episode 1 status:** Scene and shot placement are pending. No Episode 1 speaking role or dialogue is established by the current record.
+
+**Continuity rule:** Preserve the approved Scott reference as supplied. Do not assign Scott to Character A or Character B, add Scott to Episode 1 scene-cast fields, invent dialogue, or stage an appearance until the creator assigns placement. Scott is tracked as an approved asset, not added to the five established Episode 1 speaking/story identities above.
+
 ### Character relationships
 
 The available story establishes a senior/junior working relationship between Khaled and Kevin, with contrasting investigative temperaments, dry banter, and mutual reliance under pressure. The Moon and Unknown Voice create different mysteries; ORBIT provides operational information and literal counterpoint. Further biographies, ages, histories, and season-long relationship arcs have not been supplied and are intentionally left unspecified.
