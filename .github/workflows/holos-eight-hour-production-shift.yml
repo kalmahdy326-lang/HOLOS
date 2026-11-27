@@ -1,0 +1,88 @@
+name: HOLOS bounded eight-hour production shift
+
+on:
+  push:
+    branches:
+      - automation/eight-hour-production-shift-2026-11-18
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: holos-production-shift
+  cancel-in-progress: false
+
+jobs:
+  foundation:
+    name: Foundation tests and source audits (phase 1 of 2)
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Check out HOLOS
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install media and display dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ffmpeg xvfb libgl1-mesa-dri
+
+      - name: Run foundation validation shift
+        run: python tools/holos_shift.py --phase foundation --max-minutes 360
+
+      - name: Upload foundation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: holos-production-shift-foundation-${{ github.run_id }}
+          path: |
+            output/automation-reports/production-shift-${{ github.run_id }}-foundation.json
+            output/reports/shift-${{ github.run_id }}-inventory.json
+            output/reports/shift-${{ github.run_id }}-godot-assets.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  godot:
+    name: Godot 4.7.2 import and offscreen integration (phase 2 of 2)
+    needs: foundation
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out HOLOS
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Godot 4.7.2 and display dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ffmpeg xvfb libgl1-mesa-dri unzip
+          curl --fail --location --retry 10 --retry-all-errors --retry-delay 2 --retry-max-time 180 \
+            https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip \
+            --output "$RUNNER_TEMP/godot.zip"
+          echo "cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4  $RUNNER_TEMP/godot.zip" | sha256sum --check
+          unzip "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot-bin"
+          chmod +x "$RUNNER_TEMP/godot-bin/Godot_v4.7.2-stable_linux.x86_64"
+
+      - name: Run Godot validation shift
+        env:
+          HOLOS_GODOT: ${{ runner.temp }}/godot-bin/Godot_v4.7.2-stable_linux.x86_64
+        run: python tools/holos_shift.py --phase godot --max-minutes 120
+
+      - name: Upload Godot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: holos-production-shift-godot-${{ github.run_id }}
+          path: output/automation-reports/production-shift-${{ github.run_id }}-godot.json
+          if-no-files-found: warn
+          retention-days: 30
