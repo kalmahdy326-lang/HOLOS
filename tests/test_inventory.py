@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from holos_engine.inventory import (
     InventoryError,
@@ -137,6 +138,27 @@ class InventoryTests(unittest.TestCase):
     def test_rejects_inventory_report_outside_reports_directory(self):
         with self.assertRaisesRegex(InventoryError, "under output/reports"):
             write_inventory_report(self.root, Path("README-inventory.json"))
+
+
+    def test_inventory_file_list_and_aggregate_hash_are_reproducible(self):
+        (self.root / "zeta.txt").write_bytes(b"zeta")
+        (self.root / "alpha.txt").write_bytes(b"alpha")
+        first = build_inventory(self.root)
+        second = build_inventory(self.root)
+        self.assertEqual(first["files"], second["files"])
+        self.assertEqual(
+            first["summary"]["inventory_sha256"],
+            second["summary"]["inventory_sha256"],
+        )
+
+    def test_hash_read_failure_marks_inventory_partial(self):
+        (self.root / "unreadable.txt").write_text("source", encoding="utf-8")
+        with patch("holos_engine.inventory._sha256", side_effect=OSError("read denied")):
+            result = build_inventory(self.root)
+        self.assertEqual(result["status"], "partial")
+        self.assertEqual(result["summary"]["error_count"], 1)
+        self.assertEqual(result["errors"][0]["path"], "unreadable.txt")
+        self.assertEqual(result["files"], [])
 
 
 if __name__ == "__main__":

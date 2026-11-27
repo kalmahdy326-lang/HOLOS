@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from holos_engine.backup import (
     BackupError,
@@ -223,6 +224,59 @@ class SourceBackupTests(unittest.TestCase):
                 backup_path=backup_path,
                 destination=existing,
             )
+
+
+    def test_refuses_backup_when_inventory_aggregate_hash_is_tampered(self):
+        inventory_path = self.inventory()
+        data = json.loads(inventory_path.read_text(encoding="utf-8"))
+        data["summary"]["inventory_sha256"] = "0" * 64
+        inventory_path.write_text(json.dumps(data), encoding="utf-8")
+        with self.assertRaisesRegex(BackupError, "aggregate hash does not match"):
+            create_source_backup(
+                project_root=self.root,
+                inventory_path=inventory_path,
+                destination=Path("output/backups/tampered-inventory"),
+            )
+        self.assertFalse((self.root / "output" / "backups").exists())
+
+    def test_preserves_incomplete_backup_record_when_copy_fails(self):
+        inventory_path = self.inventory()
+        destination = Path("output/backups/copy-failure")
+        with patch("holos_engine.backup.shutil.copy2", side_effect=OSError("simulated disk failure")):
+            with self.assertRaisesRegex(BackupError, "partial staging was preserved"):
+                create_source_backup(
+                    project_root=self.root,
+                    inventory_path=inventory_path,
+                    destination=destination,
+                )
+        backups_root = self.root / "output" / "backups"
+        failed = list(backups_root.glob("FAILED-*"))
+        self.assertEqual(len(failed), 1)
+        failure = json.loads(
+            (failed[0] / "backup-failure.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(failure["status"], "incomplete")
+        self.assertIn("simulated disk failure", failure["error"])
+        self.assertFalse((self.root / destination).exists())
+
+    def test_refuses_restore_when_backup_manifest_total_size_is_tampered(self):
+        inventory_path = self.inventory()
+        backup_path, _ = create_source_backup(
+            project_root=self.root,
+            inventory_path=inventory_path,
+            destination=Path("output/backups/tampered-total"),
+        )
+        manifest_path = backup_path / "backup-manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["total_size_bytes"] += 1
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        with self.assertRaisesRegex(BackupError, "total size does not match"):
+            restore_source_backup(
+                project_root=self.root,
+                backup_path=backup_path,
+                destination=Path("output/restores/should-not-exist"),
+            )
+        self.assertFalse((self.root / "output" / "restores").exists())
 
 
 if __name__ == "__main__":
