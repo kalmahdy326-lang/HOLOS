@@ -1,0 +1,8 @@
+start_seconds,end_seconds,section,music_event,visual_direction,notes
+0.00,5.00,cinematic_intro,orchestral_space_opera_fanfare,"Deep space / lunar station establishing shot; slow reveal of Moon and station silhouette","Instrumental only; no dialogue or mouth animation"
+5.00,16.00,verse,hard_cut_to_alternative_rock,"Khaled checks readings; Kevin edges toward the forbidden lever; contrasting character inserts","Khaled controlled; Kevin physically impulsive"
+16.00,22.00,pre_chorus,three_region_hook,"Regions A B and C illuminate in sequence; show 000 and 111 records as a visual motif","Do not imply the missing six states have been observed"
+22.00,34.00,chorus,main_hook,"Fast montage of station geometry, connected observation screens, Khaled reviewing data and Kevin reacting","Title treatment may enter on HOLOS"
+34.00,40.00,instrumental_break,bass_guitar_synth_feature,"Quick visual gag / kinetic station insert; ORBIT diagnostics remain deadpan","ORBIT is an interface/voice, not a humanoid performer"
+40.00,51.00,final_chorus,fourth_signal_build,"Lunar display quiets; a separate fourth signal appears; Khaled and Kevin register anomaly","Fourth signal remains distinct and unexplained"
+51.00,54.00,end_tag,look_between_title_hit,"Cut to geometric relationship motif, then HOLOS title card","Anonymous processed vocal texture; no character lip sync"

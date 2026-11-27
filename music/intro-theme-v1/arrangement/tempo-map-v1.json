@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "project": "HOLOS",
+  "project_author": "Khaled AL-MAHDY",
+  "title": "What's Holding the Whole?",
+  "status": "proposed_not_audio_verified",
+  "time_signature": "4/4",
+  "target_duration_seconds": 54.0,
+  "sections": [
+    {"name": "cinematic_intro", "start_seconds": 0.0, "end_seconds": 5.0, "tempo_bpm": null, "vocal": false},
+    {"name": "verse", "start_seconds": 5.0, "end_seconds": 16.0, "tempo_bpm": 168, "vocal": true},
+    {"name": "pre_chorus", "start_seconds": 16.0, "end_seconds": 22.0, "tempo_bpm": 168, "vocal": true},
+    {"name": "chorus", "start_seconds": 22.0, "end_seconds": 34.0, "tempo_bpm": 168, "vocal": true},
+    {"name": "instrumental_break", "start_seconds": 34.0, "end_seconds": 40.0, "tempo_bpm": 168, "vocal": false},
+    {"name": "final_chorus", "start_seconds": 40.0, "end_seconds": 51.0, "tempo_bpm": 168, "vocal": true},
+    {"name": "end_tag", "start_seconds": 51.0, "end_seconds": 54.0, "tempo_bpm": 168, "vocal": true}
+  ],
+  "notes": [
+    "All timestamps are provisional editorial targets, not measured from a finished audio file.",
+    "The cinematic opening is instrumental and transitions at approximately five seconds.",
+    "Do not use this map as a phoneme or frame-accurate lip-sync source.",
+    "Replace provisional timings with measured timestamps after audio approval."
+  ]
+}
