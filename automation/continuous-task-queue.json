@@ -26,7 +26,7 @@
     {
       "id": "ANIM-QUEUE-002",
       "priority": 1,
-      "status": "queued",
+      "status": "completed",
       "title": "Strengthen FFprobe-based final media acceptance",
       "prerequisites": [
         "Inspect tests/test_media.py",
@@ -37,12 +37,15 @@
         "Reject missing, truncated, or mismatched duration outputs",
         "Preserve source media",
         "Record exact validation evidence"
-      ]
+      ],
+      "completed_in_run": "2026-11-17-run-004",
+      "last_verified_workflow": "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44056793036",
+      "note": "Added fail-closed validation for video-stream duration independently of container duration; any present audio is checked for alignment even when audio is optional; malformed stream metadata is rejected. Latest final PR #21 head d1650a7 passed workflow #225: Python/media suite 67 passed, 3 skipped; Godot offscreen integration 3 passed. CI Godot runtime was 4.4.1; production target remains 4.7.2."
     },
     {
       "id": "ANIM-QUEUE-003",
       "priority": 2,
-      "status": "queued",
+      "status": "completed",
       "title": "Audit source inventory, backup, and non-overwriting restore",
       "prerequisites": [
         "Inspect tests/test_inventory.py and tests/test_backup.py"
@@ -52,7 +55,10 @@
         "Backup integrity is verified",
         "Restore never silently overwrites existing files",
         "Failure paths are tested"
-      ]
+      ],
+      "completed_in_run": "2026-11-17-run-005",
+      "last_verified_workflow": "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44056807525",
+      "note": "Added tests for reproducible inventories, hashing failures, tampered inventory aggregates, failed backup copies, tampered backup size metadata, source-change detection, verified copy hashes, backup corruption, and refusal to overwrite existing backup/restore destinations. Latest final PR #22 head e116dff passed workflow #226: Python/media suite 68 passed, 3 skipped; Godot offscreen integration 3 passed. CI Godot runtime was 4.4.1; production target remains 4.7.2."
     },
     {
       "id": "ANIM-BLOCKED-004",
@@ -67,6 +73,48 @@
         "Real character render and audio synchronization acceptance evidence is captured"
       ],
       "blocker": "Original rig source assets are not present in this GitHub repository"
+    },
+    {
+      "id": "ANIM-QUEUE-005",
+      "priority": 4,
+      "status": "in_review",
+      "title": "Align CI headless Godot validation with production target 4.7.2",
+      "prerequisites": [
+        "Confirm official stable release and binary SHA-256",
+        "Run the generic repository Godot test project under the pinned runtime"
+      ],
+      "acceptance": [
+        "Both pull-request and scheduled workflows use the same pinned Godot 4.7.2 stable Linux x86_64 binary",
+        "Download SHA-256 is verified before extraction",
+        "Headless editor import/script parsing passes",
+        "Offscreen renderer integration tests pass"
+      ],
+      "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/25",
+      "active_branch": "production/godot-4-7-2-ci-2026-11-17",
+      "note": "PR #25 pins the official Godot 4.7.2 stable Linux x86_64 asset and verifies SHA-256 cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4. PR workflow #44236422886 passed: 63 Python/media tests, 3 skipped; Godot 4.7.2 headless import/script parse and 3 offscreen integration tests passed. The scheduled workflow was updated identically but has not run on main because PR #25 is unmerged. Scope remains the generic checked-in test project only.",
+      "last_verified_workflow": "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44236422886"
+    },
+    {
+      "id": "ANIM-QUEUE-006",
+      "priority": 3,
+      "status": "in_review",
+      "title": "Bind backup restore manifest to the original source inventory digest",
+      "prerequisites": [
+        "Reconstruct the inventory's canonical sorted path/hash digest during restore",
+        "Use exactly the same byte delimiters as inventory generation",
+        "Retain the original source files and backup payload"
+      ],
+      "acceptance": [
+        "Restore recomputes the canonical aggregate from manifest paths and hashes",
+        "Tampering with a copied file and updating its per-file hash/size still fails",
+        "Unmodified backup restores successfully",
+        "Existing restore destinations remain non-overwritable",
+        "Python/media and Godot validation pass"
+      ],
+      "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
+      "active_branch": "production/backup-manifest-integrity-2026-11-18",
+      "last_verified_workflow": "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44454126984",
+      "note": "Initial PR run #44264547861 failed three restore tests because restore_source_backup hashed literal backslash-zero/backslash-n bytes while inventory generation hashes actual NUL/newline delimiters. Corrected the restore aggregate to b\"\\0\" and b\"\\n\". Latest PR head d64f985 passed: Python/media 64 passed, 3 skipped; Godot offscreen 3 passed. The check is an integrity-consistency check, not a cryptographic signature."
     }
   ]
 }
