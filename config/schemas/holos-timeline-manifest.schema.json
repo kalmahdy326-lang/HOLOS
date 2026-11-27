@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HOLOS Timeline Builder Manifest (current contract)",
+  "description": "Structural schema for tools/build_holos_full_episode_timeline.py manifest output. The current builder does not emit a manifest schema_version; do not confuse this record with the timeline document's schema_version: 1.",
+  "type": "object",
+  "required": [
+    "source_audio_name",
+    "source_audio_sha256",
+    "alignment_name",
+    "alignment_sha256",
+    "canonical_transcript_name",
+    "canonical_transcript_sha256",
+    "transcript_version",
+    "audio_duration_seconds",
+    "absolute_timeline_name",
+    "absolute_timeline_sha256",
+    "review_wav",
+    "transcript_status",
+    "godot_integration"
+  ],
+  "properties": {
+    "source_audio_name": {"type": "string", "minLength": 1},
+    "source_audio_sha256": {"$ref": "#/$defs/sha256"},
+    "alignment_name": {"type": "string", "minLength": 1},
+    "alignment_sha256": {"$ref": "#/$defs/sha256"},
+    "canonical_transcript_name": {"type": "string", "minLength": 1},
+    "canonical_transcript_sha256": {"$ref": "#/$defs/sha256"},
+    "transcript_version": {"type": "string", "minLength": 1},
+    "audio_duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+    "absolute_timeline_name": {"type": "string", "minLength": 1},
+    "absolute_timeline_sha256": {"$ref": "#/$defs/sha256"},
+    "review_wav": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "required": ["name", "sha256", "format", "offset_seconds", "relative_timeline_name", "relative_timeline_sha256"],
+          "properties": {
+            "name": {"type": "string", "minLength": 1},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "format": {"$ref": "#/$defs/wavFormat"},
+            "offset_seconds": {"type": "number", "minimum": 0},
+            "relative_timeline_name": {"type": "string", "minLength": 1},
+            "relative_timeline_sha256": {"$ref": "#/$defs/sha256"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "transcript_status": {"type": "string", "minLength": 1},
+    "godot_integration": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
+    "wavFormat": {
+      "type": "object",
+      "required": ["channels", "sample_rate_hz", "sample_width_bytes", "frames", "duration_seconds", "compression"],
+      "properties": {
+        "channels": {"type": "integer", "minimum": 1},
+        "sample_rate_hz": {"type": "integer", "minimum": 1},
+        "sample_width_bytes": {"type": "integer", "enum": [2, 3]},
+        "frames": {"type": "integer", "minimum": 1},
+        "duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "compression": {"const": "NONE"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

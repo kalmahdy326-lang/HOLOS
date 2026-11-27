@@ -28,6 +28,31 @@ class EpisodeConfigTests(unittest.TestCase):
     def test_valid_episode(self):
         validate_episode(VALID)
 
+    def test_accepts_background_music_gain_setting(self):
+        data = {**VALID, "audio": {"dialogue": None, "music": None, "music_gain_db": -18}}
+        validate_episode(data)
+
+    def test_accepts_scene_config_object(self):
+        shot = {**VALID["scenes"][0]["shots"][0],
+                "scene_config": {"card_mode": "title", "episode_title": "Episode 1"}}
+        data = {**VALID, "scenes": [{"scene_id": "scene_01", "shots": [shot]}]}
+        validate_episode(data)
+
+    def test_rejects_invalid_scene_config(self):
+        for value in ([], {"": "invalid"}):
+            with self.subTest(value=value):
+                shot = {**VALID["scenes"][0]["shots"][0], "scene_config": value}
+                data = {**VALID, "scenes": [{"scene_id": "scene_01", "shots": [shot]}]}
+                with self.assertRaisesRegex(ConfigError, "scene_config"):
+                    validate_episode(data)
+
+    def test_rejects_out_of_range_music_gain_setting(self):
+        for value in (-61, 1, True):
+            with self.subTest(value=value):
+                data = {**VALID, "audio": {"dialogue": None, "music": None, "music_gain_db": value}}
+                with self.assertRaisesRegex(ConfigError, "music_gain_db"):
+                    validate_episode(data)
+
     def test_rejects_duplicate_shot_ids(self):
         data = {**VALID, "scenes": [dict(VALID["scenes"][0])]}
         data["scenes"][0]["shots"] = [

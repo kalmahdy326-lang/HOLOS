@@ -104,6 +104,7 @@ def _render_configured_shot(
         "debug_overlay": (
             mode == "debug" and bool(render_settings.get("debug_overlay", False))
         ),
+        "scene_config": dict(shot.get("scene_config", {})),
     }
 
     absolute_output = output_dir if output_dir.is_absolute() else root / output_dir
@@ -447,6 +448,7 @@ def main() -> int:
                     output=temporary_output,
                     dialogue=dialogue,
                     music=music,
+                    music_gain_db=float(audio.get("music_gain_db", -18.0)),
                 )
                 metadata = probe_media(temporary_output)
                 validation = validate_media(
@@ -528,6 +530,7 @@ def main() -> int:
                     output=temporary_output,
                     dialogue=dialogue,
                     music=music,
+                    music_gain_db=float(audio.get("music_gain_db", -18.0)),
                 )
                 metadata = probe_media(temporary_output)
                 validation = validate_media(

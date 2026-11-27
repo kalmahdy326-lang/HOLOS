@@ -95,14 +95,25 @@ APPROVED_TURNS = [
 EXPECTED_SPEAKERS = [speaker for speaker, _ in APPROVED_TURNS]
 EXPECTED_TEXT = " ".join(text for _, text in APPROVED_TURNS)
 SUPPORTED_VISEMES = {"rest", "closed", "open", "wide", "round", "teeth"}
-VALID_SPEAKERS = {"KEVIN", "KHALED"}
+# Provisional full cast from the extracted working screenplay. Confirm these
+# IDs against the canonical screenplay before treating them as production data.
+SPEAKER_IDS = ("KEVIN", "KHALED", "ORBIT", "THE_MOON")
+VALID_SPEAKERS = set(SPEAKER_IDS)
 # Events may not exceed the measured audio duration by more than this epsilon.
 DURATION_EPSILON_SECONDS = 0.05
 
 # Keep the vocabulary in lockstep with godot/holos_timeline.gd. These are
 # semantic viseme labels; a character-specific rig maps them to real controls.
 VISEME_TO_GODOT = {name: name for name in ("rest", "closed", "open", "wide", "round", "teeth")}
-SPEAKER_NORMALIZE = {"KEVIN": "KEVIN", "KHALED": "KHALED"}
+SPEAKER_NORMALIZE = {
+    "KEVIN": "KEVIN", "KHALED": "KHALED", "ORBIT": "ORBIT",
+    "THE MOON": "THE_MOON", "THE_MOON": "THE_MOON",
+}
+
+
+def normalize_speaker(value: Any) -> str | None:
+    raw = " ".join(str(value).strip().upper().replace("_", " ").split())
+    return SPEAKER_NORMALIZE.get(raw) or SPEAKER_NORMALIZE.get(raw.replace(" ", "_"))
 
 
 def build_godot_timeline(
@@ -120,7 +131,7 @@ def build_godot_timeline(
     converted: list[dict[str, Any]] = []
     previous_start = -1.0
     for index, event in enumerate(events):
-        speaker = SPEAKER_NORMALIZE.get(str(event.get("speaker", "")).upper())
+        speaker = normalize_speaker(event.get("speaker", ""))
         viseme = VISEME_TO_GODOT.get(str(event.get("viseme", "")).lower())
         try:
             start, end = float(event["start"]), float(event["end"])
@@ -590,16 +601,19 @@ def expand_internal_events(word: dict[str, Any], speaker: str) -> list[dict[str,
     return events
 
 
-def map_words_to_speakers(aligned_words: list[dict[str, Any]]) -> list[tuple[str, dict[str, Any]]]:
-    """Map aligned words to turns derived from the approved transcript.
-
-    Turn boundaries are computed from the exact approved turn token arrays.
-    For this transcript the counts are [10, 5, 8, 10]; they are derived here,
-    not hard-coded, and the full observed sequence is re-verified per turn, so
-    punctuation, contractions, and the number token cannot shift boundaries
-    silently. Any mismatch fails safely before speaker labels are assigned.
-    """
-    approved_turn_tokens = [tokens(text) for _, text in APPROVED_TURNS]
+def map_words_to_speakers_for_turns(
+    aligned_words: list[dict[str, Any]],
+    approved_turns: list[tuple[str, str]],
+) -> list[tuple[str, dict[str, Any]]]:
+    """Map aligned words to canonical speaker turns after exact token checks."""
+    if not approved_turns:
+        raise RuntimeError("Cannot assign speakers without approved transcript turns")
+    for speaker, text in approved_turns:
+        if normalize_speaker(speaker) not in VALID_SPEAKERS:
+            raise RuntimeError(f"Unsupported canonical speaker ID: {speaker!r}")
+        if not text.strip():
+            raise RuntimeError(f"Transcript turn for {speaker!r} is empty")
+    approved_turn_tokens = [tokens(text) for _, text in approved_turns]
     expected_lengths = [len(turn) for turn in approved_turn_tokens]
     if len(aligned_words) != sum(expected_lengths):
         raise RuntimeError(
@@ -607,19 +621,27 @@ def map_words_to_speakers(aligned_words: list[dict[str, Any]]) -> list[tuple[str
         )
     mapped: list[tuple[str, dict[str, Any]]] = []
     cursor = 0
-    for (speaker, _), expected_turn, count in zip(APPROVED_TURNS, approved_turn_tokens, expected_lengths):
+    for (speaker, _), expected_turn, count in zip(approved_turns, approved_turn_tokens, expected_lengths):
         observed_turn = [normalize_token(str(w["word"])) for w in aligned_words[cursor:cursor + count]]
         if observed_turn != expected_turn:
             raise RuntimeError(
                 f"Ambiguous speaker mapping for {speaker}: observed {observed_turn}, expected {expected_turn}"
             )
-        mapped.extend((speaker, word) for word in aligned_words[cursor:cursor + count])
+        mapped.extend((normalize_speaker(speaker) or speaker, word) for word in aligned_words[cursor:cursor + count])
         cursor += count
     return mapped
 
 
-def build_events(aligned_words: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    mapped = map_words_to_speakers(aligned_words)
+def map_words_to_speakers(aligned_words: list[dict[str, Any]]) -> list[tuple[str, dict[str, Any]]]:
+    """Backwards-compatible mapper for the approved four-turn opening."""
+    return map_words_to_speakers_for_turns(aligned_words, APPROVED_TURNS)
+
+
+def build_events(
+    aligned_words: list[dict[str, Any]],
+    approved_turns: list[tuple[str, str]] = APPROVED_TURNS,
+) -> list[dict[str, Any]]:
+    mapped = map_words_to_speakers_for_turns(aligned_words, approved_turns)
     events: list[dict[str, Any]] = []
     for speaker, word in mapped:
         events.extend(expand_internal_events(word, speaker))
@@ -647,8 +669,40 @@ def build_events(aligned_words: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return events
 
 
+def timeline_word_speaker_pairs(events: list[dict[str, Any]]) -> list[tuple[str, str]]:
+    """Collapse phoneme events into ordered (speaker, word-token) pairs."""
+    pairs: list[tuple[str, str]] = []
+    previous_acoustic_key: tuple[float, float] | None = None
+    previous_speaker: str | None = None
+    previous_word: str | None = None
+    for event in events:
+        raw_word = event.get("source_word")
+        if raw_word is None:
+            previous_acoustic_key = None
+            previous_speaker = None
+            previous_word = None
+            continue
+        speaker = normalize_speaker(event.get("speaker", ""))
+        has_acoustic_bounds = event.get("acoustic_word_start") is not None and event.get("acoustic_word_end") is not None
+        acoustic_key = None
+        if has_acoustic_bounds:
+            acoustic_key = (float(event["acoustic_word_start"]), float(event["acoustic_word_end"]))
+            if acoustic_key == previous_acoustic_key:
+                if speaker != previous_speaker:
+                    raise RuntimeError("Timeline validation failed: speaker changes inside one acoustic word")
+                if normalize_token(str(raw_word)) != normalize_token(previous_word or ""):
+                    raise RuntimeError("Timeline validation failed: source_word changes inside one acoustic word")
+                continue
+        for token in tokens(str(raw_word)):
+            pairs.append((speaker or "", token))
+        previous_acoustic_key = acoustic_key
+        previous_speaker = speaker
+        previous_word = str(raw_word)
+    return pairs
+
+
 def validate_timeline_document(document: dict[str, Any], audio_duration: float) -> dict[str, Any]:
-    """Schema validation applied to the staged timeline before promotion."""
+    """Validate timeline structure and either its canonical turns or legacy opening fixture."""
     events = document.get("events", [])
     if not events:
         raise RuntimeError("Timeline validation failed: no events")
@@ -678,12 +732,36 @@ def validate_timeline_document(document: dict[str, Any], audio_duration: float) 
             )
         last = start
 
-    words = " ".join(str(e.get("source_word") or "") for e in events).lower()
-    if re.search(r"\bbut\b", words):
-        raise RuntimeError("Timeline validation failed: unapproved leading 'But' present")
-    for required in ["tell", "interesting", "380,000", "kilometres", "away", "from", "you"]:
-        if required not in words and required.replace(",", "") not in words:
-            raise RuntimeError(f"Timeline validation failed: missing approved word {required!r}")
+    transcript = document.get("approved_transcript")
+    if isinstance(transcript, list):
+        expected_pairs: list[tuple[str, str]] = []
+        for turn in transcript:
+            if not isinstance(turn, dict) or not isinstance(turn.get("text"), str):
+                raise RuntimeError("Timeline validation failed: malformed approved_transcript turn")
+            speaker = normalize_speaker(turn.get("speaker", ""))
+            if speaker not in VALID_SPEAKERS:
+                raise RuntimeError(f"Timeline validation failed: unsupported transcript speaker {turn.get('speaker')!r}")
+            expected_pairs.extend((speaker, token) for token in tokens(turn["text"]))
+        observed_pairs = timeline_word_speaker_pairs(events)
+        if observed_pairs != expected_pairs:
+            first_diff = next(
+                (i for i, (observed, expected) in enumerate(zip(observed_pairs, expected_pairs)) if observed != expected),
+                min(len(observed_pairs), len(expected_pairs)),
+            )
+            raise RuntimeError(
+                "Timeline validation failed: event words/speakers do not match approved_transcript; "
+                f"first difference {first_diff}, observed={observed_pairs[first_diff:first_diff + 3]!r}, "
+                f"expected={expected_pairs[first_diff:first_diff + 3]!r}"
+            )
+    else:
+        # Legacy adapter fixtures lack canonical transcript metadata. Keep the
+        # opening-only safeguards for those fixtures, not full-episode files.
+        words = " ".join(str(e.get("source_word") or "") for e in events).lower()
+        if re.search(r"\bbut\b", words):
+            raise RuntimeError("Timeline validation failed: unapproved leading 'But' present")
+        for required in ["tell", "interesting", "380,000", "kilometres", "away", "from", "you"]:
+            if required not in words and required.replace(",", "") not in words:
+                raise RuntimeError(f"Timeline validation failed: missing approved word {required!r}")
     return {
         "phoneme_count": sum(e["phoneme"] != "SIL" for e in events),
         "silence_event_count": sum(e["phoneme"] == "SIL" for e in events),
@@ -735,7 +813,8 @@ def self_test() -> int:
 
     def check(name: str, condition: bool, detail: str = "") -> None:
         status = "PASS" if condition else "FAIL"
-        print(f"  [{status}] {name}{(' \u2014 ' + detail) if detail else ''}")
+        detail_suffix = f" — {detail}" if detail else ""
+        print(f"  [{status}] {name}{detail_suffix}")
         if not condition:
             failures.append(name)
 

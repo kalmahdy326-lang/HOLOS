@@ -41,8 +41,10 @@ func _base_events() -> Array:
 func _run() -> void:
 	print("HOLOS timeline self-test")
 	_test_valid_timeline()
+	_test_full_episode_profile()
 	_test_rejections()
 	_test_state_at()
+	_test_handoff_timelines()
 	print()
 	if not _failures.is_empty():
 		print("SELF-TEST FAIL: %d check(s) failed: %s" % [_failures.size(), str(_failures)])
@@ -70,10 +72,33 @@ func _test_valid_timeline() -> void:
 	_check("missing file reported", not HolosTimelineScript.from_file("user://does_not_exist.json").is_valid())
 
 
+func _test_full_episode_profile() -> void:
+	var turns := [
+		{"speaker": "THE MOON", "text": "But the whole changed."},
+		{"speaker": "ORBIT", "text": "Acknowledged."},
+	]
+	var events := [
+		{"speaker": "THE_MOON", "start": 0.0, "end": 0.1, "phoneme": "B", "viseme": "closed", "source_word": "But"},
+		{"speaker": "THE_MOON", "start": 0.1, "end": 0.2, "phoneme": "DH", "viseme": "open", "source_word": "the"},
+		{"speaker": "THE_MOON", "start": 0.2, "end": 0.3, "phoneme": "W", "viseme": "open", "source_word": "whole"},
+		{"speaker": "THE_MOON", "start": 0.3, "end": 0.4, "phoneme": "CH", "viseme": "wide", "source_word": "changed."},
+		{"speaker": "ORBIT", "start": 0.5, "end": 0.7, "phoneme": "AO", "viseme": "round", "source_word": "Acknowledged."},
+	]
+	var data := {"schema_version": 1, "approved_transcript": turns, "events": events}
+	var timeline = HolosTimelineScript.from_dictionary(data, 1.0)
+	_check("full-cast transcript accepts canonical 'But'", timeline.is_valid(), timeline.validation_error)
+	_check("THE_MOON speaker state resolves", timeline.viseme_at(0.05, "THE_MOON") == "closed")
+	var bad_events: Array = events.duplicate(true)
+	bad_events[0]["speaker"] = "ORBIT"
+	var bad_data := {"schema_version": 1, "approved_transcript": turns, "events": bad_events}
+	var bad_timeline = HolosTimelineScript.from_dictionary(bad_data, 1.0)
+	_check("full-cast speaker/transcript mismatch rejected", not bad_timeline.is_valid())
+
+
 func _test_rejections() -> void:
 	var cases: Array = [
 		["out-of-order rejected", func(): return _mutated(func(e: Array):
-			e[1]["start"] = 0.05)],
+			e[2]["start"] = 0.05)],
 		["bad viseme rejected", func(): return _mutated(func(e: Array):
 			e[2]["viseme"] = "jawdrop")],
 		["non-positive duration rejected", func(): return _mutated(func(e: Array):
@@ -122,3 +147,44 @@ func _test_state_at() -> void:
 	s = timeline.state_at(-0.5, "KEVIN")
 	_check("before first event: rest", not s["active"])
 	_check("viseme_at convenience matches", timeline.viseme_at(0.7, "KHALED") == "open")
+
+
+func _test_handoff_timelines() -> void:
+	var repo_root := ProjectSettings.globalize_path("res://").path_join("..").simplify_path()
+	var absolute_path := repo_root.path_join("handoffs/milestone-5-1-2026-11-15/HOLOS_Milestone51_WhisperX_Acoustic_Phoneme_Timeline_Aligned.json")
+	var relative_path := repo_root.path_join("handoffs/milestone-5-1-2026-11-15/HOLOS_Milestone51_FourTurn_Review_Phoneme_Timeline_Relative.json")
+	_check("absolute handoff timeline exists", FileAccess.file_exists(absolute_path), absolute_path)
+	_check("relative handoff timeline exists", FileAccess.file_exists(relative_path), relative_path)
+	if not FileAccess.file_exists(absolute_path) or not FileAccess.file_exists(relative_path):
+		return
+	var absolute_data = JSON.parse_string(FileAccess.get_file_as_string(absolute_path))
+	var relative_data = JSON.parse_string(FileAccess.get_file_as_string(relative_path))
+	_check("absolute handoff JSON parses", typeof(absolute_data) == TYPE_DICTIONARY)
+	_check("relative handoff JSON parses", typeof(relative_data) == TYPE_DICTIONARY)
+	if typeof(absolute_data) != TYPE_DICTIONARY or typeof(relative_data) != TYPE_DICTIONARY:
+		return
+	_check("absolute handoff declares schema v1", absolute_data.get("schema_version") == 1)
+	_check("relative handoff declares schema v1", relative_data.get("schema_version") == 1)
+	var absolute_timeline = HolosTimelineScript.from_dictionary(absolute_data, 914.880)
+	var relative_timeline = HolosTimelineScript.from_dictionary(relative_data, 16.825)
+	_check("absolute handoff timeline accepted", absolute_timeline.is_valid(), absolute_timeline.validation_error)
+	_check("relative handoff timeline accepted", relative_timeline.is_valid(), relative_timeline.validation_error)
+	_check("absolute event count is 189", absolute_timeline.events.size() == 189, str(absolute_timeline.events.size()))
+	_check("relative event count is 189", relative_timeline.events.size() == 189, str(relative_timeline.events.size()))
+	_check("both handoff timelines record two ASR normalizations",
+		absolute_data.get("asr_normalizations", []).size() == 2
+		and relative_data.get("asr_normalizations", []).size() == 2)
+	var offset_mismatches := 0
+	var absolute_events: Array = absolute_data.get("events", [])
+	var relative_events: Array = relative_data.get("events", [])
+	if absolute_events.size() == relative_events.size():
+		for i in absolute_events.size():
+			if abs(float(absolute_events[i]["start"]) - 0.091 - float(relative_events[i]["start"])) > 0.000001:
+				offset_mismatches += 1
+			if abs(float(absolute_events[i]["end"]) - 0.091 - float(relative_events[i]["end"])) > 0.000001:
+				offset_mismatches += 1
+	else:
+		offset_mismatches = 1
+	_check("relative event times use the documented 0.091 s offset", offset_mismatches == 0, str(offset_mismatches))
+	_check("timeline source hashes agree",
+		absolute_data.get("source_mp3_sha256", "") == relative_data.get("source_mp3_sha256", ""))

@@ -1,0 +1,2 @@
+# Optional: only for tools/generate_holos_bookend_music.py
+numpy>=2.0,<3.0

@@ -52,6 +52,12 @@ jobs:
           "$HOLOS_GODOT" --headless --editor --path godot --quit
           test -d godot/.godot
 
+      - name: Run headless HOLOS timeline self-test
+        env:
+          HOLOS_GODOT: ${{ runner.temp }}/godot-bin/Godot_v4.4.1-stable_linux.x86_64
+        run: |
+          "$HOLOS_GODOT" --headless --path godot --script res://test_scenes/timeline_selftest.gd
+
       - name: Run real Godot offscreen render integration test
         env:
           HOLOS_GODOT: ${{ runner.temp }}/godot-bin/Godot_v4.4.1-stable_linux.x86_64

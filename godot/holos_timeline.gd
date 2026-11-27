@@ -13,16 +13,14 @@ extends RefCounted
 ## transport clock, if a rig needs one, belongs in that rig's adapter, not
 ## here.
 ##
-## Validation mirrors the Python gate in the processor script (speakers,
-## supported visemes, chronology, positive durations, SIL -> rest, no
-## unapproved "But", required approved words). A timeline that failed the
-## Python gate must also fail here; this class is defence in depth, not the
-## authority. The audio-duration check is applied only when the caller
-## supplies a measured duration, because the committed JSON does not carry
-## one.
+## Validation mirrors the Python gate for structure and, when present,
+## speaker-tagged words in approved_transcript. Legacy fixture documents with
+## no approved_transcript retain the opening-exchange safeguards. Canonical
+## full-episode cast IDs are provisional until the original screenplay is
+## confirmed. The audio-duration check is applied only when supplied.
 
 const SUPPORTED_VISEMES: Array[String] = ["rest", "closed", "open", "wide", "round", "teeth"]
-const VALID_SPEAKERS: Array[String] = ["KEVIN", "KHALED"]
+const VALID_SPEAKERS: Array[String] = ["KEVIN", "KHALED", "ORBIT", "THE_MOON"]
 const CHRONOLOGY_EPSILON := 1e-6
 const DURATION_EPSILON := 0.05
 const REQUIRED_WORDS: Array[String] = [
@@ -78,22 +76,105 @@ func _load(data: Dictionary, audio_duration: float) -> void:
 		if source_word != null:
 			source_words.append(str(source_word))
 		events.append(event as Dictionary)
-	var words := " ".join(source_words).to_lower()
-	var but_regex := RegEx.new()
-	but_regex.compile("\\bbut\\b")
-	if but_regex.search(words) != null:
-		validation_error = "Timeline validation failed: unapproved leading 'But' present"
-		return
-	for required in REQUIRED_WORDS:
-		if not words.contains(required) and not words.contains(required.replace(",", "")):
-			validation_error = "Timeline validation failed: missing approved word '%s'" % required
+	if data.has("approved_transcript"):
+		var expected_pairs := _approved_word_speaker_pairs(data["approved_transcript"])
+		if not validation_error.is_empty():
 			return
+		var observed_pairs := _event_word_speaker_pairs(raw_events as Array)
+		if observed_pairs != expected_pairs:
+			var mismatch := 0
+			while mismatch < mini(observed_pairs.size(), expected_pairs.size()) and observed_pairs[mismatch] == expected_pairs[mismatch]:
+				mismatch += 1
+			var observed_context: Array = observed_pairs.slice(mismatch, mini(mismatch + 3, observed_pairs.size()))
+			var expected_context: Array = expected_pairs.slice(mismatch, mini(mismatch + 3, expected_pairs.size()))
+			validation_error = "Timeline validation failed: approved_transcript mismatch at token %d (observed %d, expected %d): %s vs %s" % [
+				mismatch, observed_pairs.size(), expected_pairs.size(), str(observed_context), str(expected_context),
+			]
+			return
+	else:
+		# Opening-only fixtures predate canonical transcript metadata.
+		var words := " ".join(source_words).to_lower()
+		var but_regex := RegEx.new()
+		but_regex.compile("\\bbut\\b")
+		if but_regex.search(words) != null:
+			validation_error = "Timeline validation failed: unapproved leading 'But' present"
+			return
+		for required in REQUIRED_WORDS:
+			if not words.contains(required) and not words.contains(required.replace(",", "")):
+				validation_error = "Timeline validation failed: missing approved word '%s'" % required
+				return
 	for speaker in VALID_SPEAKERS:
 		var list: Array[Dictionary] = []
 		for event in events:
 			if str(event["speaker"]) == speaker:
 				list.append(event)
-		_by_speaker[speaker] = list
+			_by_speaker[speaker] = list
+
+
+func _normalize_speaker(value: String) -> String:
+	var normalized := " ".join(value.strip_edges().to_upper().replace("_", " ").split(" ", false))
+	return "THE_MOON" if normalized == "THE MOON" else normalized
+
+
+func _word_tokens(text: String) -> Array[String]:
+	var result: Array[String] = []
+	var normalized := text.to_lower().replace("’", "'")
+	var regex := RegEx.new()
+	regex.compile("\\d{1,3}(?:,\\d{3})+|[A-Za-z]+(?:'[A-Za-z]+)?|\\d+")
+	for item in regex.search_all(normalized):
+		result.append(item.get_string().replace(",", ""))
+	return result
+
+
+func _approved_word_speaker_pairs(transcript: Variant) -> Array:
+	var pairs: Array = []
+	if typeof(transcript) != TYPE_ARRAY:
+		validation_error = "Timeline validation failed: approved_transcript must be an array"
+		return pairs
+	for turn in transcript as Array:
+		if typeof(turn) != TYPE_DICTIONARY or not turn.has("speaker") or not turn.has("text"):
+			validation_error = "Timeline validation failed: malformed approved_transcript turn"
+			return []
+		var speaker := _normalize_speaker(str(turn["speaker"]))
+		if not VALID_SPEAKERS.has(speaker):
+			validation_error = "Timeline validation failed: unsupported transcript speaker %s" % speaker
+			return []
+		for token in _word_tokens(str(turn["text"])):
+			pairs.append([speaker, token])
+	return pairs
+
+
+func _event_word_speaker_pairs(raw_events: Array) -> Array:
+	var pairs: Array = []
+	var previous_acoustic_key := ""
+	var previous_speaker := ""
+	var previous_word := ""
+	for raw_event in raw_events:
+		var event: Dictionary = raw_event
+		var source_word: Variant = event.get("source_word")
+		if source_word == null:
+			previous_acoustic_key = ""
+			previous_speaker = ""
+			previous_word = ""
+			continue
+		var speaker := _normalize_speaker(str(event.get("speaker", "")))
+		var acoustic_key := ""
+		if event.has("acoustic_word_start") and event.has("acoustic_word_end"):
+			acoustic_key = "%s|%s" % [str(event["acoustic_word_start"]), str(event["acoustic_word_end"])]
+		if not acoustic_key.is_empty() and acoustic_key == previous_acoustic_key:
+			if speaker != previous_speaker:
+				validation_error = "Timeline validation failed: speaker changes inside one acoustic word"
+				return []
+			if str(source_word).to_lower() != previous_word.to_lower():
+				validation_error = "Timeline validation failed: source_word changes inside one acoustic word"
+				return []
+			continue
+		for token in _word_tokens(str(source_word)):
+			pairs.append([speaker, token])
+		previous_acoustic_key = acoustic_key
+		previous_speaker = speaker
+		previous_word = str(source_word)
+	return pairs
 
 
 func _validate_event(event: Variant, index: int, previous_start: float, audio_duration: float) -> String:

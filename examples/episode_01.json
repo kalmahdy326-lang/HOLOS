@@ -14,6 +14,7 @@
   "audio": {
     "dialogue": "assets/audio/dialogue.wav",
     "music": null,
+    "music_gain_db": -18,
     "sync_tolerance_ms": 80
   },
   "scenes": [

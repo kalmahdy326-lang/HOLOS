@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from fractions import Fraction
 import json
+import math
 import shutil
 import subprocess
 from pathlib import Path
@@ -47,12 +48,20 @@ def build_assembly_command(
     output: Path,
     dialogue: Path | None = None,
     music: Path | None = None,
+    music_gain_db: float = -18.0,
 ) -> list[str]:
     """Build an explicit constant-frame-rate H.264/AAC assembly command."""
     if fps <= 0:
         raise MediaError("fps must be positive.")
     if frame_count <= 0:
         raise MediaError("frame_count must be positive.")
+    if (
+        isinstance(music_gain_db, bool)
+        or not isinstance(music_gain_db, (int, float))
+        or not math.isfinite(float(music_gain_db))
+        or not -60.0 <= float(music_gain_db) <= 0.0
+    ):
+        raise MediaError("music_gain_db must be finite and between -60 and 0 dB.")
 
     command = [
         ffmpeg, "-hide_banner", "-loglevel", "error", "-n",
@@ -69,9 +78,10 @@ def build_assembly_command(
             command.extend(["-i", str(audio_path.resolve())])
 
     if len(audio_inputs) == 2:
+        music_weight = 10.0 ** (float(music_gain_db) / 20.0)
         command.extend([
             "-filter_complex",
-            "[1:a:0][2:a:0]amix=inputs=2:duration=longest:dropout_transition=0,apad[aout]",
+            f"[1:a:0][2:a:0]amix=inputs=2:duration=longest:dropout_transition=0:weights='1 {music_weight:.6f}':normalize=1,apad[aout]",
             "-map", "0:v:0", "-map", "[aout]",
             "-c:a", "aac", "-b:a", "192k",
         ])
@@ -106,6 +116,7 @@ def assemble_video(
     output: Path,
     dialogue: Path | None = None,
     music: Path | None = None,
+    music_gain_db: float = -18.0,
     ffmpeg_executable: str | None = None,
     timeout_seconds: int = 7200,
 ) -> dict[str, Any]:
@@ -129,6 +140,7 @@ def assemble_video(
         output=output,
         dialogue=dialogue,
         music=music,
+        music_gain_db=music_gain_db,
     )
     try:
         result = subprocess.run(

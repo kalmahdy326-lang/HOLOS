@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 from typing import Any
 
@@ -89,6 +90,11 @@ def validate_episode(data: Any) -> None:
             _require(isinstance(characters, list)
                      and all(isinstance(item, str) and item for item in characters),
                      f"{shot_prefix}.characters must be an array of non-empty strings.")
+            scene_config = shot.get("scene_config", {})
+            _require(isinstance(scene_config, dict),
+                     f"{shot_prefix}.scene_config must be an object.")
+            _require(all(isinstance(key, str) and key.strip() for key in scene_config),
+                     f"{shot_prefix}.scene_config keys must be non-empty strings.")
 
     audio = data.get("audio", {})
     _require(isinstance(audio, dict), "audio must be an object.")
@@ -102,4 +108,12 @@ def validate_episode(data: Any) -> None:
         and not isinstance(sync_tolerance_ms, bool)
         and sync_tolerance_ms >= 0,
         "audio.sync_tolerance_ms must be a non-negative number.",
+    )
+    music_gain_db = audio.get("music_gain_db", -18.0)
+    _require(
+        isinstance(music_gain_db, (int, float))
+        and not isinstance(music_gain_db, bool)
+        and math.isfinite(float(music_gain_db))
+        and -60.0 <= float(music_gain_db) <= 0.0,
+        "audio.music_gain_db must be finite and between -60 and 0 dB.",
     )

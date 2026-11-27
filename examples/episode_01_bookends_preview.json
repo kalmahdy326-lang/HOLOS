@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "episode_id": "episode_01_bookends_altb_v3_preview",
+  "title": "HOLOS Episode 1 — Alternative B bookends preview only; not the completed episode",
+  "render": {
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "debug_overlay": false
+  },
+  "audio": {
+    "dialogue": null,
+    "music": null,
+    "music_gain_db": 0,
+    "sync_tolerance_ms": 80
+  },
+  "scenes": [
+    {
+      "scene_id": "opening_title_card",
+      "shots": [
+        {
+          "shot_id": "S00_TITLE_CARD",
+          "scene": "res://scenes/episode_bookend_card.tscn",
+          "start_frame": 0,
+          "end_frame": 288,
+          "characters": [],
+          "assets": [],
+          "scene_config": {
+            "card_mode": "title",
+            "series_title": "HOLOS",
+            "episode_title": "Episode 1"
+          }
+        }
+      ]
+    },
+    {
+      "scene_id": "closing_credit_card",
+      "shots": [
+        {
+          "shot_id": "S99_CREDITS_CARD",
+          "scene": "res://scenes/episode_bookend_card.tscn",
+          "start_frame": 0,
+          "end_frame": 576,
+          "characters": [],
+          "assets": [],
+          "scene_config": {
+            "card_mode": "credits",
+            "series_title": "HOLOS",
+            "credits_heading": "CREDITS",
+            "credit_lines": [
+              "CREDITS PENDING APPROVAL"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
