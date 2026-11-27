@@ -206,6 +206,7 @@ def _stream_time_seconds(stream: dict[str, Any], field: str) -> float | None:
     return None
 
 
+
 def validate_media(
     metadata: dict[str, Any],
     *,
@@ -217,22 +218,56 @@ def validate_media(
     duration_tolerance_seconds: float = 0.08,
     sync_tolerance_seconds: float = 0.08,
 ) -> dict[str, Any]:
-    """Validate video properties and audio/video stream timeline alignment."""
+    """Validate container and stream completeness plus audio/video alignment."""
     if duration_tolerance_seconds < 0 or sync_tolerance_seconds < 0:
         raise MediaError("Media validation tolerances must be non-negative.")
 
-    streams = metadata.get("streams", [])
-    video = next((s for s in streams if s.get("codec_type") == "video"), None)
-    audio = [s for s in streams if s.get("codec_type") == "audio"]
     errors: list[str] = []
+    if not isinstance(metadata, dict):
+        return {
+            "valid": False,
+            "errors": ["FFprobe metadata must be a JSON object."],
+            "video_stream": None,
+            "video_duration_seconds": None,
+            "audio_stream_count": 0,
+            "duration_seconds": None,
+            "expected_duration_seconds": expected_duration,
+            "av_sync": {
+                "checked": False,
+                "tolerance_seconds": sync_tolerance_seconds,
+                "streams": [],
+            },
+        }
 
-    if video is None:
+    raw_streams = metadata.get("streams", [])
+    if not isinstance(raw_streams, list):
+        errors.append("FFprobe streams metadata is not a list.")
+        raw_streams = []
+    streams: list[dict[str, Any]] = []
+    for index, stream in enumerate(raw_streams):
+        if isinstance(stream, dict):
+            streams.append(stream)
+        else:
+            errors.append(f"FFprobe stream entry {index} is not an object.")
+
+    video_streams = [s for s in streams if s.get("codec_type") == "video"]
+    audio = [s for s in streams if s.get("codec_type") == "audio"]
+    video = video_streams[0] if video_streams else None
+
+    if not video_streams:
         errors.append("No video stream found.")
-    else:
-        if int(video.get("width", -1)) != width:
-            errors.append(f"Width mismatch: expected {width}, got {video.get('width')}.")
-        if int(video.get("height", -1)) != height:
-            errors.append(f"Height mismatch: expected {height}, got {video.get('height')}.")
+    elif len(video_streams) > 1:
+        errors.append(f"Expected one video stream, found {len(video_streams)}.")
+
+    if video is not None:
+        for field, expected in (("width", width), ("height", height)):
+            try:
+                actual = int(video.get(field, -1))
+            except (TypeError, ValueError):
+                actual = -1
+            if actual != expected:
+                errors.append(f"{field.title()} mismatch: expected {expected}, got {video.get(field)}.")
+
         rate = video.get("avg_frame_rate") or video.get("r_frame_rate")
         try:
             actual_fps = float(Fraction(rate))
@@ -241,7 +276,11 @@ def validate_media(
         except (ValueError, ZeroDivisionError, TypeError):
             errors.append(f"Could not interpret video frame rate: {rate!r}.")
 
-    duration_value = metadata.get("format", {}).get("duration")
+    format_metadata = metadata.get("format", {})
+    if not isinstance(format_metadata, dict):
+        errors.append("FFprobe format metadata is not an object.")
+        format_metadata = {}
+    duration_value = format_metadata.get("duration")
     try:
         actual_duration = float(duration_value)
         if abs(actual_duration - expected_duration) > duration_tolerance_seconds:
@@ -253,17 +292,28 @@ def validate_media(
         actual_duration = None
         errors.append("Could not read media duration.")
 
-    sync_checks: list[dict[str, Any]] = []
+    video_duration = None
+    if video is not None:
+        video_duration = _stream_time_seconds(video, "duration")
+        if video_duration is None:
+            errors.append("Video stream duration is missing; output completeness cannot be verified.")
+        elif abs(video_duration - expected_duration) > duration_tolerance_seconds:
+            errors.append(
+                f"Video stream duration mismatch: expected {expected_duration:.3f}s, "
+                f"got {video_duration:.3f}s."
+            )
+
     if require_audio and not audio:
         errors.append("Audio stream is required but missing.")
 
-    if require_audio and video is not None and audio:
+    # If an audio stream is present, validate it even when audio is optional.
+    # Optional means absence is allowed; it does not mean a present stream may
+    # be truncated or misaligned without detection.
+    sync_checks: list[dict[str, Any]] = []
+    if video is not None and audio:
         video_start = _stream_time_seconds(video, "start_time")
-        video_duration = _stream_time_seconds(video, "duration")
         if video_start is None:
             errors.append("Video stream start time is missing; A/V sync cannot be verified.")
-        if video_duration is None:
-            errors.append("Video stream duration is missing; A/V sync cannot be verified.")
 
         for index, stream in enumerate(audio):
             audio_start = _stream_time_seconds(stream, "start_time")
@@ -312,11 +362,12 @@ def validate_media(
         "valid": not errors,
         "errors": errors,
         "video_stream": video,
+        "video_duration_seconds": video_duration,
         "audio_stream_count": len(audio),
         "duration_seconds": actual_duration,
         "expected_duration_seconds": expected_duration,
         "av_sync": {
-            "checked": bool(require_audio and audio and video is not None),
+            "checked": bool(audio and video is not None),
             "tolerance_seconds": sync_tolerance_seconds,
             "streams": sync_checks,
         },
