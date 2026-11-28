@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
+import ctypes
 from datetime import datetime, timezone
+import errno
 import hashlib
 import json
 import fnmatch
 import os
+import math
+import socket
+import sys
+import time
 from pathlib import Path, PurePosixPath
 import shutil
 
@@ -17,6 +23,51 @@ from typing import Any
 
 class BackupError(RuntimeError):
     """Raised when a source backup cannot be completed safely."""
+
+
+def _rename_directory_noreplace(source: Path, destination: Path) -> None:
+    """Atomically publish a staging directory without replacing any destination.
+
+    Linux uses renameat2(RENAME_NOREPLACE). Windows os.rename already refuses
+    an existing destination. Other platforms fail closed rather than falling
+    back to POSIX rename semantics, which can replace an empty directory.
+    """
+    if os.name == "nt":
+        try:
+            os.rename(source, destination)
+        except FileExistsError as exc:
+            raise BackupError(
+                f"Refusing to overwrite existing destination: {destination}"
+            ) from exc
+        return
+
+    if not sys.platform.startswith("linux"):
+        raise BackupError(
+            "Atomic no-replace directory promotion is unavailable on this platform."
+        )
+
+    libc = ctypes.CDLL(None, use_errno=True)
+    renameat2 = getattr(libc, "renameat2", None)
+    if renameat2 is None:
+        raise BackupError(
+            "libc renameat2 is unavailable; refusing a non-atomic directory promotion."
+        )
+    renameat2.argtypes = [
+        ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint
+    ]
+    renameat2.restype = ctypes.c_int
+    result = renameat2(
+        -100, os.fsencode(source), -100, os.fsencode(destination), 1
+    )
+    if result == 0:
+        return
+
+    error = ctypes.get_errno()
+    if error in (errno.EEXIST, errno.ENOTEMPTY):
+        raise BackupError(
+            f"Refusing to overwrite existing destination: {destination}"
+        )
+    raise OSError(error, os.strerror(error), str(destination))
 
 
 def _inside(root: Path, path: Path) -> bool:
@@ -223,7 +274,7 @@ def create_source_backup(
 
         if final_dir.exists():
             raise BackupError(f"Refusing to overwrite existing backup: {final_dir}")
-        os.replace(stage, final_dir)
+        _rename_directory_noreplace(stage, final_dir)
         return final_dir, backup_manifest
 
     except Exception as exc:
@@ -244,17 +295,199 @@ def create_source_backup(
                 with (stage / "backup-failure.json").open("w", encoding="utf-8") as stream:
                     json.dump(failure, stream, indent=2)
                     stream.write("\n")
-                os.replace(stage, failed_dir)
-            except OSError:
-                # Leave the staging directory in place if preservation itself fails.
+                _rename_directory_noreplace(stage, failed_dir)
+            except (OSError, BackupError):
+                # A competing destination must never replace the stage or mask the original failure.
                 pass
             raise BackupError(
                 f"Backup failed; partial staging was preserved at "
-                f"{failed_dir if failed_dir.exists() else stage}: {exc}"
+                f"{stage if stage.exists() else failed_dir}: {exc}"
             ) from exc
         raise
 
 
+
+
+RESTORE_LEASE_FILENAME = ".restore-lease.json"
+RESTORE_LEASE_TTL_SECONDS = 24 * 60 * 60
+
+
+def _process_start_token(pid: int) -> str | None:
+    """Return Linux /proc start-time ticks to distinguish PID reuse when available."""
+    stat_path = Path(f"/proc/{pid}/stat")
+    try:
+        stat_text = stat_path.read_text(encoding="utf-8")
+        closing = stat_text.rfind(")")
+        if closing < 0:
+            return None
+        fields = stat_text[closing + 1:].strip().split()
+        return fields[19] if len(fields) > 19 else None
+    except (OSError, UnicodeError):
+        return None
+
+
+def _write_restore_lease(stage: Path) -> None:
+    """Atomically refresh a long-lived lease for one active restore staging directory."""
+    now = time.time()
+    payload = {
+        "schema_version": 1,
+        "stage_name": stage.name,
+        "pid": os.getpid(),
+        "hostname": socket.gethostname(),
+        "process_start_token": _process_start_token(os.getpid()),
+        "heartbeat_at_epoch": now,
+        "heartbeat_at_utc": _timestamp(),
+        "lease_expires_at_epoch": now + RESTORE_LEASE_TTL_SECONDS,
+        "lease_ttl_seconds": RESTORE_LEASE_TTL_SECONDS,
+    }
+    temporary_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            prefix=".restore-lease-",
+            suffix=".tmp",
+            dir=stage,
+            delete=False,
+        ) as stream:
+            temporary_path = Path(stream.name)
+            json.dump(payload, stream, indent=2)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary_path, stage / RESTORE_LEASE_FILENAME)
+        temporary_path = None
+        try:
+            directory_fd = os.open(stage, os.O_RDONLY)
+            try:
+                os.fsync(directory_fd)
+            finally:
+                os.close(directory_fd)
+        except OSError:
+            # Directory fsync is not supported by every platform/filesystem.
+            pass
+    finally:
+        if temporary_path is not None:
+            try:
+                temporary_path.unlink()
+            except OSError:
+                pass
+
+
+def inspect_restore_staging(
+    *,
+    project_root: Path,
+    now_epoch: float | None = None,
+) -> list[dict[str, Any]]:
+    """Read-only inventory of hidden restore stages and their lease state.
+
+    An expired lease is only a manual-review candidate, never proof that a
+    process is dead. This function never renames, deletes, resumes, or promotes
+    a staging directory.
+    """
+    root = project_root.resolve()
+    output_lexical = root / "output"
+    restores_lexical = output_lexical / "restores"
+    if output_lexical.is_symlink() or restores_lexical.is_symlink():
+        raise BackupError("Restore staging inspection does not follow symbolic links.")
+    if now_epoch is None:
+        now = time.time()
+    else:
+        if (
+            isinstance(now_epoch, bool)
+            or not isinstance(now_epoch, (int, float))
+            or not math.isfinite(now_epoch)
+        ):
+            raise ValueError("Inspection time must be a finite numeric epoch.")
+        now = float(now_epoch)
+    if not restores_lexical.exists():
+        return []
+    restores_root = restores_lexical.resolve()
+    if not _inside(root, restores_root) or not restores_root.is_dir():
+        raise BackupError("Restore staging directory must remain inside project root.")
+
+    results: list[dict[str, Any]] = []
+    for stage in sorted(restores_root.iterdir(), key=lambda item: item.name):
+        if not stage.name.startswith(".restore-staging-"):
+            continue
+        result: dict[str, Any] = {
+            "stage_name": stage.name,
+            "status": "unknown",
+            "reason": "Lease evidence is missing or cannot be trusted.",
+        }
+        if stage.is_symlink() or not stage.is_dir():
+            result.update(status="unsafe", reason="Staging entry is not a real directory.")
+            results.append(result)
+            continue
+        lease_path = stage / RESTORE_LEASE_FILENAME
+        if lease_path.is_symlink() or not lease_path.is_file():
+            results.append(result)
+            continue
+        try:
+            lease = json.loads(lease_path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError):
+            results.append(result)
+            continue
+        if not isinstance(lease, dict):
+            results.append(result)
+            continue
+        pid = lease.get("pid")
+        hostname = lease.get("hostname")
+        process_token = lease.get("process_start_token")
+        heartbeat = lease.get("heartbeat_at_epoch")
+        expires = lease.get("lease_expires_at_epoch")
+        ttl = lease.get("lease_ttl_seconds")
+        if (
+            lease.get("schema_version") != 1
+            or lease.get("stage_name") != stage.name
+            or isinstance(pid, bool) or not isinstance(pid, int) or pid < 1
+            or not isinstance(hostname, str) or not hostname
+            or (process_token is not None and not isinstance(process_token, str))
+            or isinstance(heartbeat, bool) or not isinstance(heartbeat, (int, float))
+            or not math.isfinite(heartbeat)
+            or isinstance(expires, bool) or not isinstance(expires, (int, float))
+            or not math.isfinite(expires)
+            or isinstance(ttl, bool) or not isinstance(ttl, (int, float))
+            or not math.isfinite(ttl)
+            or ttl != RESTORE_LEASE_TTL_SECONDS
+            or expires <= heartbeat
+            or abs((expires - heartbeat) - ttl) > 1.0
+        ):
+            results.append(result)
+            continue
+
+        current_token = (
+            _process_start_token(pid)
+            if hostname == socket.gethostname() and process_token is not None
+            else None
+        )
+        if current_token is not None and current_token == process_token:
+            status = "active_process"
+            reason = "The recorded process identity is still present on this host."
+        elif current_token is not None and current_token != process_token:
+            status = "expired_candidate" if now >= expires else "owner_identity_mismatch"
+            reason = (
+                "The recorded PID now belongs to a different process; manual review is required."
+            )
+        elif now < expires:
+            status = "active_lease"
+            reason = "The lease has not expired; the stage must be treated as active."
+        else:
+            status = "expired_candidate"
+            reason = (
+                "The lease expired; this is only a manual-review candidate, not an "
+                "automatic cleanup or recovery instruction."
+            )
+        result.update({
+            "status": status,
+            "reason": reason,
+            "pid": pid,
+            "hostname": hostname,
+            "heartbeat_at_epoch": heartbeat,
+            "lease_expires_at_epoch": expires,
+        })
+        results.append(result)
+    return results
 
 def restore_source_backup(
     *,
@@ -365,6 +598,30 @@ def restore_source_backup(
     if total_size != manifest.get("total_size_bytes"):
         raise BackupError("Backup total size does not match its records.")
 
+    source_inventory_hash = manifest.get("source_inventory_sha256")
+    if (
+        not isinstance(source_inventory_hash, str)
+        or len(source_inventory_hash) != 64
+        or any(character not in "0123456789abcdef" for character in source_inventory_hash)
+    ):
+        raise BackupError("Backup manifest has an invalid source inventory SHA-256.")
+
+    # Reconstruct the inventory's canonical path/hash digest. This catches
+    # record edits that also update a copied file's checksum and byte count,
+    # which per-file checks and the total-size check alone cannot detect.
+    aggregate = hashlib.sha256()
+    for record, _, relative in sorted(
+        validated, key=lambda item: item[2].as_posix()
+    ):
+        aggregate.update(relative.as_posix().encode("utf-8"))
+        aggregate.update(b"\0")
+        aggregate.update(record["sha256"].encode("ascii"))
+        aggregate.update(b"\n")
+    if aggregate.hexdigest() != source_inventory_hash:
+        raise BackupError(
+            "Backup file records do not match the source inventory aggregate hash."
+        )
+
     restores_root.mkdir(parents=True, exist_ok=True)
     if destination is None:
         final_dir = restores_root / f"restored-source-{_stamp()}"
@@ -379,7 +636,9 @@ def restore_source_backup(
     stage = Path(tempfile.mkdtemp(prefix=".restore-staging-", dir=restores_root))
     restored_records: list[dict[str, Any]] = []
     try:
+        _write_restore_lease(stage)
         for record, source, relative in validated:
+            _write_restore_lease(stage)
             target = stage.joinpath(*relative.parts)
             if not _inside(stage, target):
                 raise BackupError(f"Restore path escapes staging directory: {relative}")
@@ -394,6 +653,7 @@ def restore_source_backup(
                 "size_bytes": restored_size,
                 "sha256": restored_hash,
             })
+            _write_restore_lease(stage)
 
         restore_manifest = {
             "schema_version": 1,
@@ -417,32 +677,58 @@ def restore_source_backup(
 
         if final_dir.exists():
             raise BackupError(f"Refusing to overwrite existing restore directory: {final_dir}")
-        os.replace(stage, final_dir)
+        _write_restore_lease(stage)
+        _rename_directory_noreplace(stage, final_dir)
+        try:
+            (final_dir / RESTORE_LEASE_FILENAME).unlink()
+        except OSError:
+            # A completed restore is no longer scanned as a staging directory.
+            pass
         return final_dir, restore_manifest
 
-    except Exception as exc:
-        if stage.exists():
-            failed_dir = restores_root / f"FAILED-{_stamp()}"
-            suffix = 1
-            while failed_dir.exists():
-                failed_dir = restores_root / f"FAILED-{_stamp()}-{suffix}"
-                suffix += 1
-            try:
-                failure = {
-                    "schema_version": 1,
-                    "created_at_utc": _timestamp(),
-                    "status": "incomplete",
-                    "error": f"{type(exc).__name__}: {exc}",
-                    "verified_files_before_failure": restored_records,
-                }
-                with (stage / "restore-failure.json").open("w", encoding="utf-8") as stream:
-                    json.dump(failure, stream, indent=2)
-                    stream.write("\n")
-                os.replace(stage, failed_dir)
-            except OSError:
-                pass
-            raise BackupError(
-                f"Restore failed; partial staging was preserved at "
-                f"{failed_dir if failed_dir.exists() else stage}: {exc}"
-            ) from exc
-        raise
+    except BaseException as exc:
+        if not stage.exists():
+            raise
+
+        interrupted = not isinstance(exc, Exception)
+        prefix = "INTERRUPTED" if interrupted else "FAILED"
+        status = "interrupted" if interrupted else "incomplete"
+        failed_dir = restores_root / f"{prefix}-{_stamp()}"
+        suffix = 1
+        while failed_dir.exists():
+            failed_dir = restores_root / f"{prefix}-{_stamp()}-{suffix}"
+            suffix += 1
+        try:
+            failure = {
+                "schema_version": 1,
+                "created_at_utc": _timestamp(),
+                "status": status,
+                "error": f"{type(exc).__name__}: {exc}",
+                "verified_files_before_failure": restored_records,
+                "recovery_guidance": (
+                    "The staging directory is diagnostic evidence, not a resumable "
+                    "restore. Retry from the verified backup into a new, unused "
+                    "output/restores destination. The incomplete staging directory "
+                    "is preserved and is never promoted or overwritten automatically."
+                ),
+            }
+            report_name = (
+                "restore-interruption.json" if interrupted else "restore-failure.json"
+            )
+            with (stage / report_name).open("x", encoding="utf-8") as stream:
+                json.dump(failure, stream, indent=2)
+                stream.write("\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+            _rename_directory_noreplace(stage, failed_dir)
+        except (OSError, BackupError):
+            # Keep the original exception and leave any surviving stage in place.
+            pass
+
+        if interrupted:
+            # Preserve KeyboardInterrupt/SystemExit semantics after recording evidence.
+            raise
+        raise BackupError(
+            f"Restore failed; partial staging was preserved at "
+            f"{stage if stage.exists() else failed_dir}: {exc}"
+        ) from exc

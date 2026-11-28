@@ -26,7 +26,7 @@
     {
       "id": "ANIM-QUEUE-002",
       "priority": 1,
-      "status": "queued",
+      "status": "in_review",
       "title": "Strengthen FFprobe-based final media acceptance",
       "prerequisites": [
         "Inspect tests/test_media.py",
@@ -37,12 +37,20 @@
         "Reject missing, truncated, or mismatched duration outputs",
         "Preserve source media",
         "Record exact validation evidence"
-      ]
+      ],
+      "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/27",
+      "active_branch": "production/ffprobe-stream-acceptance-2026-11-18",
+      "last_attempt_commit": "452884061e08df41dc4c8ffab326bdd29f903ae4",
+      "last_attempt_workflows": [
+        "45751169627",
+        "45751874991"
+      ],
+      "note": "\n\nRun 015 (2026-11-25): PR #27 now rejects non-finite container/video/audio timing values and validates expected dimensions, frame rate, duration, and tolerances before comparisons. Malformed stream arrays/entries and non-numeric dimensions return explicit validation errors instead of escaping as exceptions. Added regressions for infinite container duration, NaN video duration when audio is optional, NaN audio start time, malformed stream entries/dimensions, and non-finite expected duration. Commit 452884061e08df41dc4c8ffab326bdd29f903ae4. Repository tests remain unverified: latest PR workflow #45540642162 jobs had runner_id=0, runner_name empty, and zero steps; job logs returned 404 BlobNotFound. Do not mark complete until focused media and full Python/Godot checks execute.\n\nPost-change workflow verification: PR #27 run #45751169627 (jobs #139679028156 and #139679028440) and PR #28 ledger/queue run #45751240227 (jobs #139679258597 and #139679259001) all had runner_id=0, empty runner_name, zero steps, and two-to-three-second completion. Step lookup returned empty arrays; logs returned 404 BlobNotFound. No media/Python/Godot tests ran.\n\nFinal Run 015 check: queue/ledger update workflow #45751874991 had Python/media job #139681329447 and Godot job #139681329204; both had runner_id=0, empty runner_name, zero steps, and two-to-three-second completion. Logs returned 404 BlobNotFound."
     },
     {
       "id": "ANIM-QUEUE-003",
       "priority": 2,
-      "status": "queued",
+      "status": "in_review",
       "title": "Audit source inventory, backup, and non-overwriting restore",
       "prerequisites": [
         "Inspect tests/test_inventory.py and tests/test_backup.py"
@@ -52,6 +60,14 @@
         "Backup integrity is verified",
         "Restore never silently overwrites existing files",
         "Failure paths are tested"
+      ],
+      "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
+      "active_branch": "production/backup-manifest-integrity-2026-11-18",
+      "last_attempt_commit": "071aba42481d0369feeaec11e38eba191e74e837",
+      "note": " Run 012: both complete-backup and complete-restore directory promotion now use atomic no-replace semantics; Linux renameat2(RENAME_NOREPLACE), Windows os.rename, unsupported POSIX fails closed. Added concurrent race and empty-destination regressions. Isolated Python race checks passed; repository suite remains unverified because PR run #45323414848 failed without exposed steps and logs returned 404 BlobNotFound.\n\nRun 013: backup and restore failure-stage archival now uses atomic no-replace promotion. Archival collisions preserve the original incomplete stage and original exception, and the error reports the surviving stage path. Added two race regressions for a competing empty FAILED destination. Static source audit 6/6; repository tests remain unverified because workflows #45324856366/#45324876919 exposed steps=null and logs returned 404 BlobNotFound.\n\nRun 014 (2026-11-24): added cross-platform fail-closed regressions for unsupported POSIX platforms and a Linux libc without renameat2. Both assert the staging payload remains unchanged and no destination is published. GitHub-source static audit 6/6. Focused backup/full Python tests remain unverified: PR workflow #45539921611 exposed empty steps and logs returned 404 BlobNotFound; scheduled validation #45523545347 had the same no-step/log condition. Do not mark complete until repository tests execute.",
+      "last_attempt_workflows": [
+        "45539921611",
+        "45523545347"
       ]
     },
     {
@@ -67,6 +83,91 @@
         "Real character render and audio synchronization acceptance evidence is captured"
       ],
       "blocker": "Original rig source assets are not present in this GitHub repository"
+    },
+    {
+      "id": "ANIM-QUEUE-007",
+      "priority": 2,
+      "status": "completed",
+      "title": "Preserve interrupted restore staging and support safe retry",
+      "prerequisites": [
+        "Inspect restore_source_backup exception path",
+        "Keep the original backup immutable and restore only to a new destination"
+      ],
+      "acceptance": [
+        "A simulated hard interruption after one verified copy preserves an INTERRUPTED staging directory",
+        "An interruption manifest records verified files and explicit recovery guidance",
+        "KeyboardInterrupt/SystemExit semantics are preserved after evidence is written",
+        "A retry from the original verified backup into a new destination succeeds",
+        "The interrupted stage and original backup are not overwritten or silently deleted"
+      ],
+      "completed_in_run": "2026-11-19-run-008",
+      "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
+      "last_verified_workflow": "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44665879726",
+      "note": "restore_source_backup now catches BaseException only to preserve staging evidence, writes restore-interruption.json and atomically renames the stage to INTERRUPTED-*, then re-raises KeyboardInterrupt/SystemExit unchanged. Ordinary exceptions retain FAILED-* plus BackupError behavior. Test simulates KeyboardInterrupt after one copied file, verifies metadata and preserved stage, then retries from the original backup into a new destination. This does not catch SIGKILL or power loss; those require durable orphan-stage detection/lease design."
+    },
+    {
+      "id": "ANIM-QUEUE-008",
+      "priority": 4,
+      "status": "in_review",
+      "title": "Design safe orphan staging detection after uncatchable process termination",
+      "prerequisites": [
+        "Inspect current backup/restore staging names and manifests",
+        "Define a concurrency-safe lock or lease so an active restore is not misclassified"
+      ],
+      "acceptance": [
+        "SIGKILL/power-loss orphan stages can be distinguished from active work",
+        "Recovery never promotes an incomplete stage to a complete restore",
+        "Recovery never overwrites or deletes an existing backup or restore",
+        "Orphan stages remain inspectable with actionable metadata",
+        "Tests cover active lease, expired lease, malformed marker, and retry"
+      ],
+      "note": "Python cannot catch SIGKILL or power loss. Do not add a naive startup scan that might rename another live restore's staging directory. Implementation and regression coverage were added in cumulative run 009. The resulting Actions jobs failed before any step summaries were exposed (steps=null, logs_url=null); log retrieval returned 404 BlobNotFound. Tests are not counted as run or passed. Keep this task in review until a normal CI attempt provides step-level evidence. Run 010: added a read-only `holos inspect-restores` CLI and a subprocess regression that verifies an expired candidate is reported without changing marker bytes. Implementation commits 2338955fc2cbd309a941bf9136bea99663701ac6, 3b0ef21899df150eb7f79d182b3c0a925b67158d, and README commit 17b52d28c4ff11d9ded4948d6b4a324650431879. The new test is not verified: scheduled run #44969077150 and PR run #44864252387 ended in 2–3 seconds with runner_name empty and steps empty; log retrieval returned 404 BlobNotFound. Keep lease classification read-only; no automatic orphan recovery.\n\nRun 011: the inspector now rejects a lease whose declared TTL differs from the configured 24-hour policy or whose expiry-heartbeat interval differs from that TTL by more than one second. Regressions cover extended expiry, mismatched TTL, active process identity and PID reuse. Repository tests remain unverified because PR workflows #45107869172 and #45107932133 exposed zero steps and logs returned 404 BlobNotFound.",
+      "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
+      "active_branch": "production/backup-manifest-integrity-2026-11-18",
+      "last_attempt_commit": "0293dcc99662e413af16becd0299c35cd22c0dc8",
+      "last_attempt_workflows": [
+        "45107869172",
+        "45107932133"
+      ]
+    },
+    {
+      "id": "ANIM-QUEUE-009",
+      "priority": 5,
+      "status": "in_review",
+      "title": "Expose read-only restore staging inspection to production operators",
+      "prerequisites": [
+        "Use inspect_restore_staging without changing its conservative classification semantics",
+        "Keep expired leases as manual-review candidates"
+      ],
+      "acceptance": [
+        "holos inspect-restores emits machine-readable JSON",
+        "Output includes stage count and per-status counts",
+        "Command does not mutate staging directories or markers",
+        "Subprocess regression verifies expired-stage reporting and byte-for-byte non-mutation"
+      ],
+      "active_pr": "https://github.com/kalmahdy326-lang/HOLOS/pull/28",
+      "active_branch": "production/backup-manifest-integrity-2026-11-18",
+      "last_attempt_commit": "0293dcc99662e413af16becd0299c35cd22c0dc8",
+      "note": "Implementation and regression added in run 010. Repository tests are not verified because Actions jobs did not expose a runner or steps. Do not mark complete until focused backup tests and the full Python/Godot validation pass.\n\nRun 011 adds malformed-lease classification regressions; no automatic cleanup or recovery was introduced. Awaiting repository test execution.",
+      "last_attempt_workflows": [
+        "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44980307475",
+        "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44980238191",
+        "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44980400520",
+        "https://github.com/kalmahdy326-lang/HOLOS/actions/runs/44980424221"
+      ]
     }
-  ]
+  ],
+  "last_operational_blocker": {
+    "date": "2026-11-25",
+    "summary": "Latest animation jobs #45751169627, #45751240227 and #45751874991 were created but never assigned a runner: runner_id=0, empty runner_name, zero steps, and two-to-three-second completion; logs returned 404 BlobNotFound.",
+    "evidence": [
+      "45751874991",
+      "45751169627",
+      "45751240227",
+      "45742961551",
+      "45540642162"
+    ],
+    "status": "unresolved",
+    "note": "The job records establish that no runner executed these jobs. They do not identify the account, service, or provisioning cause. No repository test pass or code-level failure is inferred."
+  }
 }

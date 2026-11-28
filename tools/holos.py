@@ -19,6 +19,7 @@ if str(_REPOSITORY_ROOT) not in sys.path:
 from holos_engine.backup import (
     BackupError,
     create_source_backup,
+    inspect_restore_staging,
     restore_source_backup,
 )
 from holos_engine.batch import (
@@ -198,6 +199,11 @@ def main() -> int:
         help="Optional new directory under output/restores (default: timestamped)",
     )
 
+    subparsers.add_parser(
+        "inspect-restores",
+        help="Read-only report of hidden restore staging directories and lease states",
+    )
+
     for name in ("validate", "preflight"):
         command = subparsers.add_parser(name)
         command.add_argument("--episode", required=True, type=Path)
@@ -294,6 +300,21 @@ def main() -> int:
             print(f"Godot asset audit status: {report['status']}")
             print(f"Godot asset audit report: {report_path}")
             return 0 if report["status"] == "complete" else 1
+
+        if args.command == "inspect-restores":
+            findings = inspect_restore_staging(project_root=root)
+            status_counts: dict[str, int] = {}
+            for finding in findings:
+                status = str(finding.get("status", "unknown"))
+                status_counts[status] = status_counts.get(status, 0) + 1
+            print(json.dumps({
+                "project_root": str(root),
+                "read_only": True,
+                "stage_count": len(findings),
+                "status_counts": status_counts,
+                "stages": findings,
+            }, indent=2))
+            return 0
 
         if args.command == "backup":
             inventory_path = (
